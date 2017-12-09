@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E837D840-0B71-40D1-AAA5-89D64C4A1055}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>generator</RootNamespace>
+    <AssemblyName>generator</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Editor.sharpmake.cs" />
+    <Compile Include="..\Engine.sharpmake.cs" />
+    <Compile Include="..\Game.sharpmake.cs" />
+    <Compile Include="..\Main.sharpmake.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Lib\Sharpmake\Sharpmake.Application\Sharpmake.Application.csproj">
+      <Project>{37cf3ee3-afd3-3cc8-8f8e-b423292d491f}</Project>
+      <Name>Sharpmake.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Lib\Sharpmake\Sharpmake.Generators\Sharpmake.Generators.csproj">
+      <Project>{844f66de-b015-340e-720a-8e158b517e93}</Project>
+      <Name>Sharpmake.Generators</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Lib\Sharpmake\Sharpmake.Platforms\Sharpmake.CommonPlatforms\Sharpmake.CommonPlatforms.csproj">
+      <Project>{3b476462-28e6-4640-4257-7942657699ed}</Project>
+      <Name>Sharpmake.CommonPlatforms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Lib\Sharpmake\Sharpmake.Platforms\Sharpmake.Durango\Sharpmake.Durango.csproj">
+      <Project>{50769915-b3ff-4c7e-b804-f0294a456920}</Project>
+      <Name>Sharpmake.Durango</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Lib\Sharpmake\Sharpmake.Platforms\Sharpmake.X360\Sharpmake.X360.csproj">
+      <Project>{1c5b0df8-41c5-9e90-7a8c-622cdaa188ed}</Project>
+      <Name>Sharpmake.X360</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Lib\Sharpmake\Sharpmake.UnitTests\Sharpmake.UnitTests.csproj">
+      <Project>{be99068f-e9d0-ef2f-1ece-caaa3d6e2df0}</Project>
+      <Name>Sharpmake.UnitTests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Lib\Sharpmake\Sharpmake\Sharpmake.csproj">
+      <Project>{15f793c7-9e88-64a9-591c-7244fcc6b771}</Project>
+      <Name>Sharpmake</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Lib\Sharpmake\SimpleNuGet\SimpleNuGet.csproj">
+      <Project>{d163b9b5-0a3d-9f09-f47e-83eb1485e2c0}</Project>
+      <Name>SimpleNuGet</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

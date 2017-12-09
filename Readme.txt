@@ -1,0 +1,1 @@
+Find Editor in the IDEs after Automation\\PrepareEditorForLaunch.bat
