@@ -1,4 +1,5 @@
 #pragma once
+#include <Engine.hpp>
 
 namespace winforms {
 
@@ -48,11 +49,14 @@ namespace winforms {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			box::Engine* e = new box::Engine();
+
 			this->components = gcnew System::ComponentModel::Container();
 			this->Size = System::Drawing::Size(300,300);
 			this->Text = L"MyForm";
 			this->Padding = System::Windows::Forms::Padding(0);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			delete e;
 		}
 #pragma endregion
 	};

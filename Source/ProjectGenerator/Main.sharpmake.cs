@@ -5,6 +5,11 @@ using Sharpmake;
 [module: Sharpmake.Include("Editor.sharpmake.cs")]
 [module: Sharpmake.Include("Engine.sharpmake.cs")]
 
+public static class Globals
+{
+    public static bool isEditor = false;
+}
+
 [Generate]
 class BasicsSolution : Solution
 {
@@ -44,9 +49,11 @@ class EditorSolution : Solution
     [Configure]
     public void ConfigureAll(Solution.Configuration conf, Target target)
     {
+        Globals.isEditor = true;
         conf.SolutionPath = @"[solution.SharpmakeCsPath]\\..";
 		conf.AddProject<Editor>(target);
         conf.AddProject<Engine>(target);
+        Globals.isEditor = false;
     }
 
 	[Main]

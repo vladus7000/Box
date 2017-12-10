@@ -1,7 +1,12 @@
 #include <stdio.h>
+#include <Engine.hpp>
 
 int main(int argc, char** argv)
 {
-    printf("The game is started\n");
-	printf("The game is ended\n");
+	{
+		box::Engine();
+		printf("The game is started\n");
+		printf("The game is ended\n");
+	}
+	
 }

@@ -9,7 +9,7 @@ class Engine : Project
         Name = "Engine";
 
         SourceRootPath = @"[project.SharpmakeCsPath]" + "\\..\\Engine";
-		
+
         AddTargets(new Target(
             Platform.win64,
             DevEnv.vs2015,
@@ -21,6 +21,15 @@ class Engine : Project
 	{
         conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
 
+        if (Globals.isEditor)
+        {
+            conf.Defines.Add("EDITOR_BUILD");
+        }
+        else
+        {
+            conf.Defines.Add("GAME_BUILD");
+        }
+        conf.IncludePaths.Add(SourceRootPath + "\\Include");
         conf.Output = Project.Configuration.OutputType.Lib;
         //conf.IncludePaths.Add("[project.BasePath]");
         //conf.TargetLibraryPath = "[project.BasePath]/lib";
