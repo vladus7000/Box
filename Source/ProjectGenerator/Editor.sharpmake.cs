@@ -1,23 +1,25 @@
 using System.IO;
 using Sharpmake;
+[module: Sharpmake.Include("Common.sharpmake.cs")]
 
 [Generate]
 class Editor : Project
 {
     public Editor()
+        : base(typeof(BoxTarget))
     {
         Name = "Editor";
 
         SourceRootPath = @"[project.SharpmakeCsPath]" + "\\..\\Editor";
 		
-        AddTargets(new Target(
+        AddTargets(new BoxTarget(BuildType.Editor,
             Platform.win64,
             DevEnv.vs2015,
             Optimization.Debug | Optimization.Release, OutputType.Lib, Blob.NoBlob, BuildSystem.MSBuild/*, DotNetFramework.v4_0*/));
     }
 
 	[Configure]
-	public void ConfigureAll(Project.Configuration conf, Target target)
+	public void ConfigureAll(Project.Configuration conf, BoxTarget target)
 	{
         conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Editor\\intermediate\\");
@@ -54,6 +56,6 @@ class Editor : Project
             conf.Options.Add(Options.Vc.Compiler.RuntimeLibrary.MultiThreadedDLL);
         }
 
-        conf.AddPrivateDependency<Engine>(target);
+        conf.AddPublicDependency<Engine>(target);
     }
 }

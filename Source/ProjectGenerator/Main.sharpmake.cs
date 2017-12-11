@@ -4,6 +4,7 @@ using Sharpmake;
 [module: Sharpmake.Include("Game.sharpmake.cs")]
 [module: Sharpmake.Include("Editor.sharpmake.cs")]
 [module: Sharpmake.Include("Engine.sharpmake.cs")]
+[module: Sharpmake.Include("Common.sharpmake.cs")]
 
 public static class Globals
 {
@@ -14,17 +15,18 @@ public static class Globals
 class BasicsSolution : Solution
 {
     public BasicsSolution()
+        : base(typeof(BoxTarget))
     {
         Name = "Game";
 
-        AddTargets(new Target(
+        AddTargets(new BoxTarget(BuildType.Game,
             Platform.win64,
             DevEnv.vs2015,
             Optimization.Debug | Optimization.Release));
     }
 
     [Configure]
-    public void ConfigureAll(Solution.Configuration conf, Target target)
+    public void ConfigureAll(Solution.Configuration conf, BoxTarget target)
     {
         conf.SolutionPath = @"[solution.SharpmakeCsPath]\\..";
 
@@ -37,17 +39,18 @@ class BasicsSolution : Solution
 class EditorSolution : Solution
 {
     public EditorSolution()
+        : base(typeof(BoxTarget))
     {
         Name = "Editor";
 
-        AddTargets(new Target(
+        AddTargets(new BoxTarget(BuildType.Editor,
             Platform.win64,
             DevEnv.vs2015,
             Optimization.Debug | Optimization.Release, OutputType.Lib, Blob.NoBlob, BuildSystem.MSBuild/*, DotNetFramework.v4_0*/));
     }
 
     [Configure]
-    public void ConfigureAll(Solution.Configuration conf, Target target)
+    public void ConfigureAll(Solution.Configuration conf, BoxTarget target)
     {
         Globals.isEditor = true;
         conf.SolutionPath = @"[solution.SharpmakeCsPath]\\..";
@@ -59,6 +62,7 @@ class EditorSolution : Solution
 	[Main]
 	public static void SharpmakeMain(Arguments sharpmakeArgs)
 	{
+        //Builder.Instance.Arguments.AddFragmentMask(BuildType.Editor);
 		sharpmakeArgs.Generate<BasicsSolution>();
 		sharpmakeArgs.Generate<EditorSolution>();
 	}
