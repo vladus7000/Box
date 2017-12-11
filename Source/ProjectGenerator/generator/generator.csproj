@@ -51,7 +51,6 @@
     <Compile Include="..\Engine.sharpmake.cs" />
     <Compile Include="..\Game.sharpmake.cs" />
     <Compile Include="..\Main.sharpmake.cs" />
-    <Compile Include="Common.sharpmake.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
