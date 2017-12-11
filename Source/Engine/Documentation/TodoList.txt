@@ -1,0 +1,47 @@
+Math
+	- vector2D, 3D
+	- Matrix3D, 3D
+	- Quaternions
+	
+	- Math operations
+	- dot, cross...
+	- Matrix utils (look at, projections)
+	- SIMD ?
+
+System
+	- Engine (startup, shutdown, checking machine(cpu, ram, hdd), main loop, windows messaging, configuration)
+	- Streams (memory, file, input, output)
+	- FileIO (cached, uncached)
+	- InputSystem
+	- Threading (creating, thread pools, workers)
+	- Caching resource system (resource loaders,resource types, counting, multiple types, resource loaders extensibility)
+		- Loaders(dds, jpeg, png, obj, 3ds, mp3, ogg, xml, archives, scripts(lua))
+	- Memory (allocattors, pools, logging memory, check leaks, corruption)
+	- Logging(priority)
+	- Timers (start, stop, time)
+	- Random generator
+	- String, containers
+
+Window System
+	-Window
+
+Renderer
+	- Renderer (startup, shutdown, checking machine(dx ver, gpu vendor, ram, etc), )
+	- Shaders
+	- Buffers(vertex buffers, index buffers)
+	- Texture objects(Render targets, )
+	- 
+Sound
+	- Sound System(startup, shutdown, )
+
+Scripting
+	- Scripting System (startup, shutdown, run)
+
+Profiling
+	- Profile block
+	
+Network
+	- 
+
+Cheat System
+	- Logging, tracing, Debug draw, ingame menu, ingame console, cheats, screen shots.
