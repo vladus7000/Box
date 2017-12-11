@@ -30,7 +30,8 @@ Renderer
 	- Shaders
 	- Buffers(vertex buffers, index buffers)
 	- Texture objects(Render targets, )
-	- 
+	- Sampler
+	
 Sound
 	- Sound System(startup, shutdown, )
 
