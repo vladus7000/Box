@@ -8,8 +8,6 @@ class Engine : Project
     public Engine()
         : base(typeof(BoxTarget))
     {
-        Name = "Engine";
-
         SourceRootPath = @"[project.SharpmakeCsPath]" + "\\..\\Engine";
     }
 
@@ -32,6 +30,7 @@ class EngineForGame : Engine
 {
     public EngineForGame()
     {
+        Name = "Engine";
         AddTargets(new BoxTarget(BuildType.Game,
         Platform.win64,
         DevEnv.vs2015,
@@ -51,6 +50,7 @@ class EngineForEditor : Engine
 {
     public EngineForEditor()
     {
+        Name = "EngineE";
         AddTargets(new BoxTarget(BuildType.Editor,
         Platform.win64,
         DevEnv.vs2015,

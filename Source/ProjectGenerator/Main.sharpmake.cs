@@ -1,5 +1,6 @@
 using System.IO;
 using Sharpmake;
+using System;
 
 [module: Sharpmake.Include("Game.sharpmake.cs")]
 [module: Sharpmake.Include("Editor.sharpmake.cs")]
@@ -65,8 +66,7 @@ class EntryPoint
     [Main]
     public static void SharpmakeMain(Arguments sharpmakeArgs)
     {
-        Builder.Instance.Arguments.AddFragmentMask(BuildType.Editor | BuildType.Game);
-        sharpmakeArgs.Generate<BasicsSolution>();
         sharpmakeArgs.Generate<EditorSolution>();
+        sharpmakeArgs.Generate<BasicsSolution>();
     }
 }
