@@ -31,7 +31,7 @@ class BasicsSolution : Solution
         conf.SolutionPath = @"[solution.SharpmakeCsPath]\\..";
 
         conf.AddProject<Game>(target);
-		conf.AddProject<Engine>(target);
+		conf.AddProject<EngineForGame>(target);
     }
 }
 
@@ -55,15 +55,18 @@ class EditorSolution : Solution
         Globals.isEditor = true;
         conf.SolutionPath = @"[solution.SharpmakeCsPath]\\..";
 		conf.AddProject<Editor>(target);
-        conf.AddProject<Engine>(target);
+        conf.AddProject<EngineForEditor>(target);
         Globals.isEditor = false;
     }
+}
 
-	[Main]
-	public static void SharpmakeMain(Arguments sharpmakeArgs)
-	{
-        //Builder.Instance.Arguments.AddFragmentMask(BuildType.Editor);
-		sharpmakeArgs.Generate<BasicsSolution>();
-		sharpmakeArgs.Generate<EditorSolution>();
-	}
+class EntryPoint
+{
+    [Main]
+    public static void SharpmakeMain(Arguments sharpmakeArgs)
+    {
+        Builder.Instance.Arguments.AddFragmentMask(BuildType.Editor | BuildType.Game);
+        sharpmakeArgs.Generate<BasicsSolution>();
+        sharpmakeArgs.Generate<EditorSolution>();
+    }
 }

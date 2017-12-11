@@ -56,6 +56,6 @@ class Editor : Project
             conf.Options.Add(Options.Vc.Compiler.RuntimeLibrary.MultiThreadedDLL);
         }
 
-        conf.AddPublicDependency<Engine>(target);
+        conf.AddPublicDependency<EngineForEditor>(target);
     }
 }

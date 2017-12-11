@@ -25,7 +25,7 @@ class Game : Project
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\output");
 
-        conf.AddPublicDependency<Engine>(target);
+        conf.AddPublicDependency<EngineForGame>(target);
 
     }
 }
