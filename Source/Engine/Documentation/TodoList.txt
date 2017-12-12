@@ -13,14 +13,14 @@ System
 	- Streams (memory, file, input, output)
 	- FileIO (cached, uncached)
 	- InputSystem
-	- Threading (creating, thread pools, workers)
+	- Threading (creating, thread pools, workers, priorities)
 	- Caching resource system (resource loaders,resource types, counting, multiple types, resource loaders extensibility)
 		- Loaders(dds, jpeg, png, obj, 3ds, mp3, ogg, xml, archives, scripts(lua))
 	- Memory (allocattors, pools, logging memory, check leaks, corruption)
 	- Logging(priority)
 	- Timers (start, stop, time)
 	- Random generator
-	- String, containers
+	- String (+ static strings), containers, Hash
 
 Window System
 	-Window
