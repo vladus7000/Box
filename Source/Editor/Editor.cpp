@@ -12,3 +12,9 @@ int main(array<String^>^ args)
 
 	Application::Run(%form);
 }
+
+void winforms::MyForm::init()
+{
+	box::Engine* e = new box::Engine();
+	delete e;
+}

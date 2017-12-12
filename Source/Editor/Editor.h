@@ -37,6 +37,8 @@ namespace winforms {
 		}
 
 	private:
+		void init();
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -49,14 +51,17 @@ namespace winforms {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			box::Engine* e = new box::Engine();
-
-			this->components = gcnew System::ComponentModel::Container();
-			this->Size = System::Drawing::Size(300,300);
-			this->Text = L"MyForm";
-			this->Padding = System::Windows::Forms::Padding(0);
+			this->SuspendLayout();
+			// 
+			// MyForm
+			// 
+			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			delete e;
+			this->ClientSize = System::Drawing::Size(491, 261);
+			this->Name = L"Editor";
+			this->Text = L"Editor";
+			this->ResumeLayout(false);
+
 		}
 #pragma endregion
 	};
