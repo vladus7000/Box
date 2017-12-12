@@ -21,6 +21,9 @@ class Game : Project
 	[Configure]
 	public void ConfigureAll(Project.Configuration conf, BoxTarget target)
 	{
+        conf.PrecompHeader = "StdAfx.hpp";
+        conf.PrecompSource = "StdAfx.cpp";
+
         conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\output");

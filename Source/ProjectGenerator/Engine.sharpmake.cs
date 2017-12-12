@@ -16,6 +16,9 @@ class Engine : Project
 	{
         conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
 
+        conf.PrecompHeader = "StdAfx.hpp";
+        conf.PrecompSource = "StdAfx.cpp";
+
         conf.IncludePaths.Add(SourceRootPath + "\\Include");
         conf.Output = Project.Configuration.OutputType.Lib;
         //conf.IncludePaths.Add("[project.BasePath]");

@@ -1,3 +1,4 @@
+#include <StdAfx.hpp>
 #include <stdio.h>
 #include <System/Engine.hpp>
 

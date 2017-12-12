@@ -61,7 +61,7 @@ namespace winforms {
 			this->Name = L"Editor";
 			this->Text = L"Editor";
 			this->ResumeLayout(false);
-
+			init();
 		}
 #pragma endregion
 	};
