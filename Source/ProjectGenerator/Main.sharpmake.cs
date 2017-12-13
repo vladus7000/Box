@@ -33,6 +33,7 @@ class BasicsSolution : Solution
 
         conf.AddProject<Game>(target);
 		conf.AddProject<EngineForGame>(target);
+        conf.AddProject<TestEngine>(target);
     }
 }
 
