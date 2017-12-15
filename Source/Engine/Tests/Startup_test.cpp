@@ -1,7 +1,10 @@
 #include "gtest/gtest.h"
+#include "System/Types.hpp"
+#include "System/Engine.hpp"
 
 TEST(StartupTest, Positive) {
 	
-	const bool passed = true;
-	EXPECT_TRUE(passed);
+	box::Engine engine;
+	const bool result = engine.startup();
+	EXPECT_TRUE(result);
 }

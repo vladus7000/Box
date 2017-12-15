@@ -1,0 +1,3 @@
+When adding new feature/system
+1. Write documentation
+2. Make tests

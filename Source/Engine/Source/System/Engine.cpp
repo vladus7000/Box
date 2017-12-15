@@ -23,12 +23,25 @@ namespace box
 		printf("GAME: Engine stopped\n");
 #endif
 	}
+
 	Engine::Engine()
 	{
-		StartEngine();
 	}
+
 	Engine::~Engine()
 	{
-		StopEngine();
+	}
+
+	bool Engine::startup(U32 argc, char** argv)
+	{
+		bool result = true;
+		result &= m_machineInfo.detect();
+
+		return result;
+	}
+
+	void Engine::shutdown()
+	{
+
 	}
 }
