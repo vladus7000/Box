@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Types.hpp"
+
 namespace box
 {
 	struct MachineInfo

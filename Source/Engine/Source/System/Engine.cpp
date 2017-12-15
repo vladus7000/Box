@@ -1,5 +1,8 @@
 #include "StdAfx.hpp"
 #include <System/Engine.hpp>
+#include "System/Memory/Allocator.hpp"
+#include "System/RunEnvironment.hpp"
+#include "System/ResourceSystem/ResourceManager.hpp"
 #include <stdio.h>
 
 namespace box
@@ -36,12 +39,31 @@ namespace box
 	{
 		bool result = true;
 		result &= m_machineInfo.detect();
+		result &= Allocator::Instance().init();
+		result &= RunEnvironment::Instance().init(argc, argv);
+		result &= ResourceManager::Instance().init();
+		//create window
+		//init scripts
+		//init render
+		//init sound
+		//init network
+		//init random
+		//init cheats
 
 		return result;
 	}
 
 	void Engine::shutdown()
 	{
-
+		//deinit cheats
+		//deinit random
+		//deinit network
+		//deinit sound
+		//deinit render
+		//deinit scripts
+		//close window
+		ResourceManager::Instance().deinit();
+		RunEnvironment::Instance().deinit();
+		Allocator::Instance().deinit();
 	}
 }
