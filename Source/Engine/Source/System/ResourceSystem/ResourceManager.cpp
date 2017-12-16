@@ -3,6 +3,8 @@
 
 namespace box
 {
+	SINGLETON_ACCESSOR(ResourceManager);
+
 	bool ResourceManager::init()
 	{
 		return false;
@@ -10,5 +12,10 @@ namespace box
 
 	void ResourceManager::deinit()
 	{
+	}
+
+	void ResourceManager::preload(char* wildcard, bool threaded)
+	{
+
 	}
 }

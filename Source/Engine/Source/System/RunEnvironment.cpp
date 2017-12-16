@@ -4,6 +4,8 @@
 
 namespace box
 {
+	SINGLETON_ACCESSOR(RunEnvironment);
+
 	bool RunEnvironment::init(U32 argc, char** argv)
 	{
 		(void)argc; (void)argv;

@@ -24,6 +24,8 @@ class Game : Project
         conf.PrecompHeader = "StdAfx.hpp";
         conf.PrecompSource = "StdAfx.cpp";
 
+        conf.Defines.Add("EDITOR_BUILD");
+
         conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\output");

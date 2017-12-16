@@ -3,15 +3,11 @@
 
 namespace box
 {
-	class ResourceManager
+	class ThreadManager
 	{
-		SINGLETON(ResourceManager);
+	SINGLETON(ThreadManager);
 	public:
 		bool init();
 		void deinit();
-
-		void preload(char* wildcard, bool threaded = false);
-
-	private:
 	};
 }

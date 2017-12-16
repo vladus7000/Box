@@ -25,6 +25,8 @@ void operator delete[](void * ptr)
 
 namespace box
 {
+	SINGLETON_ACCESSOR(Allocator);
+
 	bool Allocator::init()
 	{
 		m_allocatedMemoryMb = 0;

@@ -31,6 +31,8 @@ class Editor : Project
         conf.Options.Add(Options.Vc.Compiler.RuntimeChecks.Default);
         conf.Options.Add(Options.Vc.General.CommonLanguageRuntimeSupport.ClrSupport);
 
+        conf.Defines.Add("EDITOR_BUILD");
+
         conf.ReferencesByName.Add(
                     "Microsoft.VisualC",
                     "PresentationFramework",

@@ -12,6 +12,8 @@ private:\
 	type& operator=(type&& rhs) = delete;\
 	type& operator=(type& rhs) = delete;\
 public:\
-	static type& Instance() { static type t; return t; }\
+	static type& Instance();\
 private:
+
+#define SINGLETON_ACCESSOR(type) type& type::Instance() { static type t; return t; }
 }

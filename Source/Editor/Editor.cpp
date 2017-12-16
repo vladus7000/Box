@@ -1,4 +1,5 @@
 #include "Editor.h"
+#include "Window\Window.hpp"
 
 using namespace System;
 using namespace System::Windows::Forms;
@@ -15,6 +16,21 @@ int main(array<String^>^ args)
 
 void winforms::MyForm::init()
 {
-	box::Engine* e = new box::Engine();
-	delete e;
+	if (!m_engine)
+	{
+		void* hwnd = this->panel1->Handle.ToPointer();
+		m_engine = new box::Engine();
+
+		m_engine->startup(hwnd);
+	}
+}
+
+void winforms::MyForm::deinit()
+{
+	if (m_engine)
+	{
+		m_engine->shutdown();
+		delete m_engine;
+		m_engine = nullptr;
+	}
 }
