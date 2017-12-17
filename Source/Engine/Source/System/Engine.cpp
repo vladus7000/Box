@@ -1,11 +1,20 @@
 #include "StdAfx.hpp"
+
+#include <stdio.h>
+
 #include <System/Engine.hpp>
 #include "System/Memory/Allocator.hpp"
 #include "System/RunEnvironment.hpp"
 #include "System/ResourceSystem/ResourceManager.hpp"
 #include "Window\Window.hpp"
 #include "System\Threading\ThreadManager.hpp"
-#include <stdio.h>
+#include "System\Input.hpp"
+#include "Scripting\ScriptingManager.hpp"
+#include "Render\Renderer.hpp"
+#include "Sound\SoundSystem.hpp"
+#include "System\RandomGenerator.hpp"
+#include "Cheat\CheatManager.hpp"
+#include "Network\NetworkManager.hpp"
 
 namespace box
 {
@@ -56,26 +65,26 @@ namespace box
 		result &= Display::Instance().init(hwnd);
 #endif
 		result &= ThreadManager::Instance().init();
-		//init input
-		//init scripts
-		//init render
-		//init sound
-		//init network
-		//init random
-		//init cheats
+		result &= Input::Instance().init();
+		result &= ScriptingManager::Instance().init();
+		result &= Renderer::Instance().init();
+		result &= SoundSystem::Instance().init();
+		result &= NetworkManager::Instance().init();
+		result &= RandomGenerator::init();
+		result &= CheatManager::Instance().init();
 
 		return result;
 	}
 
 	void Engine::shutdown()
 	{
-		//deinit cheats
-		//deinit random
-		//deinit network
-		//deinit sound
-		//deinit render
-		//deinit scripts
-		//deinit input
+		CheatManager::Instance().deinit();
+		RandomGenerator::deinit();
+		NetworkManager::Instance().deinit();
+		SoundSystem::Instance().deinit();
+		Renderer::Instance().deinit();
+		ScriptingManager::Instance().deinit();
+		Input::Instance().deinit();
 		ThreadManager::Instance().deinit();
 #ifdef GAME_BUILD
 		Window::Instance().deinit();

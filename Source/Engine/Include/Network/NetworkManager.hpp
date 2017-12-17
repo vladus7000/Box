@@ -3,17 +3,11 @@
 
 namespace box
 {
-	class Input
+	class NetworkManager
 	{
-		SINGLETON(Input);
-
+		SINGLETON(NetworkManager);
 	public:
 		bool init();
 		void deinit();
-
-		//test
-		void test_register_key_event(U32 keyKode);
-
-	private:
 	};
 }

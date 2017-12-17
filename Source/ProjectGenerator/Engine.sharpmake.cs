@@ -20,10 +20,10 @@ class Engine : Project
 
         conf.IncludePaths.Add(SourceRootPath + "\\..\\Include");
         conf.Output = Project.Configuration.OutputType.Lib;
-        //conf.IncludePaths.Add("[project.BasePath]");
-        //conf.TargetLibraryPath = "[project.BasePath]/lib";
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Engine\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Engine\\output");
+        //conf.IncludePaths.Add("[project.BasePath]");
+        //conf.TargetLibraryPath = "[project.BasePath]/lib";
     }
 }
 
@@ -43,6 +43,8 @@ class EngineForGame : Engine
     {
         BasicConfigure(conf, target);
         conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\Game");
+        //conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\intermediate"); test it
+        //conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\output");
         conf.Defines.Add("GAME_BUILD");
     }
 }
@@ -63,6 +65,8 @@ class EngineForEditor : Engine
     {
         BasicConfigure(conf, target);
         conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\Editor");
+        conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Editor\\intermediate");
+        conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Editor\\output");
         conf.Defines.Add("EDITOR_BUILD");
     }
 }
