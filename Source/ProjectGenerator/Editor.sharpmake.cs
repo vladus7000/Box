@@ -21,7 +21,7 @@ class Editor : Project
 	[Configure]
 	public void ConfigureAll(Project.Configuration conf, BoxTarget target)
 	{
-        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
+        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\Editor");
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Editor\\intermediate\\");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Editor\\output");
 

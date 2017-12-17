@@ -15,4 +15,19 @@ namespace box
 	private:
 		void* m_displayHandle;
 	};
+
+#ifdef GAME_BUILD
+	class Window
+	{
+		SINGLETON(Window);
+	public:
+		bool init();
+		void deinit();
+
+		void* getWindowHandle() const { return m_windowHandle; }
+	private:
+		void* m_windowHandle;
+
+	};
+#endif
 }

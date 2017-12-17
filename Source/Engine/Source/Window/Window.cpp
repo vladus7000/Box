@@ -3,6 +3,7 @@
 
 namespace box
 {
+	SINGLETON_ACCESSOR(Display);
 	bool Display::init(void* displayHandle)
 	{
 		bool result = false;
@@ -19,9 +20,14 @@ namespace box
 	{
 	}
 
-	Display& Display::Instance()
+#ifdef GAME_BUILD
+	SINGLETON_ACCESSOR(Window);
+	bool Window::init()
 	{
-		static Display d;
-		return d;
+		return false;
 	}
+	void Window::deinit()
+	{
+	}
+#endif
 }

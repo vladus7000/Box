@@ -26,7 +26,7 @@ class Game : Project
 
         conf.Defines.Add("EDITOR_BUILD");
 
-        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
+        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\Game");
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\output");
 

@@ -49,8 +49,8 @@ namespace box
 		result &= RunEnvironment::Instance().init(argc, argv);
 		result &= ResourceManager::Instance().init();
 #ifdef GAME_BUILD
-		//create window
-		box::Display::Instance().init(getHWND());
+		result &= Window::Instance().init();
+		result &= Display::Instance().init(Window::Instance().getWindowHandle());
 #endif
 #ifdef EDITOR_BUILD
 		result &= Display::Instance().init(hwnd);
@@ -78,9 +78,9 @@ namespace box
 		//deinit input
 		ThreadManager::Instance().deinit();
 #ifdef GAME_BUILD
-		//close window
+		Window::Instance().deinit();
 #endif
-		box::Display::Instance().deinit();
+		Display::Instance().deinit();
 		ResourceManager::Instance().deinit();
 		RunEnvironment::Instance().deinit();
 		Allocator::Instance().deinit();

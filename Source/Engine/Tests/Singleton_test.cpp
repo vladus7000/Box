@@ -10,6 +10,7 @@ namespace
 	public:
 		void foo() {}
 	};
+	SINGLETON_ACCESSOR(A);
 	
 	void foo()
 	{

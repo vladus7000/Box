@@ -8,14 +8,13 @@ class Engine : Project
     public Engine()
         : base(typeof(BoxTarget))
     {
+        Name = "Engine";
         SourceRootPath = @"[project.SharpmakeCsPath]" + "\\..\\Engine\\Source";
     }
 
 	[Configure]
 	public void BasicConfigure(Project.Configuration conf, BoxTarget target)
 	{
-        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
-
         conf.PrecompHeader = "StdAfx.hpp";
         conf.PrecompSource = "StdAfx.cpp";
 
@@ -33,7 +32,6 @@ class EngineForGame : Engine
 {
     public EngineForGame()
     {
-        Name = "Engine";
         AddTargets(new BoxTarget(BuildType.Game,
         Platform.win64,
         DevEnv.vs2015,
@@ -44,6 +42,7 @@ class EngineForGame : Engine
     public void ConfigureAll(Project.Configuration conf, BoxTarget target)
     {
         BasicConfigure(conf, target);
+        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\Game");
         conf.Defines.Add("GAME_BUILD");
     }
 }
@@ -53,7 +52,6 @@ class EngineForEditor : Engine
 {
     public EngineForEditor()
     {
-        Name = "EngineE";
         AddTargets(new BoxTarget(BuildType.Editor,
         Platform.win64,
         DevEnv.vs2015,
@@ -64,6 +62,7 @@ class EngineForEditor : Engine
     public void ConfigureAll(Project.Configuration conf, BoxTarget target)
     {
         BasicConfigure(conf, target);
+        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\Editor");
         conf.Defines.Add("EDITOR_BUILD");
     }
 }
@@ -85,7 +84,7 @@ class TestEngine : Project
     [Configure]
     public void ConfigureAll(Project.Configuration conf, BoxTarget target)
     {
-        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects");
+        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\TestEngine");
 
         conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\googletest\\googletest\\include");
         conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\googletest\\googletest");
