@@ -17,9 +17,21 @@ int main(array<String^>^ args)
 
 void winforms::MyForm::init()
 {
+	initTools();
+
+	if (!m_engine)
+	{
+		m_engine = new box::Engine();
+
+		m_engine->startup(m_renderWindow->getHwnd());
+	}
+}
+
+void winforms::MyForm::initTools()
+{
 	m_renderWindow = gcnew Editor::RenderWindow;
 	m_renderWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
-	
+
 	m_cheatWindow = gcnew Editor::CheatWindow;
 	m_cheatWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
 
@@ -28,9 +40,6 @@ void winforms::MyForm::init()
 
 	m_networkWindow = gcnew Editor::NetworkWindow;
 	m_networkWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
-
-	m_recourcesWindow = gcnew Editor::RecourcesWindow;
-	m_recourcesWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
 
 	m_runningEnvironmentWindow = gcnew Editor::RunningEnvironmentWindow;
 	m_runningEnvironmentWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
@@ -41,12 +50,17 @@ void winforms::MyForm::init()
 	m_soundSystemWindow = gcnew Editor::SoundSystemWindow;
 	m_soundSystemWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
 
-	if (!m_engine)
-	{
-		m_engine = new box::Engine();
+	m_properties = gcnew Editor::Properties;
+	m_properties->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockRight);
 
-		m_engine->startup(m_renderWindow->getHwnd());
-	}
+	m_sceneView = gcnew Editor::SceneView;
+	m_sceneView->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockRight);
+
+	m_addObjectWindow = gcnew Editor::AddObject;
+	m_addObjectWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockLeft);
+
+	m_recourcesWindow = gcnew Editor::RecourcesWindow;
+	m_recourcesWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockLeft);
 }
 
 void winforms::MyForm::deinit()

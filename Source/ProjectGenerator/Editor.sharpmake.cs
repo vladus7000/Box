@@ -51,6 +51,14 @@ class Editor : Project
 
         conf.ReferencesByPath.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\WinFormsUI\\WeifenLuo.WinFormsUI.Docking.dll");
 
+        //TODO: test it
+        if (conf.VcxprojUserFile == null)
+        {
+            conf.VcxprojUserFile = new Project.Configuration.VcxprojUserFileSettings();
+        }
+        conf.VcxprojUserFile.LocalDebuggerWorkingDirectory = @"[project.SharpmakeCsPath]\..\..\IDEs";
+
+
         if (target.Optimization == Optimization.Debug)
         {
             conf.Options.Add(Options.Vc.Compiler.RuntimeLibrary.MultiThreadedDebugDLL);

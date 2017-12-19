@@ -30,6 +30,14 @@ class Game : Project
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\output");
 
+        //TODO: test it
+        if (conf.VcxprojUserFile == null)
+        {
+            conf.VcxprojUserFile = new Project.Configuration.VcxprojUserFileSettings();
+        }
+        conf.VcxprojUserFile.LocalDebuggerWorkingDirectory = @"[project.SharpmakeCsPath]\..\..\Game";
+
+
         conf.AddPublicDependency<EngineForGame>(target);
 
     }
