@@ -2,6 +2,15 @@
 #include <System/Engine.hpp>
 #include "System\Input.hpp"
 
+#include "Windows\RenderWindow.h"
+#include "Windows\CheatWindow.h"
+#include "Windows\InputWindow.h"
+#include "Windows\NetworkWindow.h"
+#include "Windows\RecourcesWindow.h"
+#include "Windows\RunningEnvironmentWindow.h"
+#include "Windows\ScriptingWindow.h"
+#include "Windows\SoundSystemWindow.h"
+
 using namespace box;
 
 namespace winforms {
@@ -12,7 +21,7 @@ namespace winforms {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
+	
 	/// <summary>
 	/// Summary for MyForm
 	/// </summary>
@@ -43,11 +52,17 @@ namespace winforms {
 		void init();
 		void deinit();
 		box::Engine* m_engine;
-	private: System::Windows::Forms::Panel^  panel1;
-	private: System::Windows::Forms::TabControl^  tabControl1;
-	private: System::Windows::Forms::TabPage^  RenderWindow;
 
-	private: System::Windows::Forms::TabPage^  tabPage2;
+		Editor::RenderWindow^ m_renderWindow;
+		Editor::CheatWindow^ m_cheatWindow;
+		Editor::InputWindow^ m_inputWindow;
+		Editor::NetworkWindow^ m_networkWindow;
+		Editor::RecourcesWindow^ m_recourcesWindow;
+		Editor::RunningEnvironmentWindow^ m_runningEnvironmentWindow;
+		Editor::ScriptingWindow^ m_scriptingindow;
+		Editor::SoundSystemWindow^ m_soundSystemWindow;
+
+	private: WeifenLuo::WinFormsUI::Docking::DockPanel^  dockPanel1;
 
 
 	private: System::ComponentModel::IContainer^  components;
@@ -64,74 +79,94 @@ namespace winforms {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->panel1 = (gcnew System::Windows::Forms::Panel());
-			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
-			this->RenderWindow = (gcnew System::Windows::Forms::TabPage());
-			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
-			this->tabControl1->SuspendLayout();
-			this->RenderWindow->SuspendLayout();
+			WeifenLuo::WinFormsUI::Docking::DockPanelSkin^  dockPanelSkin1 = (gcnew WeifenLuo::WinFormsUI::Docking::DockPanelSkin());
+			WeifenLuo::WinFormsUI::Docking::AutoHideStripSkin^  autoHideStripSkin1 = (gcnew WeifenLuo::WinFormsUI::Docking::AutoHideStripSkin());
+			WeifenLuo::WinFormsUI::Docking::DockPanelGradient^  dockPanelGradient1 = (gcnew WeifenLuo::WinFormsUI::Docking::DockPanelGradient());
+			WeifenLuo::WinFormsUI::Docking::TabGradient^  tabGradient1 = (gcnew WeifenLuo::WinFormsUI::Docking::TabGradient());
+			WeifenLuo::WinFormsUI::Docking::DockPaneStripSkin^  dockPaneStripSkin1 = (gcnew WeifenLuo::WinFormsUI::Docking::DockPaneStripSkin());
+			WeifenLuo::WinFormsUI::Docking::DockPaneStripGradient^  dockPaneStripGradient1 = (gcnew WeifenLuo::WinFormsUI::Docking::DockPaneStripGradient());
+			WeifenLuo::WinFormsUI::Docking::TabGradient^  tabGradient2 = (gcnew WeifenLuo::WinFormsUI::Docking::TabGradient());
+			WeifenLuo::WinFormsUI::Docking::DockPanelGradient^  dockPanelGradient2 = (gcnew WeifenLuo::WinFormsUI::Docking::DockPanelGradient());
+			WeifenLuo::WinFormsUI::Docking::TabGradient^  tabGradient3 = (gcnew WeifenLuo::WinFormsUI::Docking::TabGradient());
+			WeifenLuo::WinFormsUI::Docking::DockPaneStripToolWindowGradient^  dockPaneStripToolWindowGradient1 = (gcnew WeifenLuo::WinFormsUI::Docking::DockPaneStripToolWindowGradient());
+			WeifenLuo::WinFormsUI::Docking::TabGradient^  tabGradient4 = (gcnew WeifenLuo::WinFormsUI::Docking::TabGradient());
+			WeifenLuo::WinFormsUI::Docking::TabGradient^  tabGradient5 = (gcnew WeifenLuo::WinFormsUI::Docking::TabGradient());
+			WeifenLuo::WinFormsUI::Docking::DockPanelGradient^  dockPanelGradient3 = (gcnew WeifenLuo::WinFormsUI::Docking::DockPanelGradient());
+			WeifenLuo::WinFormsUI::Docking::TabGradient^  tabGradient6 = (gcnew WeifenLuo::WinFormsUI::Docking::TabGradient());
+			WeifenLuo::WinFormsUI::Docking::TabGradient^  tabGradient7 = (gcnew WeifenLuo::WinFormsUI::Docking::TabGradient());
+			this->dockPanel1 = (gcnew WeifenLuo::WinFormsUI::Docking::DockPanel());
 			this->SuspendLayout();
 			// 
-			// panel1
+			// dockPanel1
 			// 
-			this->panel1->BackColor = System::Drawing::SystemColors::ActiveCaption;
-			this->panel1->Location = System::Drawing::Point(19, 16);
-			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(615, 441);
-			this->panel1->TabIndex = 0;
-			this->panel1->Click += gcnew System::EventHandler(this, &MyForm::panel1_Click);
-			this->panel1->Enter += gcnew System::EventHandler(this, &MyForm::panel1_Enter);
-			this->panel1->MouseHover += gcnew System::EventHandler(this, &MyForm::panel1_MouseHover);
-			this->panel1->PreviewKeyDown += gcnew System::Windows::Forms::PreviewKeyDownEventHandler(this, &MyForm::panel1_PreviewKeyDown);
-			// 
-			// tabControl1
-			// 
-			this->tabControl1->Controls->Add(this->RenderWindow);
-			this->tabControl1->Controls->Add(this->tabPage2);
-			this->tabControl1->Location = System::Drawing::Point(12, 12);
-			this->tabControl1->Name = L"tabControl1";
-			this->tabControl1->Padding = System::Drawing::Point(10, 3);
-			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(1248, 501);
-			this->tabControl1->TabIndex = 2;
-			// 
-			// RenderWindow
-			// 
-			this->RenderWindow->Controls->Add(this->panel1);
-			this->RenderWindow->Location = System::Drawing::Point(4, 22);
-			this->RenderWindow->Name = L"RenderWindow";
-			this->RenderWindow->Padding = System::Windows::Forms::Padding(3);
-			this->RenderWindow->Size = System::Drawing::Size(1240, 475);
-			this->RenderWindow->TabIndex = 0;
-			this->RenderWindow->Text = L"RenderWindow";
-			this->RenderWindow->UseVisualStyleBackColor = true;
-			// 
-			// tabPage2
-			// 
-			this->tabPage2->Location = System::Drawing::Point(4, 22);
-			this->tabPage2->Name = L"tabPage2";
-			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(1240, 475);
-			this->tabPage2->TabIndex = 1;
-			this->tabPage2->Text = L"tabPage2";
-			this->tabPage2->UseVisualStyleBackColor = true;
+			this->dockPanel1->BackColor = System::Drawing::SystemColors::AppWorkspace;
+			this->dockPanel1->DockBackColor = System::Drawing::SystemColors::ActiveCaption;
+			this->dockPanel1->Location = System::Drawing::Point(12, 12);
+			this->dockPanel1->Name = L"dockPanel1";
+			this->dockPanel1->Size = System::Drawing::Size(1240, 376);
+			dockPanelGradient1->EndColor = System::Drawing::SystemColors::ControlLight;
+			dockPanelGradient1->StartColor = System::Drawing::SystemColors::ControlLight;
+			autoHideStripSkin1->DockStripGradient = dockPanelGradient1;
+			tabGradient1->EndColor = System::Drawing::SystemColors::Control;
+			tabGradient1->StartColor = System::Drawing::SystemColors::Control;
+			tabGradient1->TextColor = System::Drawing::SystemColors::ControlDarkDark;
+			autoHideStripSkin1->TabGradient = tabGradient1;
+			autoHideStripSkin1->TextFont = (gcnew System::Drawing::Font(L"Segoe UI", 9));
+			dockPanelSkin1->AutoHideStripSkin = autoHideStripSkin1;
+			tabGradient2->EndColor = System::Drawing::SystemColors::ControlLightLight;
+			tabGradient2->StartColor = System::Drawing::SystemColors::ControlLightLight;
+			tabGradient2->TextColor = System::Drawing::SystemColors::ControlText;
+			dockPaneStripGradient1->ActiveTabGradient = tabGradient2;
+			dockPanelGradient2->EndColor = System::Drawing::SystemColors::Control;
+			dockPanelGradient2->StartColor = System::Drawing::SystemColors::Control;
+			dockPaneStripGradient1->DockStripGradient = dockPanelGradient2;
+			tabGradient3->EndColor = System::Drawing::SystemColors::ControlLight;
+			tabGradient3->StartColor = System::Drawing::SystemColors::ControlLight;
+			tabGradient3->TextColor = System::Drawing::SystemColors::ControlText;
+			dockPaneStripGradient1->InactiveTabGradient = tabGradient3;
+			dockPaneStripSkin1->DocumentGradient = dockPaneStripGradient1;
+			dockPaneStripSkin1->TextFont = (gcnew System::Drawing::Font(L"Segoe UI", 9));
+			tabGradient4->EndColor = System::Drawing::SystemColors::ActiveCaption;
+			tabGradient4->LinearGradientMode = System::Drawing::Drawing2D::LinearGradientMode::Vertical;
+			tabGradient4->StartColor = System::Drawing::SystemColors::GradientActiveCaption;
+			tabGradient4->TextColor = System::Drawing::SystemColors::ActiveCaptionText;
+			dockPaneStripToolWindowGradient1->ActiveCaptionGradient = tabGradient4;
+			tabGradient5->EndColor = System::Drawing::SystemColors::Control;
+			tabGradient5->StartColor = System::Drawing::SystemColors::Control;
+			tabGradient5->TextColor = System::Drawing::SystemColors::ControlText;
+			dockPaneStripToolWindowGradient1->ActiveTabGradient = tabGradient5;
+			dockPanelGradient3->EndColor = System::Drawing::SystemColors::ControlLight;
+			dockPanelGradient3->StartColor = System::Drawing::SystemColors::ControlLight;
+			dockPaneStripToolWindowGradient1->DockStripGradient = dockPanelGradient3;
+			tabGradient6->EndColor = System::Drawing::SystemColors::InactiveCaption;
+			tabGradient6->LinearGradientMode = System::Drawing::Drawing2D::LinearGradientMode::Vertical;
+			tabGradient6->StartColor = System::Drawing::SystemColors::GradientInactiveCaption;
+			tabGradient6->TextColor = System::Drawing::SystemColors::InactiveCaptionText;
+			dockPaneStripToolWindowGradient1->InactiveCaptionGradient = tabGradient6;
+			tabGradient7->EndColor = System::Drawing::Color::Transparent;
+			tabGradient7->StartColor = System::Drawing::Color::Transparent;
+			tabGradient7->TextColor = System::Drawing::SystemColors::ControlDarkDark;
+			dockPaneStripToolWindowGradient1->InactiveTabGradient = tabGradient7;
+			dockPaneStripSkin1->ToolWindowGradient = dockPaneStripToolWindowGradient1;
+			dockPanelSkin1->DockPaneStripSkin = dockPaneStripSkin1;
+			this->dockPanel1->Skin = dockPanelSkin1;
+			this->dockPanel1->TabIndex = 3;
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1272, 525);
-			this->Controls->Add(this->tabControl1);
+			this->Controls->Add(this->dockPanel1);
+			this->IsMdiContainer = true;
 			this->Name = L"MyForm";
 			this->Text = L"Editor";
-			this->tabControl1->ResumeLayout(false);
-			this->RenderWindow->ResumeLayout(false);
 			this->ResumeLayout(false);
 
 		}
 #pragma endregion
 
-	private: System::Void panel1_PreviewKeyDown(System::Object^  sender, System::Windows::Forms::PreviewKeyDownEventArgs^  e)
+	/*private: System::Void panel1_PreviewKeyDown(System::Object^  sender, System::Windows::Forms::PreviewKeyDownEventArgs^  e)
 	{
 		(void)sender;
 		Input::Instance().test_register_key_event(static_cast<U32>(e->KeyCode));
@@ -152,6 +187,6 @@ namespace winforms {
 		(void)sender;
 		(void)e;
 		this->panel1->Focus();
-	}
+	}*/
 	};
 }

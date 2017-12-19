@@ -49,6 +49,8 @@ class Editor : Project
                     "WindowsBase",
                     "WindowsFormsIntegration");
 
+        conf.ReferencesByPath.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\WinFormsUI\\WeifenLuo.WinFormsUI.Docking.dll");
+
         if (target.Optimization == Optimization.Debug)
         {
             conf.Options.Add(Options.Vc.Compiler.RuntimeLibrary.MultiThreadedDebugDLL);

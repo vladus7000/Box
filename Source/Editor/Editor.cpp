@@ -7,6 +7,7 @@ using namespace System::Windows::Forms;
 [STAThread]
 int main(array<String^>^ args)
 {
+	(void)args;
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 	winforms::MyForm form;
@@ -16,12 +17,35 @@ int main(array<String^>^ args)
 
 void winforms::MyForm::init()
 {
+	m_renderWindow = gcnew Editor::RenderWindow;
+	m_renderWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
+	
+	m_cheatWindow = gcnew Editor::CheatWindow;
+	m_cheatWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
+
+	m_inputWindow = gcnew Editor::InputWindow;
+	m_inputWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
+
+	m_networkWindow = gcnew Editor::NetworkWindow;
+	m_networkWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
+
+	m_recourcesWindow = gcnew Editor::RecourcesWindow;
+	m_recourcesWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
+
+	m_runningEnvironmentWindow = gcnew Editor::RunningEnvironmentWindow;
+	m_runningEnvironmentWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
+
+	m_scriptingindow = gcnew Editor::ScriptingWindow;
+	m_scriptingindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
+
+	m_soundSystemWindow = gcnew Editor::SoundSystemWindow;
+	m_soundSystemWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
+
 	if (!m_engine)
 	{
-		void* hwnd = this->panel1->Handle.ToPointer();
 		m_engine = new box::Engine();
 
-		m_engine->startup(hwnd);
+		m_engine->startup(m_renderWindow->getHwnd());
 	}
 }
 
