@@ -67,7 +67,12 @@ namespace Editor {
 			this->panel1->Name = L"panel1";
 			this->panel1->Size = System::Drawing::Size(260, 237);
 			this->panel1->TabIndex = 1;
+			this->panel1->Scroll += gcnew System::Windows::Forms::ScrollEventHandler(this, &RenderWindow::panel1_Scroll);
+			this->panel1->Click += gcnew System::EventHandler(this, &RenderWindow::panel1_Click);
 			this->panel1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &RenderWindow::panel1_Paint);
+			this->panel1->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &RenderWindow::panel1_MouseDown);
+			this->panel1->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &RenderWindow::panel1_MouseMove);
+			this->panel1->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &RenderWindow::panel1_MouseUp);
 			this->panel1->PreviewKeyDown += gcnew System::Windows::Forms::PreviewKeyDownEventHandler(this, &RenderWindow::panel1_PreviewKeyDown);
 			// 
 			// RenderWindow
@@ -96,7 +101,22 @@ namespace Editor {
 	}
 	private: System::Void panel1_PreviewKeyDown(System::Object^  sender, System::Windows::Forms::PreviewKeyDownEventArgs^  e) {
 		(void)sender;
-		Input::Instance().test_register_key_event(static_cast<U32>(e->KeyCode));
+		Input::Instance().keyboard().keyPress(static_cast<U32>(e->KeyCode));
+	}
+	private: System::Void panel1_Click(System::Object^  sender, System::EventArgs^  e) {
+		Input::Instance().mouse().click(0);
+	}
+	private: System::Void panel1_Scroll(System::Object^  sender, System::Windows::Forms::ScrollEventArgs^  e) {
+		Input::Instance().mouse().scroll(1);
+	}
+	private: System::Void panel1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		Input::Instance().mouse().down(0);
+	}
+	private: System::Void panel1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		Input::Instance().mouse().move(0, 0);
+	}
+	private: System::Void panel1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		Input::Instance().mouse().up(0);
 	}
 	};
 }
