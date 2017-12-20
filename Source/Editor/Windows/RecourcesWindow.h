@@ -62,6 +62,7 @@ namespace Editor {
 			this->Name = L"RecourcesWindow";
 			this->Text = L"RecourcesWindow";
 			this->ResumeLayout(false);
+			this->HideOnClose = true;
 
 		}
 #pragma endregion

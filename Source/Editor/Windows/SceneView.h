@@ -62,6 +62,7 @@ namespace Editor {
 			this->Name = L"SceneView";
 			this->Text = L"SceneView";
 			this->ResumeLayout(false);
+			this->HideOnClose = true;
 
 		}
 #pragma endregion

@@ -62,6 +62,7 @@ namespace Editor {
 			this->Name = L"AddObject";
 			this->Text = L"AddObject";
 			this->ResumeLayout(false);
+			this->HideOnClose = true;
 
 		}
 #pragma endregion

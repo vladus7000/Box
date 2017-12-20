@@ -62,6 +62,7 @@ namespace Editor {
 			this->Name = L"SoundSystemWindow";
 			this->Text = L"SoundSystemWindow";
 			this->ResumeLayout(false);
+			this->HideOnClose = true;
 
 		}
 #pragma endregion

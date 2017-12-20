@@ -62,6 +62,7 @@ namespace Editor {
 			this->Name = L"Properties";
 			this->Text = L"Properties";
 			this->ResumeLayout(false);
+			this->HideOnClose = true;
 
 		}
 #pragma endregion

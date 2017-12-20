@@ -62,7 +62,7 @@ namespace Editor {
 			this->Name = L"ScriptingWindow";
 			this->Text = L"ScriptingWindow";
 			this->ResumeLayout(false);
-
+			this->HideOnClose = true;
 		}
 #pragma endregion
 	};

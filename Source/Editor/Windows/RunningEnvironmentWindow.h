@@ -62,6 +62,7 @@ namespace Editor {
 			this->Name = L"RunningEnvironmentWindow";
 			this->Text = L"RunningEnvironmentWindow";
 			this->ResumeLayout(false);
+			this->HideOnClose = true;
 
 		}
 #pragma endregion

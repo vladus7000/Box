@@ -50,7 +50,6 @@ namespace Editor {
 		void InitializeComponent(void)
 		{
 			this->SuspendLayout();
-
 			// 
 			// CheatWindow
 			// 
@@ -59,6 +58,7 @@ namespace Editor {
 			this->ClientSize = System::Drawing::Size(284, 261);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
+			this->HideOnClose = true;
 			this->Name = L"CheatWindow";
 			this->Text = L"CheatWindow";
 			this->ResumeLayout(false);

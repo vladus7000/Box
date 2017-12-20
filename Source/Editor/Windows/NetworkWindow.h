@@ -62,6 +62,7 @@ namespace Editor {
 			this->Name = L"NetworkWindow";
 			this->Text = L"NetworkWindow";
 			this->ResumeLayout(false);
+			this->HideOnClose = true;
 
 		}
 #pragma endregion

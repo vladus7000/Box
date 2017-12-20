@@ -62,6 +62,7 @@ namespace Editor {
 			this->Name = L"InputWindow";
 			this->Text = L"InputWindow";
 			this->ResumeLayout(false);
+			this->HideOnClose = true;
 
 		}
 #pragma endregion

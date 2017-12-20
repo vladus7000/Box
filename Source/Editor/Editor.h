@@ -84,6 +84,26 @@ namespace winforms {
 	private: System::Windows::Forms::ToolStripMenuItem^  toolsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  renderWindowToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  scriptingToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  cheatToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showRenderWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showScriptingWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showCheatWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  inputToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showInputWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  networkToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showNetworkWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  resourcesToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showResourcesWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  runInvironmentToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  soundToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showSoundSystemWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  sceneViewToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showSceneViewWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  propertiesToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showPropertiesWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  createObjectToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  showCreateObjectWindowToolStripMenuItem;
 
 
 	private: System::ComponentModel::IContainer^  components;
@@ -129,7 +149,27 @@ namespace winforms {
 			this->settingsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->toolsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->renderWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showRenderWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->scriptingToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showScriptingWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->cheatToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showCheatWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->inputToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showInputWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->networkToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showNetworkWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->resourcesToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showResourcesWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->runInvironmentToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->soundToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showSoundSystemWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->sceneViewToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showSceneViewWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->propertiesToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showPropertiesWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->createObjectToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->showCreateObjectWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip1->SuspendLayout();
 			this->menuStrip1->SuspendLayout();
 			this->SuspendLayout();
@@ -270,9 +310,11 @@ namespace winforms {
 			// 
 			// toolsToolStripMenuItem
 			// 
-			this->toolsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+			this->toolsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(11) {
 				this->renderWindowToolStripMenuItem,
-					this->scriptingToolStripMenuItem
+					this->scriptingToolStripMenuItem, this->cheatToolStripMenuItem, this->inputToolStripMenuItem, this->networkToolStripMenuItem,
+					this->resourcesToolStripMenuItem, this->runInvironmentToolStripMenuItem, this->soundToolStripMenuItem, this->sceneViewToolStripMenuItem,
+					this->propertiesToolStripMenuItem, this->createObjectToolStripMenuItem
 			});
 			this->toolsToolStripMenuItem->Name = L"toolsToolStripMenuItem";
 			this->toolsToolStripMenuItem->Size = System::Drawing::Size(47, 20);
@@ -280,15 +322,157 @@ namespace winforms {
 			// 
 			// renderWindowToolStripMenuItem
 			// 
+			this->renderWindowToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showRenderWindowToolStripMenuItem });
 			this->renderWindowToolStripMenuItem->Name = L"renderWindowToolStripMenuItem";
-			this->renderWindowToolStripMenuItem->Size = System::Drawing::Size(155, 22);
-			this->renderWindowToolStripMenuItem->Text = L"RenderWindow";
+			this->renderWindowToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->renderWindowToolStripMenuItem->Text = L"Render";
+			// 
+			// showRenderWindowToolStripMenuItem
+			// 
+			this->showRenderWindowToolStripMenuItem->Name = L"showRenderWindowToolStripMenuItem";
+			this->showRenderWindowToolStripMenuItem->Size = System::Drawing::Size(184, 22);
+			this->showRenderWindowToolStripMenuItem->Text = L"ShowRenderWindow";
+			this->showRenderWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showRenderWindowToolStripMenuItem_Click);
 			// 
 			// scriptingToolStripMenuItem
 			// 
+			this->scriptingToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showScriptingWindowToolStripMenuItem });
 			this->scriptingToolStripMenuItem->Name = L"scriptingToolStripMenuItem";
-			this->scriptingToolStripMenuItem->Size = System::Drawing::Size(155, 22);
+			this->scriptingToolStripMenuItem->Size = System::Drawing::Size(160, 22);
 			this->scriptingToolStripMenuItem->Text = L"Scripting";
+			// 
+			// showScriptingWindowToolStripMenuItem
+			// 
+			this->showScriptingWindowToolStripMenuItem->Name = L"showScriptingWindowToolStripMenuItem";
+			this->showScriptingWindowToolStripMenuItem->Size = System::Drawing::Size(194, 22);
+			this->showScriptingWindowToolStripMenuItem->Text = L"ShowScriptingWindow";
+			this->showScriptingWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showScriptingWindowToolStripMenuItem_Click);
+			// 
+			// cheatToolStripMenuItem
+			// 
+			this->cheatToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showCheatWindowToolStripMenuItem });
+			this->cheatToolStripMenuItem->Name = L"cheatToolStripMenuItem";
+			this->cheatToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->cheatToolStripMenuItem->Text = L"Cheat";
+			// 
+			// showCheatWindowToolStripMenuItem
+			// 
+			this->showCheatWindowToolStripMenuItem->Name = L"showCheatWindowToolStripMenuItem";
+			this->showCheatWindowToolStripMenuItem->Size = System::Drawing::Size(178, 22);
+			this->showCheatWindowToolStripMenuItem->Text = L"ShowCheatWindow";
+			this->showCheatWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showCheatWindowToolStripMenuItem_Click);
+			// 
+			// inputToolStripMenuItem
+			// 
+			this->inputToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showInputWindowToolStripMenuItem });
+			this->inputToolStripMenuItem->Name = L"inputToolStripMenuItem";
+			this->inputToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->inputToolStripMenuItem->Text = L"Input";
+			// 
+			// showInputWindowToolStripMenuItem
+			// 
+			this->showInputWindowToolStripMenuItem->Name = L"showInputWindowToolStripMenuItem";
+			this->showInputWindowToolStripMenuItem->Size = System::Drawing::Size(175, 22);
+			this->showInputWindowToolStripMenuItem->Text = L"ShowInputWindow";
+			this->showInputWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showInputWindowToolStripMenuItem_Click);
+			// 
+			// networkToolStripMenuItem
+			// 
+			this->networkToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showNetworkWindowToolStripMenuItem });
+			this->networkToolStripMenuItem->Name = L"networkToolStripMenuItem";
+			this->networkToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->networkToolStripMenuItem->Text = L"Network";
+			// 
+			// showNetworkWindowToolStripMenuItem
+			// 
+			this->showNetworkWindowToolStripMenuItem->Name = L"showNetworkWindowToolStripMenuItem";
+			this->showNetworkWindowToolStripMenuItem->Size = System::Drawing::Size(192, 22);
+			this->showNetworkWindowToolStripMenuItem->Text = L"ShowNetworkWindow";
+			this->showNetworkWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showNetworkWindowToolStripMenuItem_Click);
+			// 
+			// resourcesToolStripMenuItem
+			// 
+			this->resourcesToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showResourcesWindowToolStripMenuItem });
+			this->resourcesToolStripMenuItem->Name = L"resourcesToolStripMenuItem";
+			this->resourcesToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->resourcesToolStripMenuItem->Text = L"Resources";
+			// 
+			// showResourcesWindowToolStripMenuItem
+			// 
+			this->showResourcesWindowToolStripMenuItem->Name = L"showResourcesWindowToolStripMenuItem";
+			this->showResourcesWindowToolStripMenuItem->Size = System::Drawing::Size(200, 22);
+			this->showResourcesWindowToolStripMenuItem->Text = L"ShowResourcesWindow";
+			this->showResourcesWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showResourcesWindowToolStripMenuItem_Click);
+			// 
+			// runInvironmentToolStripMenuItem
+			// 
+			this->runInvironmentToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showWindowToolStripMenuItem });
+			this->runInvironmentToolStripMenuItem->Name = L"runInvironmentToolStripMenuItem";
+			this->runInvironmentToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->runInvironmentToolStripMenuItem->Text = L"RunInvironment";
+			// 
+			// showWindowToolStripMenuItem
+			// 
+			this->showWindowToolStripMenuItem->Name = L"showWindowToolStripMenuItem";
+			this->showWindowToolStripMenuItem->Size = System::Drawing::Size(147, 22);
+			this->showWindowToolStripMenuItem->Text = L"ShowWindow";
+			this->showWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showWindowToolStripMenuItem_Click);
+			// 
+			// soundToolStripMenuItem
+			// 
+			this->soundToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showSoundSystemWindowToolStripMenuItem });
+			this->soundToolStripMenuItem->Name = L"soundToolStripMenuItem";
+			this->soundToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->soundToolStripMenuItem->Text = L"Sound";
+			// 
+			// showSoundSystemWindowToolStripMenuItem
+			// 
+			this->showSoundSystemWindowToolStripMenuItem->Name = L"showSoundSystemWindowToolStripMenuItem";
+			this->showSoundSystemWindowToolStripMenuItem->Size = System::Drawing::Size(219, 22);
+			this->showSoundSystemWindowToolStripMenuItem->Text = L"ShowSoundSystemWindow";
+			this->showSoundSystemWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showSoundSystemWindowToolStripMenuItem_Click);
+			// 
+			// sceneViewToolStripMenuItem
+			// 
+			this->sceneViewToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showSceneViewWindowToolStripMenuItem });
+			this->sceneViewToolStripMenuItem->Name = L"sceneViewToolStripMenuItem";
+			this->sceneViewToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->sceneViewToolStripMenuItem->Text = L"SceneView";
+			// 
+			// showSceneViewWindowToolStripMenuItem
+			// 
+			this->showSceneViewWindowToolStripMenuItem->Name = L"showSceneViewWindowToolStripMenuItem";
+			this->showSceneViewWindowToolStripMenuItem->Size = System::Drawing::Size(203, 22);
+			this->showSceneViewWindowToolStripMenuItem->Text = L"ShowSceneViewWindow";
+			this->showSceneViewWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showSceneViewWindowToolStripMenuItem_Click);
+			// 
+			// propertiesToolStripMenuItem
+			// 
+			this->propertiesToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showPropertiesWindowToolStripMenuItem });
+			this->propertiesToolStripMenuItem->Name = L"propertiesToolStripMenuItem";
+			this->propertiesToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->propertiesToolStripMenuItem->Text = L"Properties";
+			// 
+			// showPropertiesWindowToolStripMenuItem
+			// 
+			this->showPropertiesWindowToolStripMenuItem->Name = L"showPropertiesWindowToolStripMenuItem";
+			this->showPropertiesWindowToolStripMenuItem->Size = System::Drawing::Size(200, 22);
+			this->showPropertiesWindowToolStripMenuItem->Text = L"ShowPropertiesWindow";
+			this->showPropertiesWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showPropertiesWindowToolStripMenuItem_Click);
+			// 
+			// createObjectToolStripMenuItem
+			// 
+			this->createObjectToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->showCreateObjectWindowToolStripMenuItem });
+			this->createObjectToolStripMenuItem->Name = L"createObjectToolStripMenuItem";
+			this->createObjectToolStripMenuItem->Size = System::Drawing::Size(160, 22);
+			this->createObjectToolStripMenuItem->Text = L"CreateObject";
+			// 
+			// showCreateObjectWindowToolStripMenuItem
+			// 
+			this->showCreateObjectWindowToolStripMenuItem->Name = L"showCreateObjectWindowToolStripMenuItem";
+			this->showCreateObjectWindowToolStripMenuItem->Size = System::Drawing::Size(216, 22);
+			this->showCreateObjectWindowToolStripMenuItem->Text = L"ShowCreateObjectWindow";
+			this->showCreateObjectWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showCreateObjectWindowToolStripMenuItem_Click);
 			// 
 			// MyForm
 			// 
@@ -302,6 +486,7 @@ namespace winforms {
 			this->MainMenuStrip = this->menuStrip1;
 			this->Name = L"MyForm";
 			this->Text = L"Editor";
+			this->Resize += gcnew System::EventHandler(this, &MyForm::MyForm_Resize);
 			this->statusStrip1->ResumeLayout(false);
 			this->statusStrip1->PerformLayout();
 			this->menuStrip1->ResumeLayout(false);
@@ -312,29 +497,43 @@ namespace winforms {
 		}
 #pragma endregion
 
-	/*private: System::Void panel1_PreviewKeyDown(System::Object^  sender, System::Windows::Forms::PreviewKeyDownEventArgs^  e)
-	{
-		(void)sender;
-		Input::Instance().test_register_key_event(static_cast<U32>(e->KeyCode));
-	}
-	private: System::Void panel1_MouseHover(System::Object^  sender, System::EventArgs^  e)
-	{
-		(void)sender;
-		(void)e;
-	}
-	private: System::Void panel1_Enter(System::Object^  sender, System::EventArgs^  e)
-	{
-		(void)sender;
-		(void)e;
-		System::Console::WriteLine("on focus");
-	}
-	private: System::Void panel1_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		(void)sender;
-		(void)e;
-		this->panel1->Focus();
-	}*/
 	private: System::Void buildToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 	}
+private: System::Void showRenderWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e){
+	m_renderWindow->Show();
+}
+private: System::Void showScriptingWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e){
+	m_scriptingindow->Show();
+}
+private: System::Void showCheatWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_cheatWindow->Show();
+}
+private: System::Void showInputWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_inputWindow->Show();
+}
+private: System::Void showNetworkWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_networkWindow->Show();
+}
+private: System::Void showResourcesWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_recourcesWindow->Show();
+}
+private: System::Void showWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_runningEnvironmentWindow->Show();
+}
+private: System::Void showSoundSystemWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_soundSystemWindow->Show();
+}
+private: System::Void showSceneViewWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_sceneView->Show();
+}
+private: System::Void showPropertiesWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_properties->Show();
+}
+private: System::Void showCreateObjectWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	m_addObjectWindow->Show();
+}
+private: System::Void MyForm_Resize(System::Object^  sender, System::EventArgs^  e) {
+	this->dockPanel1->Size = this->ClientSize - System::Drawing::Size(0, 52);
+}
 };
 }
