@@ -1,5 +1,6 @@
 #pragma once
 #include "StdAfx.hpp"
+
 #include "Gameplay/ActorComponentFactory.hpp"
 
 namespace box
@@ -54,5 +55,4 @@ namespace box
 		static U64 id = 0;
 		return id++;
 	}
-
 }

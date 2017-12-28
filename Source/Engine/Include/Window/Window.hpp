@@ -1,6 +1,9 @@
 #pragma once
 #include "System\Patterns\Singleton.hpp"
+
+#ifdef GAME_BUILD
 #include <windows.h>
+#endif
 
 namespace box
 {

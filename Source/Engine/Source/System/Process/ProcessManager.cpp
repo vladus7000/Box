@@ -80,5 +80,4 @@ namespace box
 		Process::WeakProcessPtr ret = process;
 		return ret;
 	}
-
 }

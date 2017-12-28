@@ -1,6 +1,5 @@
 #include "StdAfx.hpp"
 #include "Window\Window.hpp"
-#include <string>
 
 namespace box
 {
