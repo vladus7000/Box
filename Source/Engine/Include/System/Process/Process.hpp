@@ -28,11 +28,11 @@ namespace box
 		Process() : m_state(State::Uninitialized) {}
 		virtual ~Process() {}
 
-		void succeeded();
-		void fail();
+		void succeeded() { setState(State::Succeeded); }
+		void fail() { setState(State::Failed); }
 
-		void pause();
-		void unpause();
+		void pause() { setState(State::Paused); }
+		void unpause() { setState(State::Running); }
 
 		State getState() const { return m_state; }
 		bool isAlive() const { return (m_state == State::Running || m_state == State::Paused); }

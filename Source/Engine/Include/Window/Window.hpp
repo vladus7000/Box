@@ -1,5 +1,6 @@
 #pragma once
 #include "System\Patterns\Singleton.hpp"
+#include <windows.h>
 
 namespace box
 {
@@ -24,9 +25,16 @@ namespace box
 		bool init();
 		void deinit();
 
+		void pollEvents();
+
 		void* getWindowHandle() const { return m_windowHandle; }
+
+		bool windowIsClosed() const { return m_windowIsClosed; } // hack
+		void closeWindow() { m_windowIsClosed = true; }
+
 	private:
 		void* m_windowHandle;
+		bool m_windowIsClosed; // hack
 
 	};
 #endif

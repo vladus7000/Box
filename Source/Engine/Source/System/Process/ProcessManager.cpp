@@ -58,8 +58,9 @@ namespace box
 					}
 					break;
 				}
+
+				m_processes.erase(thisIt);
 			}
-			m_processes.erase(thisIt);
 		}
 	}
 
