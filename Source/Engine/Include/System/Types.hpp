@@ -11,6 +11,9 @@ namespace box
 	using U64 = unsigned long long int;
 	using S64 = signed long long int;
 
+	using F32 = float;
+	using F64 = double;
+
 	static_assert(sizeof(U8) == 1, "please run on real computer");
 	static_assert(sizeof(U16) == 2, "please run on real computer");
 	static_assert(sizeof(U32) == 4, "please run on real computer");
