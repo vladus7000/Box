@@ -19,7 +19,8 @@ namespace box
 		virtual const std::string getPattern() const override { return "*"; }
 		virtual bool useRawFile() const override { return true; }
 		virtual size_t getLoadedResourceSize(U8* buffer, size_t size) override { return size; }
-		virtual bool loadResource(U8* buffer, size_t size, std::shared_ptr<ResourceHandle> handle) override { return true; };
+		virtual bool loadResource(U8* buffer, size_t size, std::shared_ptr<ResourceHandle> handle) override { return true; }
+		virtual bool discardRawBufferAfterLoad() const override { return true; }
 	};
 
 	ResourceCache::ResourceCache(size_t sizeInMb, ResourceFile* resFile)

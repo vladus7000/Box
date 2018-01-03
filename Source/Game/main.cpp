@@ -4,6 +4,8 @@
 #include <Window/Window.hpp>
 #include "System/Process/ProcessManager.hpp"
 #include "System\Input.hpp"
+#include "System\ResourceSystem\ZipFile.hpp"
+#include "System\ResourceSystem\ResourceCache.hpp"
 
 using namespace box;
 
@@ -55,6 +57,10 @@ class Game
 public:
 	void run()
 	{
+		//ResourceZipFile* resFile = new ResourceZipFile("test.zip");
+		//ResourceCache rCache(1, resFile);
+		//rCache.init();
+
 		auto& window = Window::Instance();
 		{
 			Process::StrongProcessPtr delay(new DelayedProcess(2.0f));

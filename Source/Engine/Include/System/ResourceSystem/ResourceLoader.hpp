@@ -17,6 +17,7 @@ namespace box
 		virtual ~ResourceLoader() = default;
 		virtual const std::string getPattern() const = 0;
 		virtual bool useRawFile() const = 0;
+		virtual bool discardRawBufferAfterLoad() const = 0;
 		virtual size_t getLoadedResourceSize(U8* buffer, size_t size) = 0;
 		virtual bool loadResource(U8* buffer, size_t size, std::shared_ptr<ResourceHandle> handle) = 0;
 	};

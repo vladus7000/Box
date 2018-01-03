@@ -2,6 +2,47 @@ using System.IO;
 using Sharpmake;
 [module: Sharpmake.Include("Common.sharpmake.cs")]
 
+[Generate]
+class Zlib : Project
+{
+    public Zlib()
+        : base(typeof(BoxTarget))
+    {
+        AddTargets(new BoxTarget(BuildType.Game,
+        Platform.win64,
+        DevEnv.vs2015,
+        Optimization.Debug | Optimization.Release));
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\adler32.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\compress.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\crc32.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\deflate.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\gzclose.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\gzlib.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\gzread.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\gzwrite.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\inflate.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\infback.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\inftrees.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\inffast.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\trees.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\uncompr.c");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib\\zutil.c");
+    }
+
+    [Configure]
+    public void ConfigureAll(Project.Configuration conf, BoxTarget target)
+    {
+        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\Zlib");
+
+        conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\zlib");
+        conf.Output = Project.Configuration.OutputType.Lib;
+        //conf.IncludePaths.Add("[project.BasePath]");
+        //conf.TargetLibraryPath = "[project.BasePath]/lib";
+        conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Zlib\\intermediate");
+        conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Zlib\\output");
+    }
+}
+
 //[Generate]
 class Engine : Project
 {
@@ -19,6 +60,8 @@ class Engine : Project
         conf.PrecompSource = "StdAfx.cpp";
 
         conf.IncludePaths.Add(SourceRootPath + "\\..\\Include");
+        conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib");
+
         conf.Output = Project.Configuration.OutputType.Lib;
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Engine\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Engine\\output");
@@ -46,6 +89,8 @@ class EngineForGame : Engine
         //conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\intermediate"); test it
         //conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\output");
         conf.Defines.Add("GAME_BUILD");
+
+        conf.AddPublicDependency<Zlib>(target);
     }
 }
 
@@ -68,6 +113,8 @@ class EngineForEditor : Engine
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Editor\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Editor\\output");
         conf.Defines.Add("EDITOR_BUILD");
+
+        conf.AddPublicDependency<Zlib>(target);
     }
 }
 

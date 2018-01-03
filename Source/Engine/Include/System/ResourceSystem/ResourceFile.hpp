@@ -1,5 +1,12 @@
 #pragma once
 
+#include <string>
+
+namespace box
+{
+	class Resource;
+}
+
 namespace box
 {
 	class ResourceFile
