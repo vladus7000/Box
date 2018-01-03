@@ -101,22 +101,22 @@ namespace Editor {
 	}
 	private: System::Void panel1_PreviewKeyDown(System::Object^  sender, System::Windows::Forms::PreviewKeyDownEventArgs^  e) {
 		(void)sender;
-		Input::Instance().keyboard().keyPress(static_cast<U32>(e->KeyCode));
+		Input::Instance().onKeyDown(static_cast<U32>(e->KeyCode));
 	}
 	private: System::Void panel1_Click(System::Object^  sender, System::EventArgs^  e) {
-		Input::Instance().mouse().click(0);
+		Input::Instance().onMouseButtonDown(0, 0, 0);
 	}
 	private: System::Void panel1_Scroll(System::Object^  sender, System::Windows::Forms::ScrollEventArgs^  e) {
-		Input::Instance().mouse().scroll(1);
+		//
 	}
 	private: System::Void panel1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-		Input::Instance().mouse().down(0);
+		Input::Instance().onMouseButtonDown(0, 0, 0);
 	}
 	private: System::Void panel1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-		Input::Instance().mouse().move(0, 0);
+		Input::Instance().onMouseMove(0, 0);
 	}
 	private: System::Void panel1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-		Input::Instance().mouse().up(0);
+		Input::Instance().onMousebuttonUp(0, 0, 0);
 	}
 	};
 }

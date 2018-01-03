@@ -3,27 +3,25 @@
 
 namespace box
 {
-	class Keyboard
+	class KeyboardHandler
 	{
 	public:
-		void keyPress(U32 keyKode);
+		virtual void onKeyDown(U32 key) = 0;
+		virtual void onKeyUp(U32 key) = 0;
 	};
 
-	class Mouse
+	class MouseHandler
 	{
+	public:
 		enum MouseButtons
-		{ 
+		{
 			LEFT_BUTTON = 1,
 			RIGHT_BUTTON = 2,
 			MIDDLE_BUTTON = 4,
 		};
-	public:
-		void click(U32 mouseButtons);
-		void move(U32 x, U32 y);
-		void scroll(S32 value);
-		void down(U32 mouseButtons);
-		void up(U32 mouseButtons);
-
+		virtual void onMouseMove(U32 x, U32 y) = 0;
+		virtual void onMouseButtonDown(U32 x, U32 y, U32 key) = 0;
+		virtual void onMousebuttonUp(U32 x, U32 y, U32 key) = 0;
 	};
 
 	class Input
@@ -34,11 +32,24 @@ namespace box
 		bool init();
 		void deinit();
 
-		Keyboard& keyboard() { return m_keyboard; }
-		Mouse& mouse() { return m_mouse; }
+		void registerMouseHandler(MouseHandler* handler);
+		void unregisterMouseHandler(MouseHandler* handler);
+
+		void registerKeyboardHandler(KeyboardHandler* handler);
+		void unregisterKeyboardHandler(KeyboardHandler* handler);
+
+#ifdef GAME_BUILD
+		void poll(F32 delta);
+#endif
+#ifdef GAME_BUILD
+	private:
+#endif
+		void onKeyDown(U32 key);
+		void onKeyUp(U32 key);
+		void onMouseMove(U32 x, U32 y);
+		void onMouseButtonDown(U32 x, U32 y, U32 key);
+		void onMousebuttonUp(U32 x, U32 y, U32 key);
 
 	private:
-		Keyboard m_keyboard;
-		Mouse m_mouse;
 	};
 }

@@ -3,6 +3,7 @@
 #include <System/Engine.hpp>
 #include <Window/Window.hpp>
 #include "System/Process/ProcessManager.hpp"
+#include "System\Input.hpp"
 
 using namespace box;
 
@@ -65,6 +66,7 @@ public:
 		while (!window.windowIsClosed())
 		{
 			window.pollEvents();
+			Input::Instance().poll(1.0f / 60.0f);
 			ProcessManager::Instance().update(1.0f / 60.0f);
 			Sleep(16);
 		}
