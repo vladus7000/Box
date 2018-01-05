@@ -14,6 +14,7 @@ namespace box
 	void LoadResourceProcess::onUpdate(F32 delta)
 	{
 		auto cache = m_handle->m_cache;
+		cache->load(m_handle);
 		succeeded();
 	}
 }

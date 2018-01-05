@@ -77,7 +77,7 @@ namespace box
 			if (!handle)
 			{
 				handle = std::make_shared<ResourceHandle>(r, nullptr, 0, m_cache);
-				m_cache->insertToSystem(handle);
+				m_cache->insertToLoadQueue(handle);
 				Process::StrongProcessPtr load(new LoadResourceProcess(handle));
 				ProcessManager::Instance().attachProcess(load);
 			}

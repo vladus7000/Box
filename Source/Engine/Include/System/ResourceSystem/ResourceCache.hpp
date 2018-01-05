@@ -35,6 +35,8 @@ namespace box
 		void memoryHasBeenFreed(size_t size);
 
 		void insertToSystem(std::shared_ptr<ResourceHandle> handle);
+		void insertToLoadQueue(std::shared_ptr<ResourceHandle> handle);
+		void clearFromLoadQueue(std::shared_ptr<ResourceHandle> handle);
 
 	private:
 		using ResourceHandleList = std::list<std::shared_ptr<ResourceHandle>>;
@@ -44,6 +46,7 @@ namespace box
 
 		const U8* update(std::shared_ptr<ResourceHandle> handle);
 		std::shared_ptr<ResourceHandle> load(const Resource& r);
+		void load(std::shared_ptr<ResourceHandle> handle);
 		void free(std::shared_ptr<ResourceHandle> gonner);
 
 		bool makeRoom(size_t size);
@@ -52,9 +55,11 @@ namespace box
 
 	private:
 		friend class PreloadProcess;
+		friend class LoadResourceProcess;
 
 		ResourceHandleList m_lru;
 		ResourceHandleMap m_resources;
+		ResourceHandleMap m_waitingForLoading;
 		ResourceLoaders m_loaders;
 		ResourceFiles m_resourceFiles;
 		size_t m_cacheSize;

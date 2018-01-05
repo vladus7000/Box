@@ -160,6 +160,14 @@ namespace box
 		{
 			handle = foundIt->second;
 		}
+		else
+		{
+			auto foundIt = m_waitingForLoading.find(r.m_name);
+			if (foundIt != m_waitingForLoading.end())
+			{
+				handle = foundIt->second;
+			}
+		}
 		return handle;
 	}
 
@@ -191,9 +199,19 @@ namespace box
 		m_resources[handle->m_resource.m_name] = handle;
 	}
 
+	void ResourceCache::insertToLoadQueue(std::shared_ptr<ResourceHandle> handle)
+	{
+		handle->m_status = ResourceHandle::Status::WaitingForLoading;
+		m_waitingForLoading[handle->m_resource.m_name] = handle;
+	}
+
+	void ResourceCache::clearFromLoadQueue(std::shared_ptr<ResourceHandle> handle)
+	{
+		m_waitingForLoading.erase(handle->m_resource.m_name);
+	}
+
 	std::shared_ptr<ResourceHandle> ResourceCache::load(const Resource& r)
 	{
-		LOG("ResCache load\n");
 		std::shared_ptr<ResourceHandle> handle;
 		std::shared_ptr<ResourceLoader> loader;
 
@@ -207,6 +225,7 @@ namespace box
 		}
 		if (!loader)
 		{
+			handle->m_status = ResourceHandle::Status::LoaderNotDound;
 			return handle;
 		}
 
@@ -224,6 +243,7 @@ namespace box
 
 		if (rawSize <= 0 || foundResFile == nullptr)
 		{
+			handle->m_status = ResourceHandle::Status::ResourceNotFound;
 			return handle;
 		}
 		U8* rawBuffer = loader->useRawFile() ? allocate(rawSize) : new U8[rawSize];
@@ -264,11 +284,98 @@ namespace box
 
 		if (handle)
 		{
-			handle->setDataReady();
 			insertToSystem(handle);
+			handle->setDataReady();
 		}
 
 		return handle;
+	}
+
+	void ResourceCache::load(std::shared_ptr<ResourceHandle> handle)
+	{
+		std::shared_ptr<ResourceLoader> loader;
+		Resource r = handle->m_resource;
+
+		for (auto it : m_loaders)
+		{
+			if (wildcardMatch(it->getPattern().c_str(), r.m_name.c_str()))
+			{
+				loader = it;
+				break;
+			}
+		}
+		if (!loader)
+		{
+			handle->m_status = ResourceHandle::Status::LoaderNotDound;
+			clearFromLoadQueue(handle);
+			return;
+		}
+
+		ResourceFile* foundResFile(nullptr);
+		size_t rawSize(0);
+		for (auto resFile : m_resourceFiles)
+		{
+			rawSize = resFile->getRawResourceSize(r);
+			if (rawSize > 0)
+			{
+				foundResFile = resFile;
+				break;
+			}
+		}
+
+		if (rawSize <= 0 || foundResFile == nullptr)
+		{
+			handle->m_status = ResourceHandle::Status::ResourceNotFound;
+			clearFromLoadQueue(handle);
+			return;
+		}
+		U8* rawBuffer = loader->useRawFile() ? allocate(rawSize) : new U8[rawSize];
+
+		if (!rawBuffer)
+		{
+			return;
+		}
+		handle->m_status = ResourceHandle::Status::Loading;
+		foundResFile->getRawResource(r, rawBuffer);
+		U8* buffer(nullptr);
+
+		if (loader->useRawFile())
+		{
+			buffer = rawBuffer;
+			handle->m_buffer = buffer;
+			handle->m_size = rawSize;
+		}
+		else
+		{
+			size_t size = loader->getLoadedResourceSize(rawBuffer, rawSize);
+			buffer = allocate(size);
+
+			if (!buffer)
+			{
+				handle->m_status = ResourceHandle::Status::NotInited;
+				clearFromLoadQueue(handle);
+				return;
+			}
+
+			handle->m_buffer = buffer;
+			handle->m_size = size;
+
+			bool success = loader->loadResource(rawBuffer, rawSize, handle);
+			delete[] rawBuffer;
+
+			if (!success)
+			{
+				handle->m_status = ResourceHandle::Status::NotInited;
+				handle->m_buffer = nullptr;
+				handle->m_size = 0;
+				clearFromLoadQueue(handle);
+				return;
+			}
+		}
+
+		clearFromLoadQueue(handle);
+		insertToSystem(handle);
+		handle->setDataReady();
 	}
 
 	void ResourceCache::free(std::shared_ptr<ResourceHandle> gonner)
