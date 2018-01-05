@@ -107,7 +107,7 @@ public:
 		return m_resFile.size();
 	}
 
-	virtual const std::string& getResourceName(size_t i) const override
+	virtual std::string getResourceName(size_t i) const override
 	{
 		return m_resFile[i].name;
 	}

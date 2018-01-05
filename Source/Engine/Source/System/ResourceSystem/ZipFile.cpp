@@ -16,7 +16,7 @@ namespace box
 
 	class ZipFile
 	{
-		using ZipContentsMap = std::map<std::string, size_t>;
+		using ZipContentsMap = std::map<std::string, int>;
 	public:
 		ZipFile()
 			: m_file(nullptr)
@@ -132,7 +132,7 @@ namespace box
 		}
 
 		size_t getNumFiles() { return m_numEntries; }
-		const std::string& getFileName(size_t i)
+		std::string getFileName(size_t i)
 		{
 			std::string fileName = "";
 			if (i >= 0 && i < m_numEntries)
@@ -148,7 +148,7 @@ namespace box
 		size_t getFileSize(size_t i)
 		{
 			if (i < 0 || i >= m_numEntries)
-				return -1;
+				return 0;
 			else
 				return m_papDir[i]->ucSize;
 		}
@@ -220,7 +220,7 @@ namespace box
 			return ret;
 		}
 
-		size_t find(const std::string& path)
+		int find(const std::string& path)
 		{
 			std::string lowerCase = path;
 			std::transform(lowerCase.begin(), lowerCase.end(), lowerCase.begin(), ::tolower);
@@ -336,10 +336,10 @@ namespace box
 
 	size_t ResourceZipFile::getRawResourceSize(const Resource& r)
 	{
-		size_t resourceIdx = m_zipFile->find(r.m_name);
+		int resourceIdx = m_zipFile->find(r.m_name);
 		if (resourceIdx < 0)
 		{
-			return -1;
+			return 0;
 		}
 		return m_zipFile->getFileSize(resourceIdx);
 	}
@@ -364,7 +364,7 @@ namespace box
 		return m_zipFile->getNumFiles();
 	}
 
-	const std::string& ResourceZipFile::getResourceName(size_t i) const
+	std::string ResourceZipFile::getResourceName(size_t i) const
 	{
 		std::string name("");
 		if (i >= 0 && i < m_zipFile->getNumFiles())

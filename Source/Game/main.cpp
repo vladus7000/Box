@@ -4,8 +4,7 @@
 #include <Window/Window.hpp>
 #include "System/Process/ProcessManager.hpp"
 #include "System\Input.hpp"
-#include "System\ResourceSystem\ZipFile.hpp"
-#include "System\ResourceSystem\ResourceCache.hpp"
+#include "System\ResourceSystem\ResourceManager.hpp"
 
 using namespace box;
 
@@ -57,9 +56,12 @@ class Game
 public:
 	void run()
 	{
-		//ResourceZipFile* resFile = new ResourceZipFile("test.zip");
-		//ResourceCache rCache(1, resFile);
-		//rCache.init();
+		
+		ResourceManager::Instance().preload("*.sb");
+		ResourceManager::Instance().preload("*.txt");
+		ResourceManager::Instance().preload("*.fbx");
+		ResourceManager::Instance().preload("*.bnk");
+		ResourceManager::Instance().preload("*.png");
 
 		auto& window = Window::Instance();
 		{

@@ -8,7 +8,7 @@ class Zlib : Project
     public Zlib()
         : base(typeof(BoxTarget))
     {
-        AddTargets(new BoxTarget(BuildType.Game,
+        AddTargets(new BoxTarget(BuildType.Game | BuildType.Editor,
         Platform.win64,
         DevEnv.vs2015,
         Optimization.Debug | Optimization.Release));
@@ -40,6 +40,32 @@ class Zlib : Project
         //conf.TargetLibraryPath = "[project.BasePath]/lib";
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Zlib\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Zlib\\output");
+    }
+}
+
+[Generate]
+class TinyXml2 : Project
+{
+    public TinyXml2()
+        : base(typeof(BoxTarget))
+    {
+        AddTargets(new BoxTarget(BuildType.Game | BuildType.Editor,
+        Platform.win64,
+        DevEnv.vs2015,
+        Optimization.Debug | Optimization.Release));
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\tinyxml2\\tinyxml2.cpp");
+
+    }
+
+    [Configure]
+    public void ConfigureAll(Project.Configuration conf, BoxTarget target)
+    {
+        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\tinyxml2");
+
+        conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\tinyxml2");
+        conf.Output = Project.Configuration.OutputType.Lib;
+        conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\TinyXml2\\intermediate");
+        conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\TinyXml2\\output");
     }
 }
 
@@ -91,6 +117,7 @@ class EngineForGame : Engine
         conf.Defines.Add("GAME_BUILD");
 
         conf.AddPublicDependency<Zlib>(target);
+        conf.AddPublicDependency<TinyXml2>(target);
     }
 }
 
@@ -115,6 +142,7 @@ class EngineForEditor : Engine
         conf.Defines.Add("EDITOR_BUILD");
 
         conf.AddPublicDependency<Zlib>(target);
+        conf.AddPublicDependency<TinyXml2>(target);
     }
 }
 

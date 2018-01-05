@@ -2,12 +2,12 @@
 
 #include <algorithm>
 #include <stdio.h>
+#include <regex>
 
 #include "System\ResourceSystem\ResourceCache.hpp"
 #include "System\ResourceSystem\ResourceFile.hpp"
 #include "System\ResourceSystem\ResourceLoader.hpp"
 #include "System\ResourceSystem\Resource.hpp"
-#include "System\ResourceSystem\ResourceHandle.hpp"
 
 #define LOG(args) printf(args)
 
@@ -26,63 +26,95 @@ namespace box
 	ResourceCache::ResourceCache(size_t sizeInMb, ResourceFile* resFile)
 		: m_cacheSize(sizeInMb * 1024 * 1024)
 		, m_allocated(0)
-		, m_resourceFile(resFile)
 	{
-		LOG("ResCache constructed\n");
+		if (resFile)
+		{
+			m_resourceFiles.push_back(resFile);
+		}
 	}
 
-	bool wildcardMatch(const std::string& pattern, const std::string& test)
+	bool match(char const *needle, char const *haystack) {
+		for (; *needle != '\0'; ++needle) {
+			switch (*needle) {
+			case '?':
+				if (*haystack == '\0')
+					return false;
+				++haystack;
+				break;
+			case '*': {
+				if (needle[1] == '\0')
+					return true;
+				size_t max = strlen(haystack);
+				for (size_t i = 0; i < max; i++)
+					if (match(needle + 1, haystack + i))
+						return true;
+				return false;
+			}
+			default:
+				if (*haystack != *needle)
+					return false;
+				++haystack;
+			}
+		}
+		return *haystack == '\0';
+	}
+
+	bool wildcardMatch(const char* pattern, const char* test)
 	{
-		return true;
+		//std::regex re(pattern);
+		//std::smatch res;
+		return match(pattern, test);//std::regex_match(test, re);
 	}
 
 	ResourceCache::~ResourceCache()
 	{
-		LOG("ResCache desctructed\n");
 		while (!m_lru.empty())
 		{
 			freeOneResource();
 		}
 
-		if (m_resourceFile)
+		for (auto resFile : m_resourceFiles)
 		{
-			delete m_resourceFile;
-			m_resourceFile = nullptr;
+			delete resFile;
+		}
+	}
+
+	void ResourceCache::addResourceFile(ResourceFile* resourceFile)
+	{
+		if (resourceFile && resourceFile->open())
+		{
+			m_resourceFiles.push_back(resourceFile);
 		}
 	}
 
 	bool ResourceCache::init()
 	{
-		LOG("ResCache inited\n");
-		bool res = false;
+		bool res = true;
 
-		if (m_resourceFile->open())
+		for (auto resFile : m_resourceFiles)
 		{
-			registerLoader(std::shared_ptr<ResourceLoader>(new DefaultResourceLoader()));
-			res = true;
+			res &= resFile->open();
 		}
+
+		registerLoader(std::shared_ptr<ResourceLoader>(new DefaultResourceLoader()));
 
 		return res;
 	}
 
 	void ResourceCache::registerLoader(std::shared_ptr<ResourceLoader> loader)
 	{
-		LOG("ResCache loader registered\n");
 		m_loaders.push_back(loader);
 	}
 
 	std::shared_ptr<ResourceHandle> ResourceCache::getHandle(Resource& r)
 	{
-		LOG("ResCache get handle\n");
 		std::shared_ptr<ResourceHandle> handle(find(r));
 		if (handle)
 		{
-			LOG("ResCache: in cache\n");
 			update(handle);
 		}
 		else
 		{
-			LOG("ResCache: cache miss\n");
 			handle = load(r);
 		}
 		return handle;
@@ -90,6 +122,23 @@ namespace box
 
 	void ResourceCache::preload(const std::string& pattern)
 	{
+		for (auto resFile : m_resourceFiles)
+		{
+			auto count = resFile->getResourcesCount();
+			for (size_t i = 0; i < count; i++)
+			{
+				std::string name = resFile->getResourceName(i);
+				if (wildcardMatch(pattern.c_str(), name.c_str()))
+				{
+					Resource r(name);
+					auto handle = find(r);
+					if (!handle)
+					{
+						load(r);
+					}
+				}
+			}
+		}
 	}
 
 	void ResourceCache::flush()
@@ -136,6 +185,12 @@ namespace box
 		return nullptr;
 	}
 
+	void ResourceCache::insertToSystem(std::shared_ptr<ResourceHandle> handle)
+	{
+		m_lru.push_front(handle);
+		m_resources[handle->m_resource.m_name] = handle;
+	}
+
 	std::shared_ptr<ResourceHandle> ResourceCache::load(const Resource& r)
 	{
 		LOG("ResCache load\n");
@@ -144,7 +199,7 @@ namespace box
 
 		for (auto it : m_loaders)
 		{
-			if (wildcardMatch(it->getPattern(), r.m_name))
+			if (wildcardMatch(it->getPattern().c_str(), r.m_name.c_str()))
 			{
 				loader = it;
 				break;
@@ -155,9 +210,19 @@ namespace box
 			return handle;
 		}
 
-		size_t rawSize = m_resourceFile->getRawResourceSize(r);
+		ResourceFile* foundResFile(nullptr);
+		size_t rawSize(0);
+		for (auto resFile : m_resourceFiles)
+		{
+			rawSize = resFile->getRawResourceSize(r);
+			if (rawSize > 0)
+			{
+				foundResFile = resFile;
+				break;
+			}
+		}
 
-		if (rawSize == 0)
+		if (rawSize <= 0 || foundResFile == nullptr)
 		{
 			return handle;
 		}
@@ -168,7 +233,7 @@ namespace box
 			return handle;
 		}
 
-		m_resourceFile->getRawResource(r, rawBuffer);
+		foundResFile->getRawResource(r, rawBuffer);
 		U8* buffer(nullptr);
 
 		if (loader->useRawFile())
@@ -199,8 +264,8 @@ namespace box
 
 		if (handle)
 		{
-			m_lru.push_front(handle);
-			m_resources[r.m_name] = handle;
+			handle->setDataReady();
+			insertToSystem(handle);
 		}
 
 		return handle;

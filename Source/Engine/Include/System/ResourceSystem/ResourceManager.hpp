@@ -19,6 +19,8 @@ namespace box
 
 		void preload(char* wildcard, bool threaded = false);
 
+		std::shared_ptr<ResourceHandle> getHandle(Resource& r, bool async = false);
+
 	private:
 		ResourceCache* m_cache;
 	};

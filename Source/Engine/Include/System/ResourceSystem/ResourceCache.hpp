@@ -4,13 +4,15 @@
 #include <list>
 #include <map>
 #include <string>
+#include <vector>
+
+#include "System\ResourceSystem\ResourceHandle.hpp"
 
 namespace box
 {
 	class Resource;
 	class ResourceLoader;
 	class ResourceFile;
-	class ResourceHandle;
 }
 
 namespace box
@@ -18,23 +20,28 @@ namespace box
 	class ResourceCache
 	{
 	public:
-		ResourceCache(size_t sizeInMb, ResourceFile* resFile);
+		ResourceCache(size_t sizeInMb, ResourceFile* resFile = nullptr);
 		~ResourceCache();
+
+		void addResourceFile(ResourceFile*);
 
 		bool init();
 		void registerLoader(std::shared_ptr<ResourceLoader> loader);
 		std::shared_ptr<ResourceHandle> getHandle(Resource& r);
+		std::shared_ptr<ResourceHandle> find(const Resource& r);
 
 		void preload(const std::string& pattern);
 		void flush();
 		void memoryHasBeenFreed(size_t size);
 
+		void insertToSystem(std::shared_ptr<ResourceHandle> handle);
+
 	private:
 		using ResourceHandleList = std::list<std::shared_ptr<ResourceHandle>>;
 		using ResourceHandleMap = std::map<std::string, std::shared_ptr<ResourceHandle>>;
 		using ResourceLoaders = std::list<std::shared_ptr<ResourceLoader>>;
+		using ResourceFiles = std::vector<ResourceFile*>;
 
-		std::shared_ptr<ResourceHandle> find(const Resource& r);
 		const U8* update(std::shared_ptr<ResourceHandle> handle);
 		std::shared_ptr<ResourceHandle> load(const Resource& r);
 		void free(std::shared_ptr<ResourceHandle> gonner);
@@ -44,10 +51,12 @@ namespace box
 		void freeOneResource();
 
 	private:
+		friend class PreloadProcess;
+
 		ResourceHandleList m_lru;
 		ResourceHandleMap m_resources;
 		ResourceLoaders m_loaders;
-		ResourceFile* m_resourceFile;
+		ResourceFiles m_resourceFiles;
 		size_t m_cacheSize;
 		size_t m_allocated;
 	};
