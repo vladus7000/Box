@@ -116,8 +116,8 @@ class EngineForGame : Engine
         //conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\output");
         conf.Defines.Add("GAME_BUILD");
 
-        conf.AddPublicDependency<Zlib>(target);
-        conf.AddPublicDependency<TinyXml2>(target);
+        conf.AddPrivateDependency<Zlib>(target);
+        conf.AddPrivateDependency<TinyXml2>(target);
     }
 }
 
@@ -141,8 +141,8 @@ class EngineForEditor : Engine
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Editor\\output");
         conf.Defines.Add("EDITOR_BUILD");
 
-        conf.AddPublicDependency<Zlib>(target);
-        conf.AddPublicDependency<TinyXml2>(target);
+        conf.AddPrivateDependency<Zlib>(target);
+        conf.AddPrivateDependency<TinyXml2>(target);
     }
 }
 
