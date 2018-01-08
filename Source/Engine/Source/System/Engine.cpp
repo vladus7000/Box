@@ -17,6 +17,7 @@
 #include "Network\NetworkManager.hpp"
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\Process\ProcessManager.hpp"
+#include "System\EventSystem\EngineEvents.hpp"
 
 namespace box
 {
@@ -79,9 +80,9 @@ namespace box
 			EventSystem::Instance();
 		}
 		result &= Allocator::Instance().init();
+		result &= EventSystem::Instance().init();
 		result &= RunEnvironment::Instance().init(argc, argv);
 		result &= ResourceManager::Instance().init();
-		result &= EventSystem::Instance().init();
 #ifdef GAME_BUILD
 		result &= Window::Instance().init();
 		result &= Display::Instance().init(Window::Instance().getWindowHandle());
@@ -98,6 +99,10 @@ namespace box
 		result &= RandomGenerator::init();
 		result &= CheatManager::Instance().init();
 
+		{
+			std::shared_ptr<Event_EngineStasted> event(new Event_EngineStasted);
+			EventSystem::Instance().raiseEvent(event);
+		}
 		return result;
 	}
 
@@ -116,9 +121,9 @@ namespace box
 		ProcessManager::Instance().abortAllProcesses(true);
 #endif
 		Display::Instance().deinit();
-		EventSystem::Instance().deinit();
 		ResourceManager::Instance().deinit();
 		RunEnvironment::Instance().deinit();
+		EventSystem::Instance().deinit();
 		Allocator::Instance().deinit();
 	}
 }

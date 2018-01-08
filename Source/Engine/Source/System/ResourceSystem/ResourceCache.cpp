@@ -9,6 +9,9 @@
 #include "System\ResourceSystem\ResourceLoader.hpp"
 #include "System\ResourceSystem\Resource.hpp"
 
+#include "System\EventSystem\EventSystem.hpp"
+#include "System\EventSystem\EngineEvents.hpp"
+
 #define LOG(args) printf(args)
 
 namespace box
@@ -306,6 +309,10 @@ namespace box
 		{
 			insertToSystem(handle);
 			handle->setDataReady();
+
+			std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded);
+			EventSystem::Instance().raiseEvent(event);
+
 		}
 
 		return handle;
@@ -396,6 +403,9 @@ namespace box
 		clearFromLoadQueue(handle);
 		insertToSystem(handle);
 		handle->setDataReady();
+
+		std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded);
+		EventSystem::Instance().raiseEvent(event);
 	}
 
 	void ResourceCache::free(std::shared_ptr<ResourceHandle> gonner)

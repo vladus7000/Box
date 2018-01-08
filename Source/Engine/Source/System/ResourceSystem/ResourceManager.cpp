@@ -4,6 +4,8 @@
 #include "System/Process/ProcessManager.hpp"
 #include "System/Process/Processes/PreloadProcess.hpp"
 #include "System/Process/Processes/LoadResourceProcess.hpp"
+#include "System\EventSystem\EventSystem.hpp"
+#include "System\EventSystem\EngineEvents.hpp"
 
 namespace
 {
@@ -44,7 +46,13 @@ namespace box
 			m_cache->addResourceFile(resFile);
 		}
 
-		return m_cache->init();
+		bool res = m_cache->init();
+		if (res)
+		{
+			std::shared_ptr<Event_ResourceCacheStarted> event(new Event_ResourceCacheStarted);
+			EventSystem::Instance().raiseEvent(event);
+		}
+		return res;
 	}
 
 	void ResourceManager::deinit()
