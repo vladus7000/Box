@@ -15,6 +15,9 @@ namespace box
 	public:
 		static EventSystem& Instance();
 		
+		bool init();
+		void deinit();
+
 		void add(const DelegateType& delegate, const EventData::EventType& eventType);
 		void remove(const DelegateType& delegate, const EventData::EventType& eventType);
 		void raiseEvent(StrongEventDataPtr event);

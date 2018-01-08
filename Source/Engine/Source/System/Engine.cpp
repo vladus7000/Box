@@ -15,6 +15,8 @@
 #include "System\RandomGenerator.hpp"
 #include "Cheat\CheatManager.hpp"
 #include "Network\NetworkManager.hpp"
+#include "System\EventSystem\EventSystem.hpp"
+#include "System\Process\ProcessManager.hpp"
 
 namespace box
 {
@@ -54,9 +56,32 @@ namespace box
 	{
 		bool result = true;
 		result &= m_machineInfo.detect();
+
+		{// warming up singletons
+			Allocator::Instance();
+			RunEnvironment::Instance();
+			ResourceManager::Instance();
+#ifdef GAME_BUILD
+			Window::Instance();
+			Display::Instance();
+			ProcessManager::Instance();
+#endif
+#ifdef EDITOR_BUILD
+			Display::Instance();
+#endif
+			ThreadManager::Instance();
+			Input::Instance();
+			ScriptingManager::Instance();
+			Renderer::Instance();
+			SoundSystem::Instance();
+			NetworkManager::Instance();
+			CheatManager::Instance();
+			EventSystem::Instance();
+		}
 		result &= Allocator::Instance().init();
 		result &= RunEnvironment::Instance().init(argc, argv);
 		result &= ResourceManager::Instance().init();
+		result &= EventSystem::Instance().init();
 #ifdef GAME_BUILD
 		result &= Window::Instance().init();
 		result &= Display::Instance().init(Window::Instance().getWindowHandle());
@@ -88,8 +113,10 @@ namespace box
 		ThreadManager::Instance().deinit();
 #ifdef GAME_BUILD
 		Window::Instance().deinit();
+		ProcessManager::Instance().abortAllProcesses(true);
 #endif
 		Display::Instance().deinit();
+		EventSystem::Instance().deinit();
 		ResourceManager::Instance().deinit();
 		RunEnvironment::Instance().deinit();
 		Allocator::Instance().deinit();

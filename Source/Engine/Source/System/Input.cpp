@@ -53,6 +53,8 @@ namespace box
 	{
 		unregisterKeyboardHandler(&g_editorInputController);
 		unregisterMouseHandler(&g_editorInputController);
+		MousedHandlers.clear();
+		KeyboardHandlers.clear();
 	}
 
 	void Input::registerMouseHandler(MouseHandler* handler)

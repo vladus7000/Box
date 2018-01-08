@@ -14,9 +14,26 @@ namespace box
 	{
 		SINGLETON(Allocator);
 	public:
+		struct MemoryStats 
+		{
+			size_t allocatedMemory;
+			size_t allocatedMemoryWithOverhead;
+		};
+
 		bool init();
 		void deinit();
+
+		MemoryStats getStats();
+
 	private:
-		U32 m_allocatedMemoryMb;
+		friend void* ::operator new (size_t size, size_t allignement);
+		friend void* ::operator new (size_t size);
+		friend void* ::operator new[](size_t size);
+
+		friend void ::operator delete (void* ptr);
+		friend void ::operator delete[](void* ptr);
+
+		size_t m_allocatedMemory;
+		size_t m_allocatedMemoryWithOverhead;
 	};
 }

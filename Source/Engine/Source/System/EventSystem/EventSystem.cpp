@@ -76,17 +76,34 @@ namespace box
 			}
 			incomingEvents.clear();
 		}
+		void deinit()
+		{
+			incomingEvents.clear();
+			eventsMap.clear();
+		}
 	};
 
 	SINGLETON_ACCESSOR(EventSystem);
 	EventSystem::EventSystem()
 	{
-		m_impl.reset(new impl);
 	}
 
 	EventSystem::~EventSystem()
 	{
 	}
+
+	bool EventSystem::init()
+	{
+		m_impl.reset(new impl);
+		return m_impl != nullptr;
+	}
+
+	void EventSystem::deinit()
+	{
+		m_impl->deinit();
+		m_impl.reset(nullptr);
+	}
+
 
 	void EventSystem::add(const DelegateType& delegate, const EventData::EventType& eventType)
 	{

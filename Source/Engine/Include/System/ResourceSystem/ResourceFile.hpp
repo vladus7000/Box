@@ -15,6 +15,7 @@ namespace box
 		ResourceFile() = default;
 		virtual ~ResourceFile() = default;
 		virtual bool open() = 0;
+		virtual bool isOpened() const = 0;
 		virtual  size_t getRawResourceSize(const Resource&) = 0;
 		virtual size_t getRawResource(const Resource&, U8*) = 0;
 		virtual size_t getResourcesCount() const = 0;

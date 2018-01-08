@@ -16,6 +16,7 @@ namespace box
 		virtual ~ResourceZipFile();
 
 		virtual bool open() override;
+		virtual bool isOpened() const override { return m_isOpened; }
 		virtual  size_t getRawResourceSize(const Resource& r) override;
 		virtual size_t getRawResource(const Resource&, U8* buffer) override;
 		virtual size_t getResourcesCount() const  override;
@@ -24,5 +25,6 @@ namespace box
 	private:
 		ZipFile* m_zipFile;
 		std::string m_fileName;
+		bool m_isOpened;
 	};
 }

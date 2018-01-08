@@ -72,18 +72,35 @@ namespace box
 		{
 			freeOneResource();
 		}
-
+		m_lru.clear();
+		m_resources.clear();
+		m_waitingForLoading.clear();
+		m_loaders.clear();
 		for (auto resFile : m_resourceFiles)
 		{
 			delete resFile;
 		}
+		m_resourceFiles.clear();
 	}
 
 	void ResourceCache::addResourceFile(ResourceFile* resourceFile)
 	{
-		if (resourceFile && resourceFile->open())
+		if (!resourceFile)
+		{
+			return;
+		}
+
+		if (resourceFile->isOpened())
 		{
 			m_resourceFiles.push_back(resourceFile);
+		}
+		else if (resourceFile->open())
+		{
+			m_resourceFiles.push_back(resourceFile);
+		}
+		else
+		{
+			delete resourceFile;
 		}
 	}
 
@@ -93,7 +110,10 @@ namespace box
 
 		for (auto resFile : m_resourceFiles)
 		{
-			res &= resFile->open();
+			if (!resFile->isOpened())
+			{
+				res &= resFile->open();
+			}
 		}
 
 		registerLoader(std::shared_ptr<ResourceLoader>(new DefaultResourceLoader()));

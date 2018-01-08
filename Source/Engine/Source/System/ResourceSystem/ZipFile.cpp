@@ -34,7 +34,6 @@ namespace box
 		bool init(const std::string& fileName)
 		{
 			deinit();
-
 			m_file = fopen(fileName.c_str(), "rb");
 
 			if (!m_file)
@@ -309,6 +308,7 @@ namespace box
 	ResourceZipFile::ResourceZipFile(const std::string& path)
 		: m_zipFile(nullptr)
 		, m_fileName(path)
+		, m_isOpened(false)
 	{
 	}
 
@@ -320,17 +320,25 @@ namespace box
 
 			delete m_zipFile;
 			m_zipFile = nullptr;
+
+			m_isOpened = false;
 		}
 	}
 
 	bool ResourceZipFile::open()
 	{
+		if (m_isOpened)
+		{
+			return true;
+		}
+
 		m_zipFile = new ZipFile();
 		bool ret = false;
 		if (m_zipFile->init(m_fileName))
 		{
 			ret = true;
 		}
+		m_isOpened = ret;
 		return ret;
 	}
 

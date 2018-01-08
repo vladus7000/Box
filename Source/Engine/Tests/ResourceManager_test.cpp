@@ -73,6 +73,11 @@ public:
 		return true;
 	}
 
+	virtual bool isOpened() const override
+	{
+		return true;
+	}
+
 	virtual  size_t getRawResourceSize(const Resource& r) override
 	{
 		for (auto& it : m_resFile)
