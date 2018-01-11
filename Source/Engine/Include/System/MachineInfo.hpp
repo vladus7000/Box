@@ -13,7 +13,7 @@ namespace box
 			XBOX,
 			SonyPlaystation,
 
-			Unrecognizeble
+			Unrecognizable
 		};
 
 		enum class GpuInfo : U8
@@ -22,7 +22,7 @@ namespace box
 			Amd,
 			Intel,
 
-			Unrecognizeble
+			Unrecognizable
 		};
 
 		enum class CpuInfo : U8
@@ -32,7 +32,7 @@ namespace box
 			Amd32,
 			Amd64,
 
-			Unrecognizeble
+			Unrecognizable
 		};
 
 		enum class InputDevices : U32
@@ -50,9 +50,9 @@ namespace box
 			, m_videoRamSizeMb(0)
 			, m_cpuSpeedMhz(0)
 			, m_gpuSpeedMhz(0)
-			, m_machneType(MachineType::Unrecognizeble)
-			, m_gpu(GpuInfo::Unrecognizeble)
-			, m_cpu(CpuInfo::Unrecognizeble)
+			, m_machneType(MachineType::Unrecognizable)
+			, m_gpu(GpuInfo::Unrecognizable)
+			, m_cpu(CpuInfo::Unrecognizable)
 			, m_inputDevices(InputDevices::Nothing)
 		{}
 
