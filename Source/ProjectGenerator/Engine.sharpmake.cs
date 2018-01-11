@@ -3,6 +3,51 @@ using Sharpmake;
 [module: Sharpmake.Include("Common.sharpmake.cs")]
 
 [Generate]
+class DXUT : Project
+{
+    public DXUT()
+        : base(typeof(BoxTarget))
+    {
+        AddTargets(new BoxTarget(BuildType.Game | BuildType.Editor,
+        Platform.win64,
+        DevEnv.vs2015,
+        Optimization.Debug | Optimization.Release));
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Core\\DXUTDevice11.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Core\\DXUTmisc.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Core\\DXUT.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Core\\DXUTDevice9.cpp");
+
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\SDKmisc.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\DXUTgui.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\DXUTres.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\SDKmesh.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\DXUTcamera.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\SDKsound.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\SDKwavefile.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\DXUTsettingsdlg.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\ImeUi.cpp");
+        SourceFiles.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional\\DXUTguiIME.cpp");
+
+    }
+
+    [Configure]
+    public void ConfigureAll(Project.Configuration conf, BoxTarget target)
+    {
+        conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\DXUT11");
+
+        conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Core");
+        conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional");
+        conf.IncludePaths.Add("$(DXSDK_DIR)\\Include");
+        conf.Output = Project.Configuration.OutputType.Lib;
+
+        //Options.Vc.General.CharacterSet
+        conf.Options.Add(Options.Vc.General.CharacterSet.Unicode);
+        conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\DXUT11\\intermediate");
+        conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\DXUT11\\output");
+    }
+}
+
+[Generate]
 class Zlib : Project
 {
     public Zlib()
@@ -118,6 +163,7 @@ class EngineForGame : Engine
 
         conf.AddPrivateDependency<Zlib>(target);
         conf.AddPrivateDependency<TinyXml2>(target);
+        conf.AddPrivateDependency<DXUT>(target);
     }
 }
 
@@ -143,6 +189,7 @@ class EngineForEditor : Engine
 
         conf.AddPrivateDependency<Zlib>(target);
         conf.AddPrivateDependency<TinyXml2>(target);
+        conf.AddPrivateDependency<DXUT>(target);
     }
 }
 
