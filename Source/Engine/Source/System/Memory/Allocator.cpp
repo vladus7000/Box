@@ -98,9 +98,8 @@ namespace box
 	void Allocator::deinit()
 	{
 		g_allocator = nullptr;
-		//TODO assert(m_allocatedMemory == 0);
-		m_allocatedMemory = 0;
-		m_allocatedMemoryWithOverhead = 0;
+		ASSERT(m_allocatedMemory == 0);
+		ASSERT(m_allocatedMemoryWithOverhead == 0);
 	}
 
 	Allocator::MemoryStats Allocator::getStats()

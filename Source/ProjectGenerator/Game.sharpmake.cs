@@ -25,6 +25,7 @@ class Game : Project
         conf.PrecompSource = "StdAfx.cpp";
 
         conf.Defines.Add("GAME_BUILD");
+        conf.Options.Add(Options.Vc.General.CharacterSet.Unicode);
 
         conf.ProjectPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\projects\\Game");
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Game\\intermediate");

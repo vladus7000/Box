@@ -38,6 +38,22 @@ class DXUT : Project
         conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Core");
         conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\DXUT11\\Optional");
         conf.IncludePaths.Add("$(DXSDK_DIR)\\Include");
+        conf.LibraryPaths.Add("$(DXSDK_DIR)\\Lib\\x64");
+        //conf.LibraryFiles.Add("dxerr");
+        conf.LibraryFiles.Add("dxguid");
+        conf.LibraryFiles.Add("d3dcompiler");
+        conf.LibraryFiles.Add("winmm");
+        conf.LibraryFiles.Add("comctl32");
+        if (target.Optimization == Optimization.Debug)
+        {
+            conf.LibraryFiles.Add("d3dx11d");
+            conf.LibraryFiles.Add("d3dx9d");
+        }
+        else
+        {
+            conf.LibraryFiles.Add("d3dx11");
+            conf.LibraryFiles.Add("d3dx9");
+        }
         conf.Output = Project.Configuration.OutputType.Lib;
 
         //Options.Vc.General.CharacterSet
@@ -130,7 +146,10 @@ class Engine : Project
         conf.PrecompHeader = "StdAfx.hpp";
         conf.PrecompSource = "StdAfx.cpp";
 
+        conf.Options.Add(Options.Vc.General.CharacterSet.Unicode);
+
         conf.IncludePaths.Add(SourceRootPath + "\\..\\Include");
+        conf.IncludePaths.Add(SourceRootPath + "\\..\\Source");
         conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib");
 
         conf.Output = Project.Configuration.OutputType.Lib;
@@ -163,7 +182,7 @@ class EngineForGame : Engine
 
         conf.AddPrivateDependency<Zlib>(target);
         conf.AddPrivateDependency<TinyXml2>(target);
-        conf.AddPrivateDependency<DXUT>(target);
+        conf.AddPublicDependency<DXUT>(target);
     }
 }
 
