@@ -19,7 +19,7 @@ namespace box
 		using StrongThreadPtr = std::shared_ptr<Thread>;
 		using WeakThreadPtr = std::weak_ptr<Thread>;
 
-		Thread(const std::string& name = "", U32 stackSize = 0, U32 mask = 0xFFFFFFFF);
+		Thread(const std::string& name = "Unnamed", U32 stackSize = 0, U64 mask = 0xFFFFFFFFFFFFFFFF);
 		virtual ~Thread();
 
 		virtual S32 run() = 0;
@@ -29,6 +29,8 @@ namespace box
 		virtual void pause();
 		virtual void unPause();
 
+		const std::string& getName() const { return m_name; }
+		U64 getAffinityMask() const { return m_affinityMask; }
 		State getState() const { return m_state; }
 		S32 getResult();
 
@@ -37,7 +39,7 @@ namespace box
 	protected:
 		std::string m_name;
 		U32 m_stackSize;
-		U32 m_affinityMask;
+		U64 m_affinityMask;
 		U8* m_shadow[10];
 		bool m_stopped;
 		State m_state;

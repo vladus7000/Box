@@ -5,6 +5,34 @@
 
 namespace box
 {
+
+	typedef struct tagTHREADNAME_INFO
+
+	{
+
+		DWORD dwType; // must be 0x1000
+		LPCSTR szName; // pointer to name (in user addr space)
+		DWORD dwThreadID; // thread ID (-1=caller thread)
+		DWORD dwFlags; // reserved for future use, must be zero
+
+	} THREADNAME_INFO;
+
+	void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName)
+	{
+		THREADNAME_INFO info;
+		info.dwType = 0x1000;
+		info.szName = szThreadName;
+		info.dwThreadID = dwThreadID;
+		info.dwFlags = 0;
+		__try
+		{
+			RaiseException(0x406D1388, 0, sizeof(info) / sizeof(DWORD), (ULONG_PTR*)&info);
+		}
+		__except (EXCEPTION_CONTINUE_EXECUTION)
+		{
+		}
+	}
+
 	struct Shadow
 	{
 		HANDLE event;
@@ -27,13 +55,17 @@ namespace box
 		if (This->getState() != Thread::State::Uninited && This->getState() != Thread::State::Stopped)
 		{
 			ResetEvent(e);
+			const auto& name = This->getName();
+			U64 mask = This->getAffinityMask();
+			SetThreadName(-1, name.c_str());
+			SetThreadAffinityMask(GetCurrentThread(), mask);
 			s->res = This->run();
 		}
 		This->stop();
 		return 0;
 	}
 
-	Thread::Thread(const std::string& name, U32 stackSize, U32 mask)
+	Thread::Thread(const std::string& name, U32 stackSize, U64 mask)
 		: m_name(name)
 		, m_stackSize(stackSize)
 		, m_affinityMask(mask)
@@ -68,10 +100,10 @@ namespace box
 
 		DWORD id;
 		HANDLE thread = CreateThread(NULL, // default security attributes
-			0,             // use default stack size  
-			ThreadFunction,// thread function name
-			this,          // argument to thread function 
-			0,             // use default creation flags 
+			m_stackSize,
+			ThreadFunction,
+			this,
+			0, // use default creation flags 
 			&id);
 
 		s->thread = thread;
