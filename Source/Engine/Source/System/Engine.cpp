@@ -115,6 +115,7 @@ namespace box
 		Renderer::Instance().deinit();
 		ScriptingManager::Instance().deinit();
 		Input::Instance().deinit();
+		ThreadManager::Instance().abortAllThreads(true);
 		ThreadManager::Instance().deinit();
 #ifdef GAME_BUILD
 		Window::Instance().deinit();
