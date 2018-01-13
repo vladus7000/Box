@@ -86,29 +86,32 @@ namespace box
 
 	void Thread::init()
 	{
-		static U32 n = 0;
-		n++;
-		std::string eventName("__ThreadEvent");
-		eventName += n;
-		std::wstring nameW(eventName.begin(), eventName.end());
-		HANDLE event;
-		event = CreateEvent(NULL, TRUE, FALSE, nameW.c_str());
+		if (m_state == State::Uninited)
+		{
+			static U32 n = 0;
+			n++;
+			std::string eventName("__ThreadEvent");
+			eventName += n;
+			std::wstring nameW(eventName.begin(), eventName.end());
+			HANDLE event;
+			event = CreateEvent(NULL, TRUE, FALSE, nameW.c_str());
 
-		Shadow* s = reinterpret_cast<Shadow*>(m_shadow);
-		s->res = 0;
-		s->event = event;
+			Shadow* s = reinterpret_cast<Shadow*>(m_shadow);
+			s->res = 0;
+			s->event = event;
 
-		DWORD id;
-		HANDLE thread = CreateThread(NULL, // default security attributes
-			m_stackSize,
-			ThreadFunction,
-			this,
-			0, // use default creation flags 
-			&id);
+			DWORD id;
+			HANDLE thread = CreateThread(NULL, // default security attributes
+				m_stackSize,
+				ThreadFunction,
+				this,
+				0, // use default creation flags 
+				&id);
 
-		s->thread = thread;
-		s->id = id;
-		m_state = State::Inited;
+			s->thread = thread;
+			s->id = id;
+			m_state = State::Inited;
+		}
 	}
 
 	void Thread::start()
