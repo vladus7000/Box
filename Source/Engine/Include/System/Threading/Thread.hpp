@@ -51,7 +51,7 @@ namespace box
 		std::string m_name;
 		U32 m_stackSize;
 		U64 m_affinityMask;
-		U8* m_shadow[10];
+		U8* m_shadow[32];
 		bool m_stopped;
 		State m_state;
 		Priority m_priority;

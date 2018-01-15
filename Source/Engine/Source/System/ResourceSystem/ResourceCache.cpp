@@ -248,6 +248,7 @@ namespace box
 		}
 		if (!loader)
 		{
+			handle = std::make_shared<ResourceHandle>(r, nullptr, 0, this);
 			handle->m_status = ResourceHandle::Status::LoaderNotDound;
 			return handle;
 		}
@@ -266,6 +267,7 @@ namespace box
 
 		if (rawSize <= 0 || foundResFile == nullptr)
 		{
+			handle = std::make_shared<ResourceHandle>(r, nullptr, 0, this);
 			handle->m_status = ResourceHandle::Status::ResourceNotFound;
 			return handle;
 		}
