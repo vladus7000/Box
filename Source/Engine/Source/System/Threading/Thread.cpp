@@ -7,7 +7,6 @@ namespace box
 {
 
 	typedef struct tagTHREADNAME_INFO
-
 	{
 
 		DWORD dwType; // must be 0x1000
@@ -41,6 +40,39 @@ namespace box
 		S32 res;
 	};
 
+	int PriorityMapper(Thread::Priority p)
+	{
+		int result = 0;
+		switch (p)
+		{
+		case Thread::Priority::TimeCritical:
+			result = 15;
+			break;
+		case Thread::Priority::Higest:
+			result = 2;
+			break;
+		case Thread::Priority::AboveNormal:
+			result = 1;
+			break;
+		case Thread::Priority::Normal:
+			result = 0;
+			break;
+		case Thread::Priority::BelowNormal:
+			result = -1;
+			break;
+		case Thread::Priority::Lowest:
+			result = -2;
+			break;
+		case Thread::Priority::Idle:
+			result = -15;
+			break;
+		default:
+			result = 0;
+			break;
+		}
+		return result;
+	}
+
 	DWORD WINAPI ThreadFunction(LPVOID lpParam)
 	{
 		Thread* This = reinterpret_cast<Thread*>(lpParam);
@@ -65,11 +97,12 @@ namespace box
 		return 0;
 	}
 
-	Thread::Thread(const std::string& name, U32 stackSize, U64 mask)
+	Thread::Thread(const std::string& name, U32 stackSize, U64 mask, Priority priority)
 		: m_name(name)
 		, m_stackSize(stackSize)
 		, m_affinityMask(mask)
 		, m_state(State::Uninited)
+		, m_priority(priority)
 	{
 	}
 
@@ -107,7 +140,7 @@ namespace box
 				this,
 				0, // use default creation flags 
 				&id);
-
+			SetThreadPriority(thread, PriorityMapper(m_priority));
 			s->thread = thread;
 			s->id = id;
 			m_state = State::Inited;
