@@ -18,6 +18,6 @@ namespace box
 		CriticalSection& operator=(const CriticalSection& o);
 		CriticalSection&operator=(CriticalSection&& o);
 
-		U8* m_shadow[64];
+		U8 m_shadow[64];
 	};
 }
