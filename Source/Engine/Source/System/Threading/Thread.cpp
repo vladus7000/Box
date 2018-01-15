@@ -93,7 +93,6 @@ namespace box
 			SetThreadAffinityMask(GetCurrentThread(), mask);
 			s->res = This->run();
 		}
-		This->stop();
 		return 0;
 	}
 
