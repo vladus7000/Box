@@ -1,8 +1,6 @@
 #include "StdAfx.hpp"
 #include "Window\Window.hpp"
 
-#include <stdio.h>
-int (WINAPIV * __vsnprintf)(char *, size_t, const char*, va_list) = _vsnprintf;
 #include <DXUT11\Core\DXUT.h>
 
 
@@ -70,33 +68,29 @@ namespace box
 	void CALLBACK OnKeyboard(UINT nChar, bool bKeyDown, bool bAltDown, void* pUserContext)
 	{
 	}
-	void CALLBACK OnFrameMove(double fTime, float fElapsedTime, void* pUserContext)
-	{
-	}
 
 	bool Window::init()
 	{
+
 #if defined(DEBUG) | defined(_DEBUG)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 		DXUTSetCallbackDeviceChanging(ModifyDeviceSettings);
 		DXUTSetCallbackMsgProc(MsgProc);
 		DXUTSetCallbackKeyboard(OnKeyboard);
-		DXUTSetCallbackFrameMove(OnFrameMove);
-
+	
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable);
 		DXUTSetCallbackD3D11DeviceCreated(OnD3D11CreateDevice);
 		DXUTSetCallbackD3D11SwapChainResized(OnD3D11ResizedSwapChain);
 		DXUTSetCallbackD3D11FrameRender(OnD3D11FrameRender);
 		DXUTSetCallbackD3D11SwapChainReleasing(OnD3D11ReleasingSwapChain);
 		DXUTSetCallbackD3D11DeviceDestroyed(OnD3D11DestroyDevice);
-
+	
 		DXUTInit(true, true, NULL);
 		DXUTSetCursorSettings(true, true);
 		DXUTCreateWindow(L"Window");
 		DXUTCreateDevice(D3D_FEATURE_LEVEL_11_0, true, 800, 600);
-		DXUTMainLoop();
-		return TODO fix flow with DXUT;
+		return true;
 	}
 
 	void Window::deinit()
@@ -112,6 +106,5 @@ namespace box
 			DispatchMessage(&msg);
 		}*/
 	}
-
 #endif
 }

@@ -3,6 +3,11 @@
 
 namespace box
 {
+	class GameLoop;
+}
+
+namespace box
+{
 	class Engine
 	{
 	public:
@@ -15,6 +20,10 @@ namespace box
 #endif
 			U32 argc = 0, char** argv = nullptr);
 		void shutdown();
+
+		void registerMainLoop(GameLoop* loop);
+		void enterMainLoop();
+
 
 	private:
 		MachineInfo m_machineInfo;

@@ -32,13 +32,8 @@ namespace box
 
 		void* getWindowHandle() const { return m_windowHandle; }
 
-		bool windowIsClosed() const { return m_windowIsClosed; } // hack
-		void closeWindow() { m_windowIsClosed = true; }
-
 	private:
 		void* m_windowHandle;
-		bool m_windowIsClosed; // hack
-
 	};
 #endif
 }

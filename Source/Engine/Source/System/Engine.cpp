@@ -18,6 +18,9 @@
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\Process\ProcessManager.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
+#include "Gameplay\GameLoop.hpp"
+
+#include <DXUT11\Core\DXUT.h>
 
 namespace box
 {
@@ -126,5 +129,29 @@ namespace box
 		RunEnvironment::Instance().deinit();
 		EventSystem::Instance().deinit();
 		Allocator::Instance().deinit();
+	}
+
+	GameLoop* g_loop = nullptr;
+	void CALLBACK OnFrameMove(double fTime, float fElapsedTime, void* pUserContext)
+	{
+		if (g_loop)
+		{
+			g_loop->logicTick(fTime, fElapsedTime);
+		}
+	}
+
+	void Engine::registerMainLoop(GameLoop* loop)
+	{
+		DXUTSetCallbackFrameMove(OnFrameMove);
+		g_loop = loop;
+	}
+
+	void Engine::enterMainLoop()
+	{
+		if (g_loop)
+		{
+			DXUTMainLoop();
+			g_loop->leaveGameLoop();
+		}
 	}
 }
