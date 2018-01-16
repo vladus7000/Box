@@ -139,10 +139,30 @@ namespace box
 			g_loop->logicTick(fTime, fElapsedTime);
 		}
 	}
+	HRESULT CALLBACK OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain,
+		const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext)
+	{
 
+		if (g_loop)
+		{
+			return g_loop->OnD3D11ResizedSwapChain(pd3dDevice, pSwapChain, pBackBufferSurfaceDesc, pUserContext);
+		}
+		return S_OK;
+	}
+	LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing,
+		void* pUserContext)
+	{
+		if (g_loop)
+		{
+			return g_loop->MsgProc(hWnd, uMsg, wParam, lParam, pbNoFurtherProcessing, pUserContext);
+		}
+		return 0;
+	}
 	void Engine::registerMainLoop(GameLoop* loop)
 	{
 		DXUTSetCallbackFrameMove(OnFrameMove);
+		DXUTSetCallbackMsgProc(MsgProc);
+		DXUTSetCallbackD3D11SwapChainResized(OnD3D11ResizedSwapChain);
 		g_loop = loop;
 	}
 

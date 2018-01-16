@@ -38,12 +38,7 @@ namespace box
 		HRESULT hr;
 		return hr;
 	}
-	HRESULT CALLBACK OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain,
-		const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext)
-	{
-		HRESULT hr;
-		return hr;
-	}
+	
 	void CALLBACK OnD3D11FrameRender(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime,
 		float fElapsedTime, void* pUserContext)
 	{
@@ -60,11 +55,11 @@ namespace box
 	{
 		return true;
 	}
-	LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing,
+	/*LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing,
 		void* pUserContext)
 	{
 		return 0;
-	}
+	}*/
 	void CALLBACK OnKeyboard(UINT nChar, bool bKeyDown, bool bAltDown, void* pUserContext)
 	{
 	}
@@ -76,12 +71,12 @@ namespace box
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 		DXUTSetCallbackDeviceChanging(ModifyDeviceSettings);
-		DXUTSetCallbackMsgProc(MsgProc);
+		//DXUTSetCallbackMsgProc(MsgProc);
 		DXUTSetCallbackKeyboard(OnKeyboard);
 	
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable);
 		DXUTSetCallbackD3D11DeviceCreated(OnD3D11CreateDevice);
-		DXUTSetCallbackD3D11SwapChainResized(OnD3D11ResizedSwapChain);
+		
 		DXUTSetCallbackD3D11FrameRender(OnD3D11FrameRender);
 		DXUTSetCallbackD3D11SwapChainReleasing(OnD3D11ReleasingSwapChain);
 		DXUTSetCallbackD3D11DeviceDestroyed(OnD3D11DestroyDevice);
