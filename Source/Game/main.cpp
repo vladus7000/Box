@@ -8,6 +8,16 @@
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
 #include "System\Memory\Allocator.hpp"
+#include "System\Threading\LockGuard.hpp"
+#include "System\Threading\CriticalSection.hpp"
+
+#include "System\Threading\Thread.hpp"
+#include "System\Threading\Semaphore.hpp"
+#include "Gameplay\GameLoop.hpp"
+
+#include <DXUT11\Core\DXUT.h>
+#include "DXUT11\Optional\DXUTgui.h"
+#include "DXUT11\Optional\SDKmisc.h"
 
 using namespace box;
 
@@ -83,12 +93,90 @@ void resLoaded(std::shared_ptr<EventData> event)
 {
 	printf(" Resourse loaded!!!()\n");
 }
+void CALLBACK OnGUIEvent(UINT nEvent, int nControlID, CDXUTControl* pControl, void* pUserContext)
+{
+}
 
-class Game
+HRESULT WINAPI DXTraceW(__in_z const char* strFile, __in DWORD dwLine, __in HRESULT hr, __in_z_opt const WCHAR* strMsg, __in BOOL bPopMsgBox)
+{
+	return 0;
+}
+
+class Game : public box::GameLoop
 {
 public:
-	void run()
+	virtual void logicTick(F64 fTime, F32 fElapsedTime) override
 	{
+		auto stat = Allocator::Instance().getStats();
+		if (stat.allocatedMemory != oldstat.allocatedMemory)
+		{
+			oldstat = stat;
+			printf("aloc %d, aloc+ %d \n", stat.allocatedMemory, stat.allocatedMemoryWithOverhead);
+		}
+		
+		Input::Instance().poll(1.0f / 60.0f);
+		ProcessManager::Instance().update(1.0f / 60.0f);
+		Sleep(16);
+
+		float ClearColor[4] = { 0.0f, 0.25f, 0.25f, 0.55f };
+		ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
+		context->ClearRenderTargetView(pRTV, ClearColor);
+
+		ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
+		context->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0, 0);
+
+
+		HUD.OnRender(fElapsedTime);
+
+		txtHelper->Begin();
+		txtHelper->SetInsertionPos(2, 0);
+		txtHelper->SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+		txtHelper->DrawTextLine(DXUTGetFrameStats(DXUTIsVsyncEnabled()));
+		txtHelper->DrawTextLine(DXUTGetDeviceStats());
+		txtHelper->SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+		txtHelper->DrawTextLine(L"Press F1 for help");
+		txtHelper->End();
+	}
+
+	virtual void leaveGameLoop() override
+	{
+		dialogResourceManager.OnD3D11DestroyDevice();
+		delete txtHelper;
+	}
+
+	virtual LRESULT MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void* pUserContext) override
+	{
+		*pbNoFurtherProcessing = dialogResourceManager.MsgProc(hWnd, uMsg, wParam, lParam);
+		if (*pbNoFurtherProcessing)
+			return 0;
+
+		*pbNoFurtherProcessing = HUD.MsgProc(hWnd, uMsg, wParam, lParam);
+		if (*pbNoFurtherProcessing)
+			return 0;
+	}
+
+	virtual HRESULT OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext) override
+	{
+		dialogResourceManager.OnD3D11ResizedSwapChain(pd3dDevice, pBackBufferSurfaceDesc);
+		HUD.SetLocation(20, 0);
+		HUD.SetSize(170, 170);
+		return S_OK;
+	}
+
+	void init()
+	{
+		context = DXUTGetD3D11DeviceContext();
+		device = DXUTGetD3D11Device();
+		dialogResourceManager.OnD3D11CreateDevice(device, context);
+		txtHelper = new CDXUTTextHelper(device, context, &dialogResourceManager, 15);
+		//g_D3DSettingsDlg.Init(&dialogResourceManager);
+		//g_D3DSettingsDlg.OnD3D11CreateDevice(device)
+		HUD.Init(&dialogResourceManager);
+
+		HUD.SetCallback(OnGUIEvent); int iY = 50;
+		HUD.AddButton(1, L"Toggle full screen", 50, iY, 170, 23);
+
+
 		typedef fastdelegate::FastDelegate1<std::shared_ptr<EventData>> MyDelegateT;
 		MyDelegateT MyDelegate(&printBoom);
 		EventSystem::Instance().add(MyDelegate, 1);
@@ -141,33 +229,127 @@ public:
 		}
 		Resource r("Syberia3_Wallpaper4.png");
 		auto handle = ResourceManager::Instance().getHandle(r);
-		Allocator::MemoryStats oldstat;
 		oldstat.allocatedMemory = 0;
 		oldstat.allocatedMemoryWithOverhead = 0;
-		while (!window.windowIsClosed())
-		{
-			auto stat = Allocator::Instance().getStats();
-			if (stat.allocatedMemory != oldstat.allocatedMemory)
-			{
-				oldstat = stat;
-				printf("aloc %d, aloc+ %d \n", stat.allocatedMemory, stat.allocatedMemoryWithOverhead);
-			}
-			window.pollEvents();
-			Input::Instance().poll(1.0f / 60.0f);
-			ProcessManager::Instance().update(1.0f / 60.0f);
-			Sleep(16);
-		}
 	}
+	Allocator::MemoryStats oldstat;
+	CDXUTDialogResourceManager  dialogResourceManager;
+	ID3D11DeviceContext* context;
+	ID3D11Device* device;
+	CDXUTTextHelper* txtHelper;
+	CDXUTDialog HUD;
+	//CD3DSettingsDlg g_D3DSettingsDlg;
+};
+
+int g_c = 0;
+bool stop1 = false;
+box::CriticalSection g_s;
+
+class RenderThread : public box::Thread
+{
+public:
+	RenderThread(box::Semaphore& startTick, box::Semaphore& endTick)
+		: m_startTick(startTick)
+		, m_endTick(endTick)
+		,Thread("RenderThread")
+	{
+		printf("RenderThread created\n");
+	}
+	~RenderThread()
+	{
+		printf("RenderThread destroyed\n");
+	}
+	virtual int run() override
+	{
+		while (!stop1)
+		{
+			printf("RenderThread Wait!!!!!!!!!!\n");
+			m_startTick.wait();
+			if (stop1) break;
+			printf("RenderThread do work!!!!!!!!!!\n");
+			Sleep(100);
+			m_endTick.signal();
+		}
+		return 0;
+	}
+	box::Semaphore& m_startTick;
+	box::Semaphore& m_endTick;
+};
+
+class PhysicsTread : public box::Thread
+{
+public:
+	PhysicsTread(box::Semaphore& startTick, box::Semaphore& endTick)
+		: m_startTick(startTick)
+		, m_endTick(endTick)
+		, Thread("PhysicsTread")
+	{
+		printf("PhysicsTread created\n");
+	}
+	~PhysicsTread()
+	{
+		printf("PhysicsTread destroyed\n");
+	}
+	virtual int run() override
+	{
+		while (!stop1)
+		{
+			printf("PhysicsTread Wait!!!!!!!!!!\n");
+			m_startTick.wait();
+			if (stop1) break;
+			printf("PhysicsTread do work!!!!!!!!!!\n");
+			Sleep(200);
+			m_endTick.signal();
+		}
+		return 0;
+	}
+	box::Semaphore& m_startTick;
+	box::Semaphore& m_endTick;
 };
 
 int main(int argc, char** argv)
 {
 	{
+		box::CriticalSection s;
+		//{
+		//	box::LockGuard<box::CriticalSection> g(s);
+		//}
 		box::Engine engine;
+		/*{
+			box::Semaphore startTick;
+			box::Semaphore renderSema;
+			box::Semaphore physSema;
+			Thread::StrongThreadPtr t(new RenderThread(startTick, renderSema));
+			t->init();
+			t->start();
+
+			Thread::StrongThreadPtr t2(new PhysicsTread(startTick, physSema));
+			t2->init();
+			t2->start();
+
+
+			Sleep(10);
+			for (int i = 0; i < 10; i++)
+			{
+				printf("Save!!!!!!!!!!\n");
+				startTick.signal();
+				startTick.signal();
+				printf("main thread do work!!!!!!!!!!\n");
+				Sleep(300);
+				renderSema.wait();
+				physSema.wait();
+
+			}
+			stop1 = true;
+			startTick.signal();
+			startTick.signal();
+		}*/
 		engine.startup(argc, argv);
 		{
 			Game game;
-			game.run();
+			game.init();
+			engine.registerMainLoop(&game);
+			engine.enterMainLoop();
 		}
 		engine.shutdown();
 	}
