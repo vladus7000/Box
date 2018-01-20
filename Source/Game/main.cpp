@@ -13,7 +13,7 @@
 
 #include "System\Threading\Thread.hpp"
 #include "System\Threading\Semaphore.hpp"
-#include "Gameplay\GameLoop.hpp"
+#include "Gameplay\GameView.hpp"
 
 #include <DXUT11\Core\DXUT.h>
 #include "DXUT11\Optional\DXUTgui.h"
@@ -102,10 +102,13 @@ HRESULT WINAPI DXTraceW(__in_z const char* strFile, __in DWORD dwLine, __in HRES
 	return 0;
 }
 
-class Game : public box::GameLoop
+class Game : public box::GameView
 {
 public:
-	virtual void logicTick(F64 fTime, F32 fElapsedTime) override
+	virtual void deviceLost() override {}
+	virtual S32 render(F64 time, F32 delta) override { return 0; }
+
+	virtual void update(F64 fTime, F32 fElapsedTime) override
 	{
 		auto stat = Allocator::Instance().getStats();
 		if (stat.allocatedMemory != oldstat.allocatedMemory)
@@ -138,21 +141,21 @@ public:
 		txtHelper->End();
 	}
 
-	virtual void leaveGameLoop() override
+	virtual void deinit() override
 	{
 		dialogResourceManager.OnD3D11DestroyDevice();
 		delete txtHelper;
 	}
 
-	virtual LRESULT MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void* pUserContext) override
+	virtual S32 msgProc(const AppMsg& msg) override
 	{
-		*pbNoFurtherProcessing = dialogResourceManager.MsgProc(hWnd, uMsg, wParam, lParam);
-		if (*pbNoFurtherProcessing)
-			return 0;
+		if (dialogResourceManager.MsgProc(msg.hwnd, msg.uMsg, msg.wParam, msg.lParam))
+			return 1;
 
-		*pbNoFurtherProcessing = HUD.MsgProc(hWnd, uMsg, wParam, lParam);
-		if (*pbNoFurtherProcessing)
-			return 0;
+		if(HUD.MsgProc(msg.hwnd, msg.uMsg, msg.wParam, msg.lParam))
+			return 1;
+
+		return 0;
 	}
 
 	virtual HRESULT OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext) override
@@ -163,15 +166,15 @@ public:
 		return S_OK;
 	}
 
-	void init()
+	virtual bool restore() override
 	{
 		context = DXUTGetD3D11DeviceContext();
 		device = DXUTGetD3D11Device();
-		dialogResourceManager.OnD3D11CreateDevice(device, context);
 		txtHelper = new CDXUTTextHelper(device, context, &dialogResourceManager, 15);
 		//g_D3DSettingsDlg.Init(&dialogResourceManager);
 		//g_D3DSettingsDlg.OnD3D11CreateDevice(device)
 		HUD.Init(&dialogResourceManager);
+		dialogResourceManager.OnD3D11CreateDevice(device, context);
 
 		HUD.SetCallback(OnGUIEvent); int iY = 50;
 		HUD.AddButton(1, L"Toggle full screen", 50, iY, 170, 23);
@@ -231,7 +234,10 @@ public:
 		auto handle = ResourceManager::Instance().getHandle(r);
 		oldstat.allocatedMemory = 0;
 		oldstat.allocatedMemoryWithOverhead = 0;
+
+		return true;
 	}
+
 	Allocator::MemoryStats oldstat;
 	CDXUTDialogResourceManager  dialogResourceManager;
 	ID3D11DeviceContext* context;
@@ -346,9 +352,8 @@ int main(int argc, char** argv)
 		}*/
 		engine.startup(argc, argv);
 		{
-			Game game;
-			game.init();
-			engine.registerMainLoop(&game);
+			std::shared_ptr<Game> game(new Game);
+			engine.attachGameView(game);
 			engine.enterMainLoop();
 		}
 		engine.shutdown();

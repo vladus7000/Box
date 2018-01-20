@@ -1,10 +1,13 @@
 #pragma once
 #include "MachineInfo.hpp"
 
+#ifdef GAME_BUILD
+#include <memory>
 namespace box
 {
-	class GameLoop;
+	class GameView;
 }
+#endif
 
 namespace box
 {
@@ -21,9 +24,10 @@ namespace box
 			U32 argc = 0, char** argv = nullptr);
 		void shutdown();
 
-		void registerMainLoop(GameLoop* loop);
+#ifdef GAME_BUILD
+		void attachGameView(std::shared_ptr<GameView> view);
 		void enterMainLoop();
-
+#endif
 
 	private:
 		MachineInfo m_machineInfo;

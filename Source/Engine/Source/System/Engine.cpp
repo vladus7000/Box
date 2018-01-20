@@ -18,9 +18,12 @@
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\Process\ProcessManager.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
-#include "Gameplay\GameLoop.hpp"
+#include "Gameplay\GameView.hpp"
 
+#ifdef GAME_BUILD
 #include <DXUT11\Core\DXUT.h>
+#include <vector>
+#endif
 
 namespace box
 {
@@ -131,47 +134,70 @@ namespace box
 		Allocator::Instance().deinit();
 	}
 
-	GameLoop* g_loop = nullptr;
+#ifdef GAME_BUILD
+	std::vector<std::shared_ptr<GameView>> g_gameViews;
+
 	void CALLBACK OnFrameMove(double fTime, float fElapsedTime, void* pUserContext)
 	{
-		if (g_loop)
+		for (auto& it : g_gameViews)
 		{
-			g_loop->logicTick(fTime, fElapsedTime);
+			it->update(fTime, fElapsedTime);
 		}
 	}
+
 	HRESULT CALLBACK OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain,
 		const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext)
 	{
-
-		if (g_loop)
+		for (auto& it : g_gameViews)
 		{
-			return g_loop->OnD3D11ResizedSwapChain(pd3dDevice, pSwapChain, pBackBufferSurfaceDesc, pUserContext);
+			return it->OnD3D11ResizedSwapChain(pd3dDevice, pSwapChain, pBackBufferSurfaceDesc, pUserContext);
 		}
 		return S_OK;
 	}
+
 	LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing,
 		void* pUserContext)
 	{
-		if (g_loop)
+		AppMsg msg;
+		msg.hwnd = hWnd;
+		msg.uMsg = uMsg;
+		msg.lParam = lParam;
+		msg.wParam = wParam;
+		// TODO: sort gameViews;
+		for (auto& it : g_gameViews)
 		{
-			return g_loop->MsgProc(hWnd, uMsg, wParam, lParam, pbNoFurtherProcessing, pUserContext);
+			it->msgProc(msg);
+			return S_OK;
 		}
 		return 0;
 	}
-	void Engine::registerMainLoop(GameLoop* loop)
+
+	void Engine::attachGameView(std::shared_ptr<GameView> view)
 	{
 		DXUTSetCallbackFrameMove(OnFrameMove);
 		DXUTSetCallbackMsgProc(MsgProc);
 		DXUTSetCallbackD3D11SwapChainResized(OnD3D11ResizedSwapChain);
-		g_loop = loop;
+
+		if (view)
+		{
+			if (view->restore())
+			{
+				g_gameViews.push_back(view);
+			}
+		}
 	}
 
 	void Engine::enterMainLoop()
 	{
-		if (g_loop)
+		if (g_gameViews.size() > 0)
 		{
 			DXUTMainLoop();
-			g_loop->leaveGameLoop();
+			for (auto& it : g_gameViews)
+			{
+				it->deinit();
+			}
 		}
+		g_gameViews.clear();
 	}
+#endif
 }
