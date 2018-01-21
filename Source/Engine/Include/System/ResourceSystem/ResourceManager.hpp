@@ -20,6 +20,7 @@ namespace box
 		void preload(char* wildcard, bool threaded = false);
 
 		std::shared_ptr<ResourceHandle> getHandle(Resource& r, bool async = false);
+		void registerLoader(std::shared_ptr<ResourceLoader> loader);
 
 	private:
 		ResourceCache* m_cache;

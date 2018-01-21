@@ -10,6 +10,14 @@
 
 #include "SDKMisc.h"
 
+namespace box
+{
+	namespace DXUT
+	{
+		ID3D11ShaderResourceView* LoadShaderResourceView(const char* name);
+	}
+}
+
 #undef min // use __min instead
 #undef max // use __max instead
 
@@ -2542,7 +2550,7 @@ HRESULT InitFont11( ID3D11Device* pd3d11Device, ID3D11InputLayout* pInputLayout 
 {
     HRESULT hr = S_OK;
     WCHAR str[MAX_PATH];
-    V_RETURN( DXUTFindDXSDKMediaFileCch( str, MAX_PATH, L"UI\\Font.dds" ) );
+    //V_RETURN( DXUTFindDXSDKMediaFileCch( str, MAX_PATH, L"UI\\Font.dds" ) );
     
     if (pd3d11Device->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0 ) {
 
@@ -2568,7 +2576,12 @@ HRESULT InitFont11( ID3D11Device* pd3d11Device, ID3D11InputLayout* pInputLayout 
     }
     else
     {
-        V_RETURN( D3DX11CreateShaderResourceViewFromFile( pd3d11Device, str, NULL, NULL, &g_pFont11, &hr) );
+		g_pFont11 = box::DXUT::LoadShaderResourceView("UI\\Font.dds");
+		if (!g_pFont11)
+		{
+			return -1;
+		}
+        //V_RETURN( D3DX11CreateShaderResourceViewFromFile( pd3d11Device, str, NULL, NULL, &g_pFont11, &hr) );
     }
 
 #if defined(PROFILE) || defined(DEBUG)

@@ -6,6 +6,9 @@
 #include "DXUT11\Optional\SDKmisc.h"
 #include "DXUT11\Optional\DXUTgui.h"
 
+#include "System\ResourceSystem\ResourceManager.hpp"
+#include "Render\TextureResourceExtraData.hpp"
+
 HRESULT WINAPI DXTraceW(__in_z const char* strFile, __in DWORD dwLine, __in HRESULT hr, __in_z_opt const WCHAR* strMsg, __in BOOL bPopMsgBox)
 {
 	return 0;
@@ -62,5 +65,19 @@ namespace DXUT
 		return *g_TextHelper;
 	}
 
+	ID3D11ShaderResourceView* LoadShaderResourceView(const char* name)
+	{
+		ID3D11ShaderResourceView* result = nullptr;
+
+		box::Resource r(name);
+		auto handle = box::ResourceManager::Instance().getHandle(r);
+		std::shared_ptr<box::TextureResourceExtraData> extra(std::static_pointer_cast<box::TextureResourceExtraData>(handle->getExtra()));
+		if (extra)
+		{
+			result = extra->getShaderResourceView();
+		}
+
+		return result;
+	}
 }
 }

@@ -92,4 +92,9 @@ namespace box
 			return handle;
 		}
 	}
+
+	void ResourceManager::registerLoader(std::shared_ptr<ResourceLoader> loader)
+	{
+		m_cache->registerLoader(loader);
+	}
 }

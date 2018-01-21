@@ -126,7 +126,7 @@ namespace box
 
 	void ResourceCache::registerLoader(std::shared_ptr<ResourceLoader> loader)
 	{
-		m_loaders.push_back(loader);
+		m_loaders.push_front(loader);
 	}
 
 	std::shared_ptr<ResourceHandle> ResourceCache::getHandle(Resource& r)
@@ -289,9 +289,9 @@ namespace box
 		else
 		{
 			size_t size = loader->getLoadedResourceSize(rawBuffer, rawSize);
-			buffer = allocate(size);
+			buffer = size > 0 ? allocate(size) : nullptr;
 
-			if (!buffer)
+			if (!buffer && size > 0)
 			{
 				return handle;
 			}
@@ -299,7 +299,10 @@ namespace box
 			handle = std::make_shared<ResourceHandle>(r, buffer, size, this);
 
 			bool success = loader->loadResource(rawBuffer, rawSize, handle);
-			delete[] rawBuffer;
+			if (loader->discardRawBufferAfterLoad())
+			{
+				delete[] rawBuffer;
+			}
 
 			if (!success)
 			{
