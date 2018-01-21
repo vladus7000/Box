@@ -23,6 +23,7 @@
 #ifdef GAME_BUILD
 #include <DXUT11\Core\DXUT.h>
 #include <vector>
+#include "Render\DXUTHelper.hpp"
 #endif
 
 namespace box
@@ -69,6 +70,12 @@ namespace box
 			RunEnvironment::Instance();
 			ResourceManager::Instance();
 #ifdef GAME_BUILD
+
+#if defined(DEBUG) | defined(_DEBUG)
+			_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+			DXUTInit(true, true, NULL);
 			Window::Instance();
 			Display::Instance();
 			ProcessManager::Instance();
@@ -145,16 +152,6 @@ namespace box
 		}
 	}
 
-	HRESULT CALLBACK OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain,
-		const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext)
-	{
-		for (auto& it : g_gameViews)
-		{
-			return it->OnD3D11ResizedSwapChain(pd3dDevice, pSwapChain, pBackBufferSurfaceDesc, pUserContext);
-		}
-		return S_OK;
-	}
-
 	LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing,
 		void* pUserContext)
 	{
@@ -163,21 +160,29 @@ namespace box
 		msg.uMsg = uMsg;
 		msg.lParam = lParam;
 		msg.wParam = wParam;
+
+		if (DXUT::MsgProc(msg) == AppMsg::Status::Processed)
+		{
+			*pbNoFurtherProcessing = true;
+			return S_OK;
+		}
+
 		// TODO: sort gameViews;
 		for (auto& it : g_gameViews)
 		{
-			it->msgProc(msg);
-			return S_OK;
+			if (it->msgProc(msg) == AppMsg::Status::Processed)
+			{
+				*pbNoFurtherProcessing = true;
+				return S_OK;
+			}
 		}
-		return 0;
+		return S_OK;
 	}
 
 	void Engine::attachGameView(std::shared_ptr<GameView> view)
 	{
 		DXUTSetCallbackFrameMove(OnFrameMove);
 		DXUTSetCallbackMsgProc(MsgProc);
-		DXUTSetCallbackD3D11SwapChainResized(OnD3D11ResizedSwapChain);
-
 		if (view)
 		{
 			if (view->restore())

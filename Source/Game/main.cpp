@@ -18,6 +18,7 @@
 #include <DXUT11\Core\DXUT.h>
 #include "DXUT11\Optional\DXUTgui.h"
 #include "DXUT11\Optional\SDKmisc.h"
+#include "Render\DXUTHelper.hpp"
 
 using namespace box;
 
@@ -97,10 +98,6 @@ void CALLBACK OnGUIEvent(UINT nEvent, int nControlID, CDXUTControl* pControl, vo
 {
 }
 
-HRESULT WINAPI DXTraceW(__in_z const char* strFile, __in DWORD dwLine, __in HRESULT hr, __in_z_opt const WCHAR* strMsg, __in BOOL bPopMsgBox)
-{
-	return 0;
-}
 
 class Game : public box::GameView
 {
@@ -131,54 +128,50 @@ public:
 
 		HUD.OnRender(fElapsedTime);
 
-		txtHelper->Begin();
-		txtHelper->SetInsertionPos(2, 0);
-		txtHelper->SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
-		txtHelper->DrawTextLine(DXUTGetFrameStats(DXUTIsVsyncEnabled()));
-		txtHelper->DrawTextLine(DXUTGetDeviceStats());
-		txtHelper->SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-		txtHelper->DrawTextLine(L"Press F1 for help");
-		txtHelper->End();
+		auto& txtHelper = box::DXUT::GetTextHelper();
+		txtHelper.Begin();
+		txtHelper.SetInsertionPos(2, 0);
+		txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+		txtHelper.DrawTextLine(DXUTGetFrameStats(DXUTIsVsyncEnabled()));
+		txtHelper.DrawTextLine(DXUTGetDeviceStats());
+		txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+		txtHelper.DrawTextLine(L"Press F1 for help");
+		txtHelper.End();
 	}
 
 	virtual void deinit() override
 	{
-		dialogResourceManager.OnD3D11DestroyDevice();
-		delete txtHelper;
 	}
 
-	virtual S32 msgProc(const AppMsg& msg) override
+	virtual AppMsg::Status msgProc(const AppMsg& msg) override
 	{
-		if (dialogResourceManager.MsgProc(msg.hwnd, msg.uMsg, msg.wParam, msg.lParam))
-			return 1;
+		switch (msg.uMsg)
+		{
+		case WM_CLOSE:
+		//	return AppMsg::Status::Processed;
+			break;
+		}
+		
+		if (HUD.MsgProc(msg.hwnd, msg.uMsg, msg.wParam, msg.lParam))
+		{
+			return AppMsg::Status::Processed;
+		}
 
-		if(HUD.MsgProc(msg.hwnd, msg.uMsg, msg.wParam, msg.lParam))
-			return 1;
-
-		return 0;
-	}
-
-	virtual HRESULT OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext) override
-	{
-		dialogResourceManager.OnD3D11ResizedSwapChain(pd3dDevice, pBackBufferSurfaceDesc);
-		HUD.SetLocation(20, 0);
-		HUD.SetSize(170, 170);
-		return S_OK;
+		return AppMsg::Status::DefaultAction;
 	}
 
 	virtual bool restore() override
 	{
 		context = DXUTGetD3D11DeviceContext();
 		device = DXUTGetD3D11Device();
-		txtHelper = new CDXUTTextHelper(device, context, &dialogResourceManager, 15);
-		//g_D3DSettingsDlg.Init(&dialogResourceManager);
-		//g_D3DSettingsDlg.OnD3D11CreateDevice(device)
-		HUD.Init(&dialogResourceManager);
-		dialogResourceManager.OnD3D11CreateDevice(device, context);
 
+
+		auto& dialogResourceManager = box::DXUT::GetDialogResourceManager();
+		HUD.Init(&dialogResourceManager);
 		HUD.SetCallback(OnGUIEvent); int iY = 50;
 		HUD.AddButton(1, L"Toggle full screen", 50, iY, 170, 23);
-
+		HUD.SetLocation(20, 0);
+		HUD.SetSize(170, 170);
 
 		typedef fastdelegate::FastDelegate1<std::shared_ptr<EventData>> MyDelegateT;
 		MyDelegateT MyDelegate(&printBoom);
@@ -239,12 +232,9 @@ public:
 	}
 
 	Allocator::MemoryStats oldstat;
-	CDXUTDialogResourceManager  dialogResourceManager;
 	ID3D11DeviceContext* context;
 	ID3D11Device* device;
-	CDXUTTextHelper* txtHelper;
 	CDXUTDialog HUD;
-	//CD3DSettingsDlg g_D3DSettingsDlg;
 };
 
 int g_c = 0;
