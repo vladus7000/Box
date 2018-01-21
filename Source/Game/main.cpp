@@ -20,6 +20,8 @@
 #include "DXUT11\Optional\SDKmisc.h"
 #include "Render\DXUTHelper.hpp"
 
+#include "UI/Dialog.hpp"
+
 using namespace box;
 
 class BoomEvent : public EventData
@@ -94,10 +96,10 @@ void resLoaded(std::shared_ptr<EventData> event)
 {
 	printf(" Resourse loaded!!!()\n");
 }
+
 void CALLBACK OnGUIEvent(UINT nEvent, int nControlID, CDXUTControl* pControl, void* pUserContext)
 {
 }
-
 
 class Game : public box::GameView
 {
@@ -126,8 +128,23 @@ public:
 		context->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0, 0);
 
 
-		HUD.OnRender(fElapsedTime);
 
+		if (m_yesNoDialog.isVisible())
+		{
+			m_yesNoDialog.render(fTime, fElapsedTime);
+			if (m_yesNoDialog.getAnswer() == Dialog::Answer::Yes)
+			{
+				exit(0);
+			}
+			else if (m_yesNoDialog.getAnswer() == Dialog::Answer::No)
+			{
+				m_yesNoDialog.setVisible(false);
+				m_yesNoDialog.resetAnswer();
+			}
+			return;
+		}
+
+		HUD.OnRender(fElapsedTime);
 		auto& txtHelper = box::DXUT::GetTextHelper();
 		txtHelper.Begin();
 		txtHelper.SetInsertionPos(2, 0);
@@ -148,11 +165,17 @@ public:
 		switch (msg.uMsg)
 		{
 		case WM_CLOSE:
-		//	return AppMsg::Status::Processed;
+			m_yesNoDialog.setVisible(true);
+			return AppMsg::Status::Processed;
 			break;
 		}
 		
 		if (HUD.MsgProc(msg.hwnd, msg.uMsg, msg.wParam, msg.lParam))
+		{
+			return AppMsg::Status::Processed;
+		}
+
+		if (m_yesNoDialog.msgProc(msg) == AppMsg::Status::Processed)
 		{
 			return AppMsg::Status::Processed;
 		}
@@ -165,7 +188,8 @@ public:
 		context = DXUTGetD3D11DeviceContext();
 		device = DXUTGetD3D11Device();
 
-
+		m_yesNoDialog.restore();
+		m_yesNoDialog.setVisible(false);
 		auto& dialogResourceManager = box::DXUT::GetDialogResourceManager();
 		HUD.Init(&dialogResourceManager);
 		HUD.SetCallback(OnGUIEvent); int iY = 50;
@@ -235,6 +259,7 @@ public:
 	ID3D11DeviceContext* context;
 	ID3D11Device* device;
 	CDXUTDialog HUD;
+	Dialog m_yesNoDialog;
 };
 
 int g_c = 0;
