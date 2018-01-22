@@ -1,7 +1,7 @@
 #include "StdAfx.hpp"
 #include "Render\Renderer.hpp"
 #include "System\ResourceSystem\ResourceManager.hpp"
-#include "Render\DDSTextureResourceLoader.hpp"
+#include "Render\ResourceLoaders\DDSTextureResourceLoader.hpp"
 
 #include <DXUT11\Core\DXUT.h>
 #include "Render\DXUTHelper.hpp"

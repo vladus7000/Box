@@ -7,7 +7,7 @@
 #include "DXUT11\Optional\DXUTgui.h"
 
 #include "System\ResourceSystem\ResourceManager.hpp"
-#include "Render\TextureResourceExtraData.hpp"
+#include "Render\ResourceLoaders\TextureResourceExtraData.hpp"
 
 HRESULT WINAPI DXTraceW(__in_z const char* strFile, __in DWORD dwLine, __in HRESULT hr, __in_z_opt const WCHAR* strMsg, __in BOOL bPopMsgBox)
 {

@@ -1,5 +1,5 @@
 #include "StdAfx.hpp"
-#include <Render/TextureResourceExtraData.hpp>
+#include <Render/ResourceLoaders/TextureResourceExtraData.hpp>
 
 namespace box
 {
