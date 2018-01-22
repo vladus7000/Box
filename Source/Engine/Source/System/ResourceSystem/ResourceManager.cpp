@@ -22,27 +22,27 @@ namespace box
 		ResourceFile* resFile(nullptr);
 
 		{
-			resFile = new ResourceZipFile("configs.zip");
+			resFile = new ResourceZipFile("Configs.zip");
 			m_cache->addResourceFile(resFile);
 		}
 
 		{
-			resFile = new ResourceZipFile("sounds.zip");
+			resFile = new ResourceZipFile("Sounds.zip");
 			m_cache->addResourceFile(resFile);
 		}
 
 		{
-			resFile = new ResourceZipFile("textures.zip");
+			resFile = new ResourceZipFile("Textures.zip");
 			m_cache->addResourceFile(resFile);
 		}
 
 		{
-			resFile = new ResourceZipFile("models.zip");
+			resFile = new ResourceZipFile("Models.zip");
 			m_cache->addResourceFile(resFile);
 		}
 
 		{
-			resFile = new ResourceZipFile("animations.zip");
+			resFile = new ResourceZipFile("Animations.zip");
 			m_cache->addResourceFile(resFile);
 		}
 
