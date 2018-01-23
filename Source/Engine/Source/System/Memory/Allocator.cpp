@@ -57,6 +57,11 @@ void* operator new[](size_t size)
 
 void operator delete(void* ptr)
 {
+	if (!ptr)
+	{
+		return;
+	}
+
 	box::U8* originalPtr = reinterpret_cast<box::U8*>(ptr) - sizeof(size_t);
 	size_t* sizeVal = reinterpret_cast<size_t*>(originalPtr);
 
@@ -71,6 +76,11 @@ void operator delete(void* ptr)
 
 void operator delete[](void* ptr)
 {
+	if (!ptr)
+	{
+		return;
+	}
+
 	box::U8* originalPtr = reinterpret_cast<box::U8*>(ptr) - sizeof(size_t);
 	size_t* sizeVal = reinterpret_cast<size_t*>(originalPtr);
 

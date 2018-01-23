@@ -1,0 +1,7 @@
+<samplerState>
+	<Filter>MIN_MAG_MIP_LINEAR</Filter>
+	<AddressU>WRAP</AddressU>
+	<AddressV>WRAP</AddressV>
+	<AddressW>WRAP</AddressW>
+	<CmpFunc>NEVER</CmpFunc>
+</samplerState>

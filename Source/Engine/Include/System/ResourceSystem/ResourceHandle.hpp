@@ -44,6 +44,7 @@ namespace box
 		bool isDataReady() const { return m_status == Status::Ready; }
 		void setDataReady() { m_status = Status::Ready; }
 		Status getStatus() const { return m_status; }
+		const Resource& getResource() const { return m_resource; }
 
 	protected:
 		Resource m_resource;
