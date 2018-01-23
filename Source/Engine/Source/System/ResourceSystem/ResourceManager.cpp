@@ -1,6 +1,7 @@
 #include "StdAfx.hpp"
 #include "System\ResourceSystem\ResourceManager.hpp"
 #include "System\ResourceSystem\ZipFile.hpp"
+#include "System/ResourceSystem/XMLResourceLoader.hpp"
 #include "System/Process/ProcessManager.hpp"
 #include "System/Process/Processes/PreloadProcess.hpp"
 #include "System/Process/Processes/LoadResourceProcess.hpp"
@@ -49,6 +50,8 @@ namespace box
 		bool res = m_cache->init();
 		if (res)
 		{
+			m_cache->registerLoader(std::shared_ptr<ResourceLoader>(new XMLResourceLoader()));
+
 			std::shared_ptr<Event_ResourceCacheStarted> event(new Event_ResourceCacheStarted);
 			EventSystem::Instance().raiseEvent(event);
 		}

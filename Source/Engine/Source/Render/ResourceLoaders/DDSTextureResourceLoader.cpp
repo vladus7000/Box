@@ -1,12 +1,12 @@
 #include "StdAfx.hpp"
 #include <Render/ResourceLoaders/DDSTextureResourceLoader.hpp>
 #include <Render/ResourceLoaders/TextureResourceExtraData.hpp>
+#include "System/ResourceSystem/XMLResourceExtraData.hpp"
 #include <System/ResourceSystem/ResourceHandle.hpp>
 #include <System/ResourceSystem/ResourceManager.hpp>
 
 #include <DXUT11\Core\DXUT.h>
 #include <d3dx11tex.h>
-#include <tinyxml2/tinyxml2.h>
 
 namespace box
 {
@@ -73,28 +73,23 @@ namespace box
 		sampDesc.MinLOD = 0;
 		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-		box::Resource samplerState(handle->getResource().m_name + ".xml");
-		auto samplerHandle = box::ResourceManager::Instance().getHandle(samplerState);
-		if (samplerHandle)
+		box::Resource samplerStateResource(handle->getResource().m_name + ".xml");
+		auto samplerHandleXML = box::ResourceManager::Instance().getHandle(samplerStateResource);
+
+		std::shared_ptr<box::XMLResourceExtraData> xmlData(std::static_pointer_cast<box::XMLResourceExtraData>(samplerHandleXML->getExtra()));
+		if (xmlData)
 		{
-			const U8* data = samplerHandle->buffer();
-			const size_t size = samplerHandle->getSize();
-			tinyxml2::XMLDocument xmlDoc;
-			tinyxml2::XMLError result = xmlDoc.Parse(reinterpret_cast<const char*>(data), size);
-			if (result == tinyxml2::XMLError::XML_SUCCESS)
+			if (auto root = xmlData->getXMLRoot())
 			{
-				if (tinyxml2::XMLNode* root = xmlDoc.RootElement())
+				for (tinyxml2::XMLNode* child = root->FirstChildElement(); child; child = child->NextSibling())
 				{
-					for (tinyxml2::XMLNode* child = root->FirstChildElement(); child; child = child->NextSibling())
+					if (auto element = child->ToElement())
 					{
-						if (auto element = child->ToElement())
+						const char* name = element->Name();
+						const char* val = element->GetText();
+						if (name && val)
 						{
-							const char* name = element->Name();
-							const char* val = element->GetText();
-							if (name && val)
-							{
-								fillSamplerElement(sampDesc, name, val);
-							}
+							fillSamplerElement(sampDesc, name, val);
 						}
 					}
 				}
