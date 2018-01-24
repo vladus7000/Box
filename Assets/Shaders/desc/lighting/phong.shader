@@ -1,6 +1,6 @@
-<shader name="phong" file="src/phong/phong.hlsl">
+<shader file="src/lighting/phong/phong.hlsl">
 
-<Technicues>
+<techniques>
 	<techique name="t1">
 		<VS entryPoint="t1_VsMain">
 			<Defines>
@@ -8,12 +8,12 @@
 			</Defines>
 		
 		<InputLayout>
-			<item semanticName="position" semanticIndex="0" stream="0" format="float3">
-			<item semanticName="texcoord" semanticIndex="0" stream="0" format="float2">
+			<item semanticName="position" semanticIndex="0" stream="0" format="float3"/>
+			<item semanticName="texcoord" semanticIndex="0" stream="0" format="float2"/>
 		</InputLayout>
 
 		<InputBuffers>
-			<item type="Matrix4x4">
+			<item type="Matrix4x4"/>
 		</InputBuffers>
 		</VS>
 
@@ -35,9 +35,9 @@
 			</BlendDescriptions>
 
 			<Outputs>
-				<item RT="0" format="RGBA">
+				<item RT="0" format="RGBA"/>
 			</Outputs>
 		</PS>
 	</techique>
-</Technicues>
+</techniques>
 </shader>

@@ -239,6 +239,11 @@ public:
 				Resource r("Syberia3_Wallpaper4.png");
 				auto handle = ResourceManager::Instance().getHandle(r);
 			}
+
+			{
+				Resource r("desc\\lighting\\phong.shader");
+				auto handle = ResourceManager::Instance().getHandle(r);
+			}
 		}
 		auto& window = Window::Instance();
 		{

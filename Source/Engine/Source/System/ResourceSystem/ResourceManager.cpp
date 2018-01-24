@@ -47,6 +47,12 @@ namespace box
 			m_cache->addResourceFile(resFile);
 		}
 
+		{
+			resFile = new ResourceZipFile("Shaders.zip");
+			m_cache->addResourceFile(resFile);
+		}
+
+
 		bool res = m_cache->init();
 		if (res)
 		{

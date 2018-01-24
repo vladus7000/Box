@@ -2,6 +2,7 @@
 #include "Render\Renderer.hpp"
 #include "System\ResourceSystem\ResourceManager.hpp"
 #include "Render\ResourceLoaders\DDSTextureResourceLoader.hpp"
+#include "Render\ResourceLoaders\ShaderResourceLoader.hpp"
 
 #include <DXUT11\Core\DXUT.h>
 #include "Render\DXUTHelper.hpp"
@@ -56,6 +57,7 @@ namespace box
 	bool Renderer::init()
 	{
 		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new DDSTextureResourceLoader()));
+		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new ShaderResourceLoader()));
 
 		DXUTSetCallbackDeviceChanging(ModifyDeviceSettings);
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable);
