@@ -27,11 +27,32 @@
 			</Rasterizer>
 
 			<DepthStencil>
-				<item zWrite="true"/>
+				<item name="DepthEnable" value="true"/>
+				<item name="StencilReadMask" value="255"/>
+				<item name="DepthFunc" value="Greater"/>
 			</DepthStencil>
 
 			<BlendDescriptions>
-				<item RT="0" enabled="true" ColorSrcBlend="ONE" ColordstBlend="SRC_COLOR" ColorOP="ADD" AlphaSrcBlend="DEST_ALPHA" AlphaDstBlend="SRC1_ALPHA" AlphaOp="MAX" writeMask="0xFF"/>
+				<RT name="0">
+					<item name="BlendEnable" value="true" />
+					<item name="ColorSrc" value="InvDstColor" />
+					<item name="ColorDst" value="SrcColor" />
+					<item name="ColorOp" value="Max" />
+					<item name="AlphaSrc" value="Src1Alpha" />
+					<item name="AlphaDst" value="DstAlpha" />
+					<item name="AlphaOp" value="RevSubstract" />
+					<item name="WriteMask" value="Blue"/>
+				</RT>
+				<RT name="4">
+					<item name="BlendEnable" value="true" />
+					<item name="ColorSrc" value="InvDstColor" />
+					<item name="ColorDst" value="SrcColor" />
+					<item name="ColorOp" value="Max" />
+					<item name="AlphaSrc" value="Src1Alpha" />
+					<item name="AlphaDst" value="DstAlpha" />
+					<item name="AlphaOp" value="RevSubstract" />
+					<item name="WriteMask" value="Blue"/>
+				</RT>
 			</BlendDescriptions>
 
 			<Outputs>
