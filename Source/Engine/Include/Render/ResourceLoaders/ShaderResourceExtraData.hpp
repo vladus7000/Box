@@ -46,7 +46,7 @@ namespace box
 				RELEASE(vertexShader);
 			}
 			ID3D11BlendState* blendState;
-			ID3D11DepthStencilView* depthStencilView;
+			ID3D11DepthStencilState* depthStencilView;
 			ID3D11RasterizerState* rasterizerState;
 			ID3D11InputLayout* inputLayout;
 

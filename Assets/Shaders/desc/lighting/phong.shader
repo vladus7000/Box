@@ -7,14 +7,14 @@
 				<item DEFINE_NAME="DEFINE_VALUE"/>
 			</Defines>
 		
-		<InputLayout>
-			<item semanticName="position" semanticIndex="0" stream="0" format="float3"/>
-			<item semanticName="texcoord" semanticIndex="0" stream="0" format="float2"/>
-		</InputLayout>
+			<InputLayout>
+				<item semanticName="position" semanticIndex="0" stream="0" format="float3"/>
+				<item semanticName="texcoord" semanticIndex="0" stream="0" format="float2"/>
+			</InputLayout>
 
-		<InputBuffers>
-			<item type="Matrix4x4"/>
-		</InputBuffers>
+			<InputBuffers>
+				<item type="Matrix4x4"/>
+			</InputBuffers>
 		</VS>
 
 		<PS entryPoint="t1_psMain">
