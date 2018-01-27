@@ -1,4 +1,5 @@
 #include "StdAfx.hpp"
+#include <Render/ResourceLoaders/XmlHelper.hpp>
 #include <Render/ResourceLoaders/ShaderResourceLoader.hpp>
 #include <Render/ResourceLoaders/ShaderResourceExtraData.hpp>
 #include <System/ResourceSystem/ResourceHandle.hpp>
@@ -7,131 +8,6 @@
 #include <DXUT11\Core\DXUT.h>
 #include <d3dx11tex.h>
 #include <tinyxml2/tinyxml2.h>
-#include <map>
-#include <string>
-
-namespace
-{
-	std::map<std::string, D3D11_COMPARISON_FUNC> getCmpFuncs()
-	{
-		std::map<std::string, D3D11_COMPARISON_FUNC> ret;
-		ret["Never"] = D3D11_COMPARISON_NEVER;
-		ret["Less"] = D3D11_COMPARISON_LESS;
-		ret["Equal"] = D3D11_COMPARISON_EQUAL;
-		ret["LessEqual"] = D3D11_COMPARISON_LESS_EQUAL;
-		ret["Greater"] = D3D11_COMPARISON_GREATER;
-		ret["NotEqual"] = D3D11_COMPARISON_NOT_EQUAL;
-		ret["GrEqual"] = D3D11_COMPARISON_GREATER_EQUAL;
-		ret["Always"] = D3D11_COMPARISON_ALWAYS;
-		return ret;
-	}
-
-	std::map<std::string, D3D11_FILL_MODE> getFillMode()
-	{
-		std::map<std::string, D3D11_FILL_MODE> ret;
-		ret["Solid"] = D3D11_FILL_SOLID;
-		ret["Wireframe"] = D3D11_FILL_WIREFRAME;
-		return ret;
-	}
-	std::map<std::string, D3D11_CULL_MODE> getCullModes()
-	{
-		std::map<std::string, D3D11_CULL_MODE> ret;
-		ret["None"] = D3D11_CULL_NONE;
-		ret["Front"] = D3D11_CULL_FRONT;
-		ret["Back"] = D3D11_CULL_BACK;
-		return ret;
-	}
-	std::map<std::string, D3D11_DEPTH_WRITE_MASK> getWriteMasks()
-	{
-		std::map<std::string, D3D11_DEPTH_WRITE_MASK> ret;
-		ret["MaskAll"] = D3D11_DEPTH_WRITE_MASK_ALL;
-		ret["MaskZero"] = D3D11_DEPTH_WRITE_MASK_ZERO;
-
-		return ret;
-	}
-
-	std::map<std::string, D3D11_STENCIL_OP> getStencilOp()
-	{
-		std::map<std::string, D3D11_STENCIL_OP> ret;
-		ret["Keep"] = D3D11_STENCIL_OP_KEEP;
-		ret["Zero"] = D3D11_STENCIL_OP_ZERO;
-		ret["Replace"] = D3D11_STENCIL_OP_REPLACE;
-		ret["IncrSat"] = D3D11_STENCIL_OP_INCR_SAT;
-		ret["DecrSat"] = D3D11_STENCIL_OP_DECR_SAT;
-		ret["Invert"] = D3D11_STENCIL_OP_INVERT;
-		ret["Incr"] = D3D11_STENCIL_OP_INCR;
-		ret["Decr"] = D3D11_STENCIL_OP_DECR;
-
-		return ret;
-	}
-
-
-	std::map<std::string, D3D11_BLEND> getBlend()
-	{
-		std::map<std::string, D3D11_BLEND> ret;
-
-		ret["Zero"] = D3D11_BLEND_ZERO;
-		ret["One"] = D3D11_BLEND_ONE;
-		ret["SrcColor"] = D3D11_BLEND_SRC_COLOR;
-		ret["InvSrcColor"] = D3D11_BLEND_INV_SRC_COLOR;
-		ret["SrcAlpha"] = D3D11_BLEND_SRC_ALPHA;
-		ret["InvSrcAlpha"] = D3D11_BLEND_INV_SRC_ALPHA;
-		ret["DstAlpha"] = D3D11_BLEND_DEST_ALPHA;
-		ret["InvDstAlpha"] = D3D11_BLEND_INV_DEST_ALPHA;
-		ret["DstColor"] = D3D11_BLEND_DEST_COLOR;
-		ret["InvDstColor"] = D3D11_BLEND_INV_DEST_COLOR;
-		ret["SrcAlphaSat"] = D3D11_BLEND_SRC_ALPHA_SAT;
-		ret["BlendFactor"] = D3D11_BLEND_BLEND_FACTOR;
-		ret["InvBlendFactor"] = D3D11_BLEND_INV_BLEND_FACTOR;
-		ret["Src1Color"] = D3D11_BLEND_SRC1_COLOR;
-		ret["InvSrc1Color"] = D3D11_BLEND_INV_SRC1_COLOR;
-		ret["Src1Alpha"] = D3D11_BLEND_SRC1_ALPHA;
-		ret["InvSrc1Alpha"] = D3D11_BLEND_INV_SRC1_ALPHA;
-		return ret;
-	}
-	
-	std::map<std::string, D3D11_BLEND_OP> getBlendOp()
-	{
-		std::map<std::string, D3D11_BLEND_OP> ret;
-		ret["Add"] = D3D11_BLEND_OP_ADD;
-		ret["Substract"] = D3D11_BLEND_OP_SUBTRACT;
-		ret["RevSubstract"] = D3D11_BLEND_OP_REV_SUBTRACT;
-		ret["Min"] = D3D11_BLEND_OP_MIN;
-		ret["Max"] = D3D11_BLEND_OP_MAX;
-		return ret;
-	}
-
-	std::map<std::string, UINT8> getColorWriteMask()
-	{
-		std::map<std::string, UINT8> ret;
-		ret["Red"] = D3D11_COLOR_WRITE_ENABLE_RED;
-		ret["Green"] = D3D11_COLOR_WRITE_ENABLE_GREEN;
-		ret["Blue"] = D3D11_COLOR_WRITE_ENABLE_BLUE;
-		ret["Alpha"] = D3D11_COLOR_WRITE_ENABLE_ALPHA;
-		ret["All"] = D3D11_COLOR_WRITE_ENABLE_ALL;
-		return ret;
-	}
-
-	std::map<std::string, D3D11_COMPARISON_FUNC> g_cmpFuncs = getCmpFuncs();
-	std::map<std::string, D3D11_FILL_MODE> g_fillModes = getFillMode();
-	std::map<std::string, D3D11_CULL_MODE> g_cullModes = getCullModes();
-	std::map<std::string, D3D11_DEPTH_WRITE_MASK> g_WriteMasks = getWriteMasks();
-	std::map<std::string, D3D11_STENCIL_OP> g_stencilOps = getStencilOp();
-
-	std::map<std::string, D3D11_BLEND> g_Blends = getBlend();
-	std::map<std::string, D3D11_BLEND_OP> g_BlendOps = getBlendOp();
-	std::map<std::string, UINT8> g_colorWriteMasks = getColorWriteMask();
-}
-
-#define START_LOOP(root) for (auto item = root->FirstChild(); item; item = item->NextSibling()) { bool found = false;
-#define END_LOOP }
-
-#define ITEM_TEXT(var, name, map) if (found)continue;do{ auto el = item->ToElement(); if (!strcmp(el->Attribute("name"), name)) {const char* v = el->Attribute("value"); auto p = map.find(v); if (p != map.end()){var = p->second;found = true;} }   }while(0)
-#define ITEM_BOOL(var, name, textValue, dxValue) if (found)continue;do{ auto el = item->ToElement(); if (!strcmp(el->Attribute("name"), name)) { if (!strcmp(el->Attribute("value"), textValue)) {var = dxValue; found = true; } }}while(0)
-#define ITEM_BOOL(var, name) if (found)continue;do {auto el = item->ToElement(); if (!strcmp(el->Attribute("name"), name)) { if (!strcmp(el->Attribute("value"), "true")) { var = true; found = true; } else { var = false; found = true; } } } while (0)
-
-#define ITEM_INT(var, name) if (found)continue;do {auto el = item->ToElement(); if (!strcmp(el->Attribute("name"), name)) { int val(0); el->QueryIntAttribute("value", &val); var = val;found = true;} } while (0)
-#define ITEM_FLOAT(var, name) if (found)continue;do {auto el = item->ToElement(); if (!strcmp(el->Attribute("name"), name)) { float val(0.0f); el->QueryFloatAttribute("value", &val); var = val;found = true;} } while (0)
 
 namespace box
 {
@@ -159,6 +35,7 @@ namespace box
 
 	bool parseInputLayout(tinyxml2::XMLElement* inputLayoutRoot, ID3D11InputLayout*& out)
 	{
+		D3D11_INPUT_ELEMENT_DESC inputDesc;
 		//TODO implement me
 		return true;
 	}

@@ -1,4 +1,5 @@
 #include "StdAfx.hpp"
+#include <Render/ResourceLoaders/XmlHelper.hpp>
 #include <Render/ResourceLoaders/DDSTextureResourceLoader.hpp>
 #include <Render/ResourceLoaders/TextureResourceExtraData.hpp>
 #include "System/ResourceSystem/XMLResourceExtraData.hpp"
@@ -10,43 +11,29 @@
 
 namespace box
 {
-	void fillSamplerElement(D3D11_SAMPLER_DESC& out, const char* name, const char* value)
+	bool parseSamplerState(tinyxml2::XMLElement* samplerRoot, ID3D11SamplerState*& out)
 	{
-		if (!strcmp(name, "Filter"))
+		D3D11_SAMPLER_DESC sampDesc;
+		ZeroMemory(&sampDesc, sizeof(sampDesc));
+
+		sampDesc.MinLOD = 0;
+		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		START_LOOP(samplerRoot)
+			ITEM_TEXT(sampDesc.Filter, "Filter", g_Filters);
+			ITEM_TEXT(sampDesc.AddressU, "AddressU", g_addressModes);
+			ITEM_TEXT(sampDesc.AddressV, "AddressV", g_addressModes);
+			ITEM_TEXT(sampDesc.AddressW, "AddressW", g_addressModes);
+			ITEM_TEXT(sampDesc.ComparisonFunc, "CmpFunc", g_cmpFuncs);
+			ITEM_FLOAT(sampDesc.MinLOD, "MinLod");
+			ITEM_FLOAT(sampDesc.MaxLOD, "MaxLOD");
+		END_LOOP
+
+		if (FAILED(DXUTGetD3D11Device()->CreateSamplerState(&sampDesc, &out)))
 		{
-			if (!strcmp(value, "MIN_MAG_MIP_LINEAR"))
-			{
-				out.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-			}
+			return false;
 		}
-		else if (!strcmp(name, "AddressU"))
-		{
-			if (!strcmp(value, "WRAP"))
-			{
-				out.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-			}
-		}
-		else if (!strcmp(name, "AddressV"))
-		{
-			if (!strcmp(value, "WRAP"))
-			{
-				out.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-			}
-		}
-		else if (!strcmp(name, "AddressW"))
-		{
-			if (!strcmp(value, "WRAP"))
-			{
-				out.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-			}
-		}
-		else if (!strcmp(name, "CmpFunc"))
-		{
-			if (!strcmp(value, "NEVER"))
-			{
-				out.ComparisonFunc = D3D11_COMPARISON_NEVER;
-			}
-		}
+		return true;
 	}
 
 	DDSTextureResourceLoader::~DDSTextureResourceLoader()
@@ -63,16 +50,6 @@ namespace box
 			return false;
 		}
 
-		D3D11_SAMPLER_DESC sampDesc;
-		ZeroMemory(&sampDesc, sizeof(sampDesc));
-		sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-		sampDesc.MinLOD = 0;
-		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
 		box::Resource samplerStateResource(handle->getResource().m_name + ".xml");
 		auto samplerHandleXML = box::ResourceManager::Instance().getHandle(samplerStateResource);
 
@@ -81,27 +58,18 @@ namespace box
 		{
 			if (auto root = xmlData->getXMLRoot())
 			{
-				for (tinyxml2::XMLNode* child = root->FirstChildElement(); child; child = child->NextSibling())
+				if (parseSamplerState(root->ToElement(), extra->m_samplerState))
 				{
-					if (auto element = child->ToElement())
-					{
-						const char* name = element->Name();
-						const char* val = element->GetText();
-						if (name && val)
-						{
-							fillSamplerElement(sampDesc, name, val);
-						}
-					}
+					handle->setExtra(extra);
+					return true;
+				}
+				else
+				{
+					return false;
 				}
 			}
 		}
 
-		if (FAILED(DXUTGetD3D11Device()->CreateSamplerState(&sampDesc, &extra->m_samplerState)))
-		{
-			return false;
-		}
-
-		handle->setExtra(extra);
 		return true;
 	}
 }
