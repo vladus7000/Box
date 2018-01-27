@@ -2576,7 +2576,7 @@ HRESULT InitFont11( ID3D11Device* pd3d11Device, ID3D11InputLayout* pInputLayout 
     }
     else
     {
-		g_pFont11 = box::DXUT::LoadShaderResourceView("UI\\Font.dds");
+		g_pFont11 = box::DXUT::LoadShaderResourceView("UI/Font.dds");
 		if (!g_pFont11)
 		{
 			return -1;

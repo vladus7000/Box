@@ -241,7 +241,7 @@ public:
 			}
 
 			{
-				Resource r("desc\\lighting\\phong.shader");
+				Resource r("desc/lighting/phong.shader");
 				auto handle = ResourceManager::Instance().getHandle(r);
 			}
 		}

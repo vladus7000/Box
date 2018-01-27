@@ -86,9 +86,9 @@ namespace box
 					pfh += sizeof(fh);
 
 					// Convert UNIX slashes to DOS backlashes.
-					for (int j = 0; j < fh.fnameLen; j++)
-						if (pfh[j] == '/')
-							pfh[j] = '\\';
+					//for (int j = 0; j < fh.fnameLen; j++)
+					//	if (pfh[j] == '/')
+					//		pfh[j] = '\\';
 
 					char fileName[_MAX_PATH];
 					memcpy(fileName, pfh, fh.fnameLen);

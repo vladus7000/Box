@@ -13,14 +13,46 @@ namespace box
 {
 	struct Common
 	{
+		~Common()
+		{
+			RELEASE(commonBlend);
+			RELEASE(commonDepthStencil);
+			RELEASE(commonRasterizer);
+		}
 		ID3D11BlendState* commonBlend = nullptr;
 		ID3D11DepthStencilState* commonDepthStencil = nullptr;
 		ID3D11RasterizerState* commonRasterizer = nullptr;
-		ID3D11InputLayout* commonInputLayout = nullptr;
 		std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
 
 		const char* fileName = nullptr;
+		U8* shaderText = nullptr;
+		size_t shaderSize = 0;
 	};
+
+	bool compileShader(const U8* shaderText, size_t shaderSize, const char* fileName, const char* entry, const char* shaderModel, ID3D10Blob*& out)
+	{
+		DWORD dwShaderFlags = 0;
+		ID3DBlob* pErrorBlob = nullptr;
+
+		auto hr = D3DX11CompileFromMemory(reinterpret_cast<const char*>(shaderText), shaderSize, fileName, NULL, NULL, entry, shaderModel, dwShaderFlags, 0, NULL, &out, &pErrorBlob, NULL);
+		if (FAILED(hr))
+		{
+			if (pErrorBlob != NULL)
+			{
+				OutputDebugStringA((char*)pErrorBlob->GetBufferPointer());
+			}
+			if (pErrorBlob)
+			{
+				pErrorBlob->Release();
+			}
+			return false;
+		}
+		if (pErrorBlob)
+		{
+			pErrorBlob->Release();
+		}
+		return true;
+	}
 
 	bool parseDefines(tinyxml2::XMLElement* definesRoot)
 	{
@@ -65,6 +97,7 @@ namespace box
 		}
 		return out.size() > 0;
 	}
+
 	bool parseRasterizer(tinyxml2::XMLElement* rasterizerRoot, ID3D11RasterizerState*& out)
 	{
 		D3D11_RASTERIZER_DESC rasterDesc;
@@ -166,42 +199,64 @@ namespace box
 	bool parseVS(tinyxml2::XMLElement* vsRoot, ShaderResourceExtraData::Technique& out, Common& common)
 	{
 		const char* entryPoint = vsRoot->Attribute("entryPoint");
+		const char* shaderModel = vsRoot->Attribute("shaderModel");
 		ID3D11VertexShader* vertexShader = nullptr;
 		std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
 		bool ret = true;
 
-		if (!entryPoint)
+		if (!entryPoint || !shaderModel)
 		{
 			return false;
 		}
 
-		if (auto elem = vsRoot->FirstChildElement("Defines"))
+		do
 		{
-			ret &= parseDefines(elem);
-		}
-
-		if (auto elem = vsRoot->FirstChildElement("InputBuffers"))
-		{
-			ret &= parseInputBuffers(elem);
-		}
-
-		if (auto elem = vsRoot->FirstChildElement("InputLayout"))
-		{
-			ret &= parseInputLayout(elem, inputLayoutDesc);
-		}
-		else
-		{
-			if (common.inputLayoutDesc.size() > 0)
+			if (auto elem = vsRoot->FirstChildElement("Defines"))
 			{
-				inputLayoutDesc = common.inputLayoutDesc;
+				ret &= parseDefines(elem);
+				if (!ret) break;
+			}
+
+			if (auto elem = vsRoot->FirstChildElement("InputBuffers"))
+			{
+				ret &= parseInputBuffers(elem);
+				if (!ret) break;
+			}
+
+			if (auto elem = vsRoot->FirstChildElement("InputLayout"))
+			{
+				ret &= parseInputLayout(elem, inputLayoutDesc);
 			}
 			else
 			{
+				if (common.inputLayoutDesc.size() > 0)
+				{
+					inputLayoutDesc = common.inputLayoutDesc;
+				}
+				else
+				{
+					ret = false;
+				}
+			}
+			if (!ret) break;
+			ID3DBlob* rawShader = nullptr;
+
+			ret &= compileShader(common.shaderText, common.shaderSize, common.fileName, entryPoint, shaderModel, rawShader);
+			if (!ret) break;
+
+			auto device = DXUTGetD3D11Device();
+			device->CreateVertexShader(rawShader->GetBufferPointer(), rawShader->GetBufferSize(), nullptr, &out.vertexShader);
+
+			if (inputLayoutDesc.size() > 0)
+			{
+				device->CreateInputLayout(inputLayoutDesc.data(), inputLayoutDesc.size(), rawShader->GetBufferPointer(), rawShader->GetBufferSize(), &out.inputLayout);
+			}
+
+			if (out.inputLayout == nullptr || out.vertexShader == nullptr)
+			{
 				ret = false;
 			}
-		}
-
-		//TODO: build shader
+		} while (0);
 
 		return ret;
 	}
@@ -209,10 +264,11 @@ namespace box
 	bool parsePS(tinyxml2::XMLElement* psRoot, ShaderResourceExtraData::Technique& out, Common& common)
 	{
 		const char* entryPoint = psRoot->Attribute("entryPoint");
+		const char* shaderModel = psRoot->Attribute("shaderModel");
 		ID3D11PixelShader* pixelShader = nullptr;
 		bool ret = true;
 
-		if (!entryPoint)
+		if (!entryPoint || !shaderModel)
 		{
 			return false;
 		}
@@ -263,7 +319,17 @@ namespace box
 			ret &= parseOutput(elem);
 		}
 
-		return ret;
+		ID3DBlob* rawShader = nullptr;
+
+		ret &= compileShader(common.shaderText, common.shaderSize, common.fileName, entryPoint, shaderModel, rawShader);
+
+		if (ret)
+		{
+			auto device = DXUTGetD3D11Device();
+			device->CreatePixelShader(rawShader->GetBufferPointer(), rawShader->GetBufferSize(), nullptr, &out.pixelShader);
+		}
+
+		return out.pixelShader != nullptr;
 	}
 
 	bool parseTechnique(tinyxml2::XMLNode* techniqueRoot, ShaderResourceExtraData::Technique& out, Common& common)
@@ -314,7 +380,17 @@ namespace box
 				{
 					break;
 				}
-
+				box::Resource samplerStateResource(ShaderCommon.fileName);
+				auto shaderCode = box::ResourceManager::Instance().getHandle(samplerStateResource);
+				if (shaderCode->getStatus() == ResourceHandle::Status::Ready)
+				{
+					ShaderCommon.shaderText = shaderCode->buffer();
+					ShaderCommon.shaderSize = shaderCode->getSize();
+				}
+				else
+				{
+					break;
+				}
 				{ // common stuff
 					if (auto elem = root->FirstChildElement("Defines"))
 					{
@@ -377,10 +453,9 @@ namespace box
 				handle->setExtra(extra);
 			}
 
-			return true;
+			return ok;
 		}
 
-		handle->setExtra(extra);
-		return true;
+		return false;
 	}
 }
