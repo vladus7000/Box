@@ -19,7 +19,8 @@
 #include "DXUT11\Optional\DXUTgui.h"
 #include "DXUT11\Optional\SDKmisc.h"
 #include "Render\DXUTHelper.hpp"
-
+#define RELEASE(x) if (x) { x->Release(); x = nullptr; }
+#include "Render\Shader.hpp"
 #include "UI/Dialog.hpp"
 
 using namespace box;
@@ -241,8 +242,8 @@ public:
 			}
 
 			{
-				Resource r("desc/lighting/phong.shader");
-				auto handle = ResourceManager::Instance().getHandle(r);
+				Shader s("desc/lighting/phong.shader");
+				s.restore();
 			}
 		}
 		auto& window = Window::Instance();

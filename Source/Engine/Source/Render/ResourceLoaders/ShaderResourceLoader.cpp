@@ -436,7 +436,7 @@ namespace box
 						ShaderResourceExtraData::Technique t;
 						if (parseTechnique(child, t, ShaderCommon))
 						{
-							extra->m_techniques.push_back(t);
+							extra->m_techniques.emplace_back(t);
 						}
 						else
 						{
