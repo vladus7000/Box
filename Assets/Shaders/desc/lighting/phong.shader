@@ -8,8 +8,8 @@
 			</Defines>
 		
 			<InputLayout>
-				<item semanticName="position" semanticIndex="0" stream="0" format="float3"/>
-				<item semanticName="texcoord" semanticIndex="0" stream="0" format="float2"/>
+				<item semanticName="Position" semanticIndex="0" stream="0" format="Float3"/>
+				<item semanticName="Texcoord" semanticIndex="0" stream="0" format="Float2"/>
 			</InputLayout>
 
 			<InputBuffers>

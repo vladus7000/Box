@@ -17,6 +17,7 @@ namespace box
 		ID3D11DepthStencilState* commonDepthStencil = nullptr;
 		ID3D11RasterizerState* commonRasterizer = nullptr;
 		ID3D11InputLayout* commonInputLayout = nullptr;
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
 
 		const char* fileName = nullptr;
 	};
@@ -33,11 +34,36 @@ namespace box
 		return true;
 	}
 
-	bool parseInputLayout(tinyxml2::XMLElement* inputLayoutRoot, ID3D11InputLayout*& out)
+	bool parseInputLayout(tinyxml2::XMLElement* inputLayoutRoot, std::vector<D3D11_INPUT_ELEMENT_DESC>& out)
 	{
-		D3D11_INPUT_ELEMENT_DESC inputDesc;
-		//TODO implement me
-		return true;
+		out.clear();
+		static const char* semanticNames[] = { "POSITION", "NORMAL", "TEXCOORD", "COLOR", "TANGENT", "BINORMAL" };
+		std::map<std::string, U32> nameToIndex;
+		nameToIndex["Position"] = 0;
+		nameToIndex["Normal"] = 1;
+		nameToIndex["Texcoord"] = 2;
+		nameToIndex["Color"] = 3;
+		nameToIndex["Tangent"] = 4;
+		nameToIndex["Binormal"] = 5;
+
+		for (auto item = inputLayoutRoot->FirstChild(); item; item = item->NextSibling())
+		{
+			auto element = item->ToElement();
+
+			const char* semanticName = element->Attribute("semanticName");
+			U32 semanticIndex(0);
+			U32 stream(0);
+			element->QueryUnsignedAttribute("semanticIndex", &semanticIndex);
+			element->QueryUnsignedAttribute("stream", &stream);
+			const char* format = element->Attribute("format");
+
+			const bool first = out.size() == 0;
+			auto dxFormat = g_dxgiFormats.find(format)->second;
+			U32 index = nameToIndex.find(semanticName)->second;
+
+			out.push_back({ semanticNames[index], semanticIndex, dxFormat, stream, first ? 0 : D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+		}
+		return out.size() > 0;
 	}
 	bool parseRasterizer(tinyxml2::XMLElement* rasterizerRoot, ID3D11RasterizerState*& out)
 	{
@@ -141,6 +167,7 @@ namespace box
 	{
 		const char* entryPoint = vsRoot->Attribute("entryPoint");
 		ID3D11VertexShader* vertexShader = nullptr;
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
 		bool ret = true;
 
 		if (!entryPoint)
@@ -160,19 +187,21 @@ namespace box
 
 		if (auto elem = vsRoot->FirstChildElement("InputLayout"))
 		{
-			ret &= parseInputLayout(elem, out.inputLayout);
+			ret &= parseInputLayout(elem, inputLayoutDesc);
 		}
 		else
 		{
-			if (common.commonInputLayout)
+			if (common.inputLayoutDesc.size() > 0)
 			{
-				out.inputLayout = common.commonInputLayout;
+				inputLayoutDesc = common.inputLayoutDesc;
 			}
 			else
 			{
 				ret = false;
 			}
 		}
+
+		//TODO: build shader
 
 		return ret;
 	}
@@ -297,11 +326,11 @@ namespace box
 						parseInputBuffers(elem);
 					}
 
-					/*if (auto elem = root->FirstChildElement("InputLayout"))
+					if (auto elem = root->FirstChildElement("InputLayout"))
 					{
-						parseInputLayout(elem);
+						parseInputLayout(elem, ShaderCommon.inputLayoutDesc);
 					}
-					*/
+					
 					if (auto elem = root->FirstChildElement("Rasterizer"))
 					{
 						parseRasterizer(elem, ShaderCommon.commonRasterizer);

@@ -157,15 +157,15 @@ namespace box
 	{
 		std::map<std::string, DXGI_FORMAT> ret;
 		ret["Unknown"] = DXGI_FORMAT_UNKNOWN;
-
+		ret["Float4"] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		ret["Float3"] = DXGI_FORMAT_R32G32B32_FLOAT;
+		ret["Float2"] = DXGI_FORMAT_R32G32_FLOAT;
 		/*
 		TODO: write others
 		DXGI_FORMAT_R32G32B32A32_TYPELESS       = 1,
-		DXGI_FORMAT_R32G32B32A32_FLOAT          = 2,
 		DXGI_FORMAT_R32G32B32A32_UINT           = 3,
 		DXGI_FORMAT_R32G32B32A32_SINT           = 4,
 		DXGI_FORMAT_R32G32B32_TYPELESS          = 5,
-		DXGI_FORMAT_R32G32B32_FLOAT             = 6,
 		DXGI_FORMAT_R32G32B32_UINT              = 7,
 		DXGI_FORMAT_R32G32B32_SINT              = 8,
 		DXGI_FORMAT_R16G16B16A16_TYPELESS       = 9,
@@ -175,7 +175,6 @@ namespace box
 		DXGI_FORMAT_R16G16B16A16_SNORM          = 13,
 		DXGI_FORMAT_R16G16B16A16_SINT           = 14,
 		DXGI_FORMAT_R32G32_TYPELESS             = 15,
-		DXGI_FORMAT_R32G32_FLOAT                = 16,
 		DXGI_FORMAT_R32G32_UINT                 = 17,
 		DXGI_FORMAT_R32G32_SINT                 = 18,
 		DXGI_FORMAT_R32G8X24_TYPELESS           = 19,
