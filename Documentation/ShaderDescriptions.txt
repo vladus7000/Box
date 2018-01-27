@@ -124,7 +124,7 @@ TEXT "AlphaSrc", [Blend]
 TEXT "AlphaDst", [Blend]
 TEXT "AlphaOp", [BlendOp]
 ex:
-<BlendDescriptions>
+<BlendDescriptions AlphaToCoverage="true|false" IndependentBlend="true|false">
 	<RT name="0">
 		<item name="BlendEnable" value="true" />
 		<item name="ColorSrc" value="InvDstColor" />

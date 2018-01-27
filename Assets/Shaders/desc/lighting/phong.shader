@@ -32,7 +32,7 @@
 				<item name="DepthFunc" value="Greater"/>
 			</DepthStencil>
 
-			<BlendDescriptions>
+			<BlendDescriptions AlphaToCoverage="true" IndependentBlend="true">
 				<RT name="0">
 					<item name="BlendEnable" value="true" />
 					<item name="ColorSrc" value="InvDstColor" />

@@ -222,11 +222,14 @@ namespace box
 
 	bool parseBlend(tinyxml2::XMLElement* blendRoot, ID3D11BlendState*& out)
 	{
-		// TODO implement reading
-		//BOOL AlphaToCoverageEnable;
-		//BOOL IndependentBlendEnable;
 		D3D11_BLEND_DESC BlendState;
 		ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+		bool alphaToCoverage = false;
+		bool independentBlend = false;
+		blendRoot->QueryBoolAttribute("AlphaToCoverage", &alphaToCoverage);
+		blendRoot->QueryBoolAttribute("IndependentBlend", &independentBlend);
+		BlendState.AlphaToCoverageEnable = alphaToCoverage;
+		BlendState.IndependentBlendEnable = independentBlend;
 		for (auto rt = blendRoot->FirstChild(); rt; rt = rt->NextSibling())
 		{
 			auto el = rt->ToElement();
