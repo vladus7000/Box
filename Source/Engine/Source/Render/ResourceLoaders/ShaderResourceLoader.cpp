@@ -15,9 +15,9 @@ namespace box
 	{
 		~Common()
 		{
-			RELEASE(commonBlend);
-			RELEASE(commonDepthStencil);
-			RELEASE(commonRasterizer);
+			SAVE_RELEASE(commonBlend);
+			SAVE_RELEASE(commonDepthStencil);
+			SAVE_RELEASE(commonRasterizer);
 		}
 		ID3D11BlendState* commonBlend = nullptr;
 		ID3D11DepthStencilState* commonDepthStencil = nullptr;
@@ -287,6 +287,7 @@ namespace box
 			if (common.commonRasterizer)
 			{
 				out.rasterizerState = common.commonRasterizer;
+				out.rasterizerState->AddRef();
 			}
 		}
 
@@ -299,6 +300,7 @@ namespace box
 			if (common.commonDepthStencil)
 			{
 				out.depthStencilView = common.commonDepthStencil;
+				out.depthStencilView->AddRef();
 			}
 		}
 
@@ -311,6 +313,7 @@ namespace box
 			if (common.commonBlend)
 			{
 				out.blendState = common.commonBlend;
+				out.blendState->AddRef();
 			}
 		}
 

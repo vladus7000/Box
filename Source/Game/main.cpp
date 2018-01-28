@@ -19,7 +19,7 @@
 #include "DXUT11\Optional\DXUTgui.h"
 #include "DXUT11\Optional\SDKmisc.h"
 #include "Render\DXUTHelper.hpp"
-#define RELEASE(x) if (x) { x->Release(); x = nullptr; }
+#define SAVE_RELEASE(x) if (x) { x->Release(); x = nullptr; }
 #include "Render\Shader.hpp"
 #include "UI/Dialog.hpp"
 

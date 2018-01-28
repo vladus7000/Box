@@ -74,7 +74,8 @@ namespace DXUT
 		std::shared_ptr<box::TextureResourceExtraData> extra(std::static_pointer_cast<box::TextureResourceExtraData>(handle->getExtra()));
 		if (extra)
 		{
-			result = extra->getShaderResourceView();
+			result = extra->getTextureData().shaderResourceView;
+			result->AddRef();
 		}
 
 		return result;

@@ -22,16 +22,16 @@ namespace box
 		{
 			void releaseAll()
 			{
-				RELEASE(blendState);
-				RELEASE(depthStencilView);
-				RELEASE(rasterizerState);
-				RELEASE(inputLayout);
-				RELEASE(hullShader);
-				RELEASE(domainShader);
-				RELEASE(geometryShader);
-				RELEASE(computeShader);
-				RELEASE(pixelShader);
-				RELEASE(vertexShader);
+				SAVE_RELEASE(blendState);
+				SAVE_RELEASE(depthStencilView);
+				SAVE_RELEASE(rasterizerState);
+				SAVE_RELEASE(inputLayout);
+				SAVE_RELEASE(hullShader);
+				SAVE_RELEASE(domainShader);
+				SAVE_RELEASE(geometryShader);
+				SAVE_RELEASE(computeShader);
+				SAVE_RELEASE(pixelShader);
+				SAVE_RELEASE(vertexShader);
 			}
 		public:
 			Technique()

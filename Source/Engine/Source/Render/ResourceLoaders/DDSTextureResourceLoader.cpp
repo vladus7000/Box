@@ -45,7 +45,7 @@ namespace box
 		std::shared_ptr<TextureResourceExtraData> extra(new TextureResourceExtraData());
 
 		// Load the Texture
-		if (FAILED(D3DX11CreateShaderResourceViewFromMemory(DXUTGetD3D11Device(), buffer, size, NULL, NULL, &extra->m_shaderResourceView, NULL)))
+		if (FAILED(D3DX11CreateShaderResourceViewFromMemory(DXUTGetD3D11Device(), buffer, size, NULL, NULL, &extra->getTextureData().shaderResourceView, NULL)))
 		{
 			return false;
 		}
@@ -58,7 +58,7 @@ namespace box
 		{
 			if (auto root = xmlData->getXMLRoot())
 			{
-				if (parseSamplerState(root->ToElement(), extra->m_samplerState))
+				if (parseSamplerState(root->ToElement(), extra->getTextureData().samplerState))
 				{
 					handle->setExtra(extra);
 					return true;
