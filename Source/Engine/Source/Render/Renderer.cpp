@@ -3,6 +3,7 @@
 #include "System\ResourceSystem\ResourceManager.hpp"
 #include "Render\ResourceLoaders\DDSTextureResourceLoader.hpp"
 #include "Render\ResourceLoaders\ShaderResourceLoader.hpp"
+#include <Render/ResourceLoaders/SdkmeshResourceLoader.hpp>
 
 #include <DXUT11\Core\DXUT.h>
 #include "Render\DXUTHelper.hpp"
@@ -58,6 +59,7 @@ namespace box
 	{
 		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new DDSTextureResourceLoader()));
 		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new ShaderResourceLoader()));
+		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new SdkmeshResourceLoader()));
 
 		DXUTSetCallbackDeviceChanging(ModifyDeviceSettings);
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable);
