@@ -77,4 +77,18 @@ namespace box
 	{
 		DXUT::Deinit();
 	}
+
+	void Renderer::renderScene(F32 delta)
+	{
+		if (m_scene)
+		{
+			m_scene->render(delta);
+		}
+	}
+
+	void Renderer::cullObjects()
+	{
+
+	}
+
 }
