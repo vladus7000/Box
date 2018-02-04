@@ -155,6 +155,10 @@ class Engine : Project
         conf.Output = Project.Configuration.OutputType.Lib;
         conf.IntermediatePath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Engine\\intermediate");
         conf.TargetPath = Path.Combine("[project.SharpmakeCsPath]", "\\..\\..\\Artifacts\\Engine\\output");
+
+        conf.LibraryPaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\Assimp\\lib\\x64");
+        conf.LibraryFiles.Add("assimp");
+        conf.IncludePaths.Add(@"[project.SharpmakeCsPath]\\..\\..\\Lib\\Assimp\\include");
         //conf.IncludePaths.Add("[project.BasePath]");
         //conf.TargetLibraryPath = "[project.BasePath]/lib";
     }
