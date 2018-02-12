@@ -19,12 +19,7 @@ void winforms::MyForm::init()
 {
 	initTools();
 
-	if (!m_engine)
-	{
-		m_engine = new box::Engine();
-
-		m_engine->startup(m_renderWindow->getHwnd());
-	}
+	Exports::System::StartEngine(m_renderWindow->getHwnd(), 0, nullptr);
 }
 
 void winforms::MyForm::initTools()
@@ -65,10 +60,5 @@ void winforms::MyForm::initTools()
 
 void winforms::MyForm::deinit()
 {
-	if (m_engine)
-	{
-		m_engine->shutdown();
-		delete m_engine;
-		m_engine = nullptr;
-	}
+	Exports::System::StopEngine();
 }

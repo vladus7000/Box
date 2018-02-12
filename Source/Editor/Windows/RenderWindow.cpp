@@ -2,5 +2,5 @@
 
 void* Editor::RenderWindow::getHwnd()
 {
-	return this->panel1->Handle.ToPointer();;
+	return this->panel1->Handle.ToPointer();
 }
