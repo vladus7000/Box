@@ -19,35 +19,15 @@
 #include "System\Process\ProcessManager.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
 #include "Gameplay\GameView.hpp"
+#include <DXUT11\Core\DXUT.h>
 
 #ifdef GAME_BUILD
-#include <DXUT11\Core\DXUT.h>
 #include <vector>
 #include "Render\DXUTHelper.hpp"
 #endif
 
 namespace box
 {
-	void StartEngine()
-	{
-#ifdef EDITOR_BUILD
-		printf("EDITOR: Engine started\n");
-#endif
-#ifdef GAME_BUILD
-		printf("GAME: Engine started\n");
-#endif
-	}
-
-	void StopEngine()
-	{
-#ifdef EDITOR_BUILD
-		printf("EDITOR: Engine stopped\n");
-#endif
-#ifdef GAME_BUILD
-		printf("GAME: Engine stopped\n");
-#endif
-	}
-
 	Engine::Engine()
 	{
 	}
@@ -77,11 +57,7 @@ namespace box
 
 			DXUTInit(true, true, NULL);
 			Window::Instance();
-			Display::Instance();
 			ProcessManager::Instance();
-#endif
-#ifdef EDITOR_BUILD
-			Display::Instance();
 #endif
 			ThreadManager::Instance();
 			Input::Instance();
@@ -96,12 +72,12 @@ namespace box
 		result &= EventSystem::Instance().init();
 		result &= RunEnvironment::Instance().init(argc, argv);
 		result &= ResourceManager::Instance().init();
+		
 #ifdef GAME_BUILD
 		result &= Window::Instance().init();
-		result &= Display::Instance().init(Window::Instance().getWindowHandle());
 #endif
 #ifdef EDITOR_BUILD
-		result &= Display::Instance().init(hwnd);
+		result &= Window::Instance().init(hwnd);
 #endif
 		result &= ThreadManager::Instance().init();
 		result &= Input::Instance().init();
@@ -134,14 +110,12 @@ namespace box
 		Window::Instance().deinit();
 		ProcessManager::Instance().abortAllProcesses(true);
 #endif
-		Display::Instance().deinit();
 		ResourceManager::Instance().deinit();
 		RunEnvironment::Instance().deinit();
 		EventSystem::Instance().deinit();
 		Allocator::Instance().deinit();
 	}
 
-#ifdef GAME_BUILD
 	std::vector<std::shared_ptr<GameView>> g_gameViews;
 
 	void CALLBACK OnFrameMove(double fTime, float fElapsedTime, void* pUserContext)
@@ -204,5 +178,4 @@ namespace box
 		}
 		g_gameViews.clear();
 	}
-#endif
 }

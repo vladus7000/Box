@@ -1,9 +1,7 @@
 #pragma once
 #include "System\Patterns\Singleton.hpp"
 
-#ifdef GAME_BUILD
 #include <windows.h>
-#endif
 
 namespace box
 {
@@ -20,20 +18,24 @@ namespace box
 		void* m_displayHandle;
 	};
 
-#ifdef GAME_BUILD
 	class Window
 	{
 		SINGLETON(Window);
 	public:
-		bool init();
+		bool init(void* windowHandle = nullptr);
 		void deinit();
 
 		void pollEvents();
 
 		void* getWindowHandle() const { return m_windowHandle; }
+		U32 getHeight() const { return m_windowHeight; }
+		U32 getWidth() const { return m_windowWidth; }
+
+		void onResize();
 
 	private:
 		void* m_windowHandle;
+		U32 m_windowHeight;
+		U32 m_windowWidth;
 	};
-#endif
 }

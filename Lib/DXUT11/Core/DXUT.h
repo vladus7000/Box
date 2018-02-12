@@ -349,6 +349,8 @@ bool      WINAPI DXUTIsMouseButtonDown( BYTE vButton ); // Pass a virtual-key co
 HRESULT   WINAPI DXUTCreateState(); // Optional method to create DXUT's memory.  If its not called by the application it will be automatically called when needed
 void      WINAPI DXUTDestroyState(); // Optional method to destroy DXUT's memory.  If its not called by the application it will be automatically called after the application exits WinMain 
 
+void DXUTResizeDXGIBuffers(UINT Width, UINT Height, BOOL bFullScreen);
+
 //--------------------------------------------------------------------------------------
 // DXUT core layer includes
 //--------------------------------------------------------------------------------------

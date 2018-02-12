@@ -4,6 +4,7 @@
 #include "Render\ResourceLoaders\DDSTextureResourceLoader.hpp"
 #include "Render\ResourceLoaders\ShaderResourceLoader.hpp"
 #include <Render/ResourceLoaders/SdkmeshResourceLoader.hpp>
+#include "Window\Window.hpp"
 
 #include <DXUT11\Core\DXUT.h>
 #include "Render\DXUTHelper.hpp"
@@ -69,7 +70,7 @@ namespace box
 		DXUTSetCallbackD3D11SwapChainReleasing(OnD3D11ReleasingSwapChain);
 		DXUTSetCallbackD3D11DeviceDestroyed(OnD3D11DestroyDevice);
 		DXUTSetCallbackD3D11SwapChainResized(OnD3D11ResizedSwapChain);
-		DXUTCreateDevice(D3D_FEATURE_LEVEL_11_0, true, 800, 600);
+		DXUTCreateDevice(D3D_FEATURE_LEVEL_11_0, true, Window::Instance().getWidth(), Window::Instance().getHeight());
 		return true;
 	}
 
