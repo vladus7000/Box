@@ -2,6 +2,8 @@
 
 #include "System/Types.hpp"
 
+#include "System/ResourceSystem/ResourceSystemExports.hpp"
+
 namespace Exports
 {
 	namespace System
