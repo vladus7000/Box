@@ -1,6 +1,6 @@
 #pragma once
-#include <System/Engine.hpp>
-#include "System\Input.hpp"
+
+#include <EngineExports/EngineExports.hpp>
 
 #include "Windows\RenderWindow.h"
 #include "Windows\CheatWindow.h"
@@ -13,8 +13,6 @@
 #include "Windows\SceneView.h"
 #include "Windows\Properties.h"
 #include "Windows\AddObject.h"
-
-using namespace box;
 
 namespace winforms {
 
@@ -32,7 +30,6 @@ namespace winforms {
 	{
 	public:
 		MyForm(void)
-			: m_engine(nullptr)
 		{
 			InitializeComponent();
 			init();
@@ -55,7 +52,6 @@ namespace winforms {
 		void init();
 		void initTools();
 		void deinit();
-		box::Engine* m_engine;
 
 		Editor::RenderWindow^ m_renderWindow;
 		Editor::CheatWindow^ m_cheatWindow;

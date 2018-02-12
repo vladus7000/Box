@@ -1,9 +1,6 @@
 #pragma once
 
-#include <System/Engine.hpp>
-#include "System\Input.hpp"
-
-using namespace box;
+#include "EngineExports/EngineExports.hpp"
 
 namespace Editor {
 
@@ -101,22 +98,22 @@ namespace Editor {
 	}
 	private: System::Void panel1_PreviewKeyDown(System::Object^  sender, System::Windows::Forms::PreviewKeyDownEventArgs^  e) {
 		(void)sender;
-		Input::Instance().onKeyDown(static_cast<U32>(e->KeyCode));
+		Exports::Input::OnKeyDown(static_cast<box::U32>(e->KeyCode));
 	}
 	private: System::Void panel1_Click(System::Object^  sender, System::EventArgs^  e) {
-		Input::Instance().onMouseButtonDown(0, 0, 0);
+		Exports::Input::OnMouseButtonDown(0, 0, 0);
 	}
 	private: System::Void panel1_Scroll(System::Object^  sender, System::Windows::Forms::ScrollEventArgs^  e) {
 		//
 	}
 	private: System::Void panel1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-		Input::Instance().onMouseButtonDown(0, 0, 0);
+		Exports::Input::OnMouseButtonDown(0, 0, 0);
 	}
 	private: System::Void panel1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-		Input::Instance().onMouseMove(0, 0);
+		Exports::Input::OnMouseMove(0, 0);
 	}
 	private: System::Void panel1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-		Input::Instance().onMousebuttonUp(0, 0, 0);
+		Exports::Input::OnMousebuttonUp(0, 0, 0);
 	}
 	};
 }
