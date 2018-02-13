@@ -11,6 +11,9 @@ namespace Exports
 		int StartEngine(void* hwnd, int argc, char** argv);
 		int StopEngine();
 
+		int WndProc(void* hwnd, int msg, int wParam, int lParam);
+		int RenderFrame();
+
 		int Update(box::F32 delta);
 		int RenderFrame(box::F32 delta);
 	}

@@ -1,6 +1,7 @@
 #include "StdAfx.hpp"
 #include "System/Engine.hpp"
 #include "System/Input.hpp"
+#include <DXUT11\Core\DXUT.h>
 
 namespace Exports
 {
@@ -17,7 +18,7 @@ namespace System
 		}
 
 		g_engineInstance = new box::Engine();
-		g_engineInstance->startup(hwnd);
+		g_engineInstance->startup(hwnd, argc, argv);
 		return 0;
 	}
 
@@ -32,6 +33,28 @@ namespace System
 		delete g_engineInstance;
 		g_engineInstance = nullptr;
 
+		return 0;
+	}
+
+	int WndProc(void* hwnd, int msg, int wParam, int lParam)
+	{
+		if (!g_engineInstance)
+		{
+			return -1;
+		}
+
+		DXUTStaticWndProc(static_cast<HWND>(hwnd), msg, wParam, lParam);
+		return 0;
+	}
+
+	int RenderFrame()
+	{
+		if (!g_engineInstance)
+		{
+			return -1;
+		}
+
+		DXUTRender3DEnvironment();
 		return 0;
 	}
 

@@ -22,7 +22,8 @@ namespace winforms {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-	
+	using namespace System::Runtime::InteropServices;
+
 	/// <summary>
 	/// Summary for MyForm
 	/// </summary>
@@ -32,6 +33,7 @@ namespace winforms {
 		MyForm(void)
 		{
 			InitializeComponent();
+			Application::Idle += gcnew EventHandler(this,&MyForm::onIdle);
 			init();
 		}
 
@@ -100,6 +102,8 @@ namespace winforms {
 	private: System::Windows::Forms::ToolStripMenuItem^  showPropertiesWindowToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  createObjectToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  showCreateObjectWindowToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  importModelToolStripMenuItem;
+	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
 
 
 	private: System::ComponentModel::IContainer^  components;
@@ -137,6 +141,7 @@ namespace winforms {
 			this->progressBar = (gcnew System::Windows::Forms::ToolStripProgressBar());
 			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->importModelToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->buildToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->releaseBuildToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->debugToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -166,6 +171,7 @@ namespace winforms {
 			this->showPropertiesWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->createObjectToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->showCreateObjectWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->statusStrip1->SuspendLayout();
 			this->menuStrip1->SuspendLayout();
 			this->SuspendLayout();
@@ -259,9 +265,17 @@ namespace winforms {
 			// 
 			// fileToolStripMenuItem
 			// 
+			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->importModelToolStripMenuItem });
 			this->fileToolStripMenuItem->Name = L"fileToolStripMenuItem";
 			this->fileToolStripMenuItem->Size = System::Drawing::Size(37, 20);
 			this->fileToolStripMenuItem->Text = L"File";
+			// 
+			// importModelToolStripMenuItem
+			// 
+			this->importModelToolStripMenuItem->Name = L"importModelToolStripMenuItem";
+			this->importModelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->importModelToolStripMenuItem->Text = L"ImportModel";
+			this->importModelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::importModelToolStripMenuItem_Click);
 			// 
 			// buildToolStripMenuItem
 			// 
@@ -470,6 +484,10 @@ namespace winforms {
 			this->showCreateObjectWindowToolStripMenuItem->Text = L"ShowCreateObjectWindow";
 			this->showCreateObjectWindowToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::showCreateObjectWindowToolStripMenuItem_Click);
 			// 
+			// openFileDialog1
+			// 
+			this->openFileDialog1->FileName = L"openFileDialog1";
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -531,5 +549,24 @@ private: System::Void showCreateObjectWindowToolStripMenuItem_Click(System::Obje
 private: System::Void MyForm_Resize(System::Object^  sender, System::EventArgs^  e) {
 	this->dockPanel1->Size = this->ClientSize - System::Drawing::Size(0, 52);
 }
+private: System::Void importModelToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	openFileDialog1->Title = "Import Model";
+	openFileDialog1->FileName = "";
+	openFileDialog1->ShowDialog();
+	System::String^ fileName = openFileDialog1->FileName;
+
+	{
+		char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
+		Exports::Resources::ImportModel(name);
+		Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+	}
+}
+
+	private: System::Void onIdle(System::Object^  sender, System::EventArgs^  e) {
+		Exports::System::WndProc(m_renderWindow->getHwnd(), 0, 0, 0);
+		Exports::System::RenderFrame();
+		Invalidate();
+	}
 };
 }

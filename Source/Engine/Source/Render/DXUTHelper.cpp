@@ -18,8 +18,6 @@ namespace box
 {
 namespace DXUT
 {
-
-
 	CDXUTDialogResourceManager* g_DialogResourceManager;
 	CDXUTTextHelper* g_TextHelper = nullptr;
 

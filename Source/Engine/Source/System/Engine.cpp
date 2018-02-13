@@ -21,13 +21,48 @@
 #include "Gameplay\GameView.hpp"
 #include <DXUT11\Core\DXUT.h>
 
-#ifdef GAME_BUILD
 #include <vector>
 #include "Render\DXUTHelper.hpp"
-#endif
 
 namespace box
 {
+	std::vector<std::shared_ptr<GameView>> g_gameViews;
+
+	void CALLBACK OnFrameMove(double fTime, float fElapsedTime, void* pUserContext)
+	{
+		for (auto& it : g_gameViews)
+		{
+			it->update(fTime, fElapsedTime);
+		}
+	}
+
+	LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing,
+		void* pUserContext)
+	{
+		AppMsg msg;
+		msg.hwnd = hWnd;
+		msg.uMsg = uMsg;
+		msg.lParam = lParam;
+		msg.wParam = wParam;
+
+		if (DXUT::MsgProc(msg) == AppMsg::Status::Processed)
+		{
+			*pbNoFurtherProcessing = true;
+			return S_OK;
+		}
+
+		// TODO: sort gameViews;
+		for (auto& it : g_gameViews)
+		{
+			if (it->msgProc(msg) == AppMsg::Status::Processed)
+			{
+				*pbNoFurtherProcessing = true;
+				return S_OK;
+			}
+		}
+		return S_OK;
+	}
+
 	Engine::Engine()
 	{
 	}
@@ -46,19 +81,19 @@ namespace box
 		result &= m_machineInfo.detect();
 
 		{// warming up singletons
+			DXUTInit(true, true, NULL);
+			DXUTSetCallbackFrameMove(OnFrameMove);
+			DXUTSetCallbackMsgProc(MsgProc);
+
 			Allocator::Instance();
 			RunEnvironment::Instance();
 			ResourceManager::Instance();
-#ifdef GAME_BUILD
 
 #if defined(DEBUG) | defined(_DEBUG)
 			_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
-			DXUTInit(true, true, NULL);
 			Window::Instance();
 			ProcessManager::Instance();
-#endif
 			ThreadManager::Instance();
 			Input::Instance();
 			ScriptingManager::Instance();
@@ -114,49 +149,11 @@ namespace box
 		RunEnvironment::Instance().deinit();
 		EventSystem::Instance().deinit();
 		Allocator::Instance().deinit();
-	}
-
-	std::vector<std::shared_ptr<GameView>> g_gameViews;
-
-	void CALLBACK OnFrameMove(double fTime, float fElapsedTime, void* pUserContext)
-	{
-		for (auto& it : g_gameViews)
-		{
-			it->update(fTime, fElapsedTime);
-		}
-	}
-
-	LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing,
-		void* pUserContext)
-	{
-		AppMsg msg;
-		msg.hwnd = hWnd;
-		msg.uMsg = uMsg;
-		msg.lParam = lParam;
-		msg.wParam = wParam;
-
-		if (DXUT::MsgProc(msg) == AppMsg::Status::Processed)
-		{
-			*pbNoFurtherProcessing = true;
-			return S_OK;
-		}
-
-		// TODO: sort gameViews;
-		for (auto& it : g_gameViews)
-		{
-			if (it->msgProc(msg) == AppMsg::Status::Processed)
-			{
-				*pbNoFurtherProcessing = true;
-				return S_OK;
-			}
-		}
-		return S_OK;
+		DXUTShutdown();
 	}
 
 	void Engine::attachGameView(std::shared_ptr<GameView> view)
 	{
-		DXUTSetCallbackFrameMove(OnFrameMove);
-		DXUTSetCallbackMsgProc(MsgProc);
 		if (view)
 		{
 			if (view->restore())

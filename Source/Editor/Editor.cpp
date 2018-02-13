@@ -1,5 +1,4 @@
 #include "Editor.h"
-#include "Window\Window.hpp"
 
 using namespace System;
 using namespace System::Windows::Forms;
@@ -11,7 +10,6 @@ int main(array<String^>^ args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 	winforms::MyForm form;
-
 	Application::Run(%form);
 }
 
