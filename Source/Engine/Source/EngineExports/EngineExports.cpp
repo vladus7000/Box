@@ -1,9 +1,11 @@
 #include "StdAfx.hpp"
+#include "EngineExports/EngineExports.hpp"
 #include "System/Engine.hpp"
 #include "System/Input.hpp"
 #include "Render/Renderer.hpp"
 #include "Gameplay\GameView.hpp"
 #include "Scene\Scene.hpp"
+#include "Window\Window.hpp"
 
 #include <DXUT11\Core\DXUT.h>
 
@@ -125,6 +127,17 @@ namespace System
 		}
 
 		DXUTRender3DEnvironment();
+		return 0;
+	}
+
+	int Resize(int width, int height)
+	{
+		if (!g_engineInstance)
+		{
+			return -1;
+		}
+
+		Window::Instance().resize(width, height);
 		return 0;
 	}
 }//System

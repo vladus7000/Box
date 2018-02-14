@@ -31,7 +31,7 @@ namespace box
 		U32 getHeight() const { return m_windowHeight; }
 		U32 getWidth() const { return m_windowWidth; }
 
-		void onResize();
+		void resize(U32 width, U32 height);
 
 	private:
 		void* m_windowHandle;
