@@ -11,6 +11,7 @@ namespace box
 	{
 	public:
 		using SceneNodeStrongPtr = std::shared_ptr<SceneNode>;
+		using SceneNodeWeakPtr = std::weak_ptr<SceneNode>;
 	public:
 		SceneNode()
 			: m_radius(1.0f)

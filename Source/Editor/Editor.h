@@ -565,7 +565,7 @@ private: System::Void importModelToolStripMenuItem_Click(System::Object^  sender
 
 	private: System::Void onIdle(System::Object^  sender, System::EventArgs^  e) {
 		Exports::System::WndProc(m_renderWindow->getHwnd(), 0, 0, 0);
-		Exports::System::RenderFrame();
+		Exports::System::RenderFrame(1.0f / 60.0f);
 		Invalidate();
 	}
 };

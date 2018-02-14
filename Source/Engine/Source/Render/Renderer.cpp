@@ -42,12 +42,6 @@ namespace box
 		return true;
 	}
 
-	void CALLBACK OnD3D11FrameRender(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime,
-		float fElapsedTime, void* pUserContext)
-	{
-		return;
-	}
-
 	HRESULT CALLBACK OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain,
 		const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext)
 	{
@@ -66,7 +60,6 @@ namespace box
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable);
 		DXUTSetCallbackD3D11DeviceCreated(OnD3D11CreateDevice);
 
-		DXUTSetCallbackD3D11FrameRender(OnD3D11FrameRender);
 		DXUTSetCallbackD3D11SwapChainReleasing(OnD3D11ReleasingSwapChain);
 		DXUTSetCallbackD3D11DeviceDestroyed(OnD3D11DestroyDevice);
 		DXUTSetCallbackD3D11SwapChainResized(OnD3D11ResizedSwapChain);

@@ -33,6 +33,10 @@ namespace box
 		{
 			m_root->deviceLost();
 		}
+		inline SceneNode::SceneNodeWeakPtr getRoot()
+		{
+			return m_root;
+		}
 	private:
 		inline virtual void preRender()
 		{

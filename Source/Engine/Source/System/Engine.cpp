@@ -36,6 +36,15 @@ namespace box
 		}
 	}
 
+	void CALLBACK OnD3D11FrameRender(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime,
+		float fElapsedTime, void* pUserContext)
+	{
+		for (auto& it : g_gameViews)
+		{
+			it->render(fTime, fElapsedTime);
+		}
+	}
+
 	LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing,
 		void* pUserContext)
 	{
@@ -83,6 +92,7 @@ namespace box
 		{// warming up singletons
 			DXUTInit(true, true, NULL);
 			DXUTSetCallbackFrameMove(OnFrameMove);
+			DXUTSetCallbackD3D11FrameRender(OnD3D11FrameRender);
 			DXUTSetCallbackMsgProc(MsgProc);
 
 			Allocator::Instance();
@@ -132,6 +142,12 @@ namespace box
 
 	void Engine::shutdown()
 	{
+		for (auto& it : g_gameViews)
+		{
+			it->deinit();
+		}
+		g_gameViews.clear();
+
 		CheatManager::Instance().deinit();
 		RandomGenerator::deinit();
 		NetworkManager::Instance().deinit();
@@ -141,10 +157,8 @@ namespace box
 		Input::Instance().deinit();
 		ThreadManager::Instance().abortAllThreads(true);
 		ThreadManager::Instance().deinit();
-#ifdef GAME_BUILD
 		Window::Instance().deinit();
 		ProcessManager::Instance().abortAllProcesses(true);
-#endif
 		ResourceManager::Instance().deinit();
 		RunEnvironment::Instance().deinit();
 		EventSystem::Instance().deinit();
@@ -168,11 +182,6 @@ namespace box
 		if (g_gameViews.size() > 0)
 		{
 			DXUTMainLoop();
-			for (auto& it : g_gameViews)
-			{
-				it->deinit();
-			}
 		}
-		g_gameViews.clear();
 	}
 }
