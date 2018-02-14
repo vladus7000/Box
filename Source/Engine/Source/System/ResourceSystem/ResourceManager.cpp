@@ -8,6 +8,10 @@
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 namespace
 {
 	const box::U32 DefaultCacheSizeMb = 100;
@@ -106,4 +110,15 @@ namespace box
 	{
 		m_cache->registerLoader(loader);
 	}
+
+	void ResourceManager::importModelFromFile(const std::string& fileName)
+	{
+		Assimp::Importer importer;
+		const aiScene* assimpScene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Quality);
+		if (assimpScene)
+		{
+			//TODO: do something clever here.
+		}
+	}
+
 }

@@ -22,6 +22,8 @@ namespace box
 		std::shared_ptr<ResourceHandle> getHandle(Resource& r, bool async = false);
 		void registerLoader(std::shared_ptr<ResourceLoader> loader);
 
+		void importModelFromFile(const std::string& fileName);
+
 	private:
 		ResourceCache* m_cache;
 	};

@@ -2,6 +2,8 @@
 #include "System/ResourceSystem/ResourceSystemExports.hpp"
 #include "System/Engine.hpp"
 
+#include "System/ResourceSystem/ResourceManager.hpp"
+
 namespace Exports
 {
 	extern box::Engine* g_engineInstance;
@@ -14,6 +16,8 @@ namespace Resources
 		{
 			return -1;
 		}
+
+		box::ResourceManager::Instance().importModelFromFile(fileName);
 
 		return 0;
 	}
