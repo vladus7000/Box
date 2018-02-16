@@ -24,7 +24,7 @@ namespace
 			m_renderer = &Renderer::Instance();
 			m_scene = std::make_shared<Scene>();
 			m_camera = std::make_shared<Camera>();
-			m_objectsLoaded = 0;
+			m_modelsLoaded = 0;
 
 			m_renderer->setScene(m_scene);
 			m_renderer->setCamera(m_camera);
@@ -66,7 +66,7 @@ namespace
 			txtHelper.DrawTextLine(DXUTGetDeviceStats());
 			txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 			wchar_t buf[50];
-			wsprintf(buf, L"Objects loaded: %d", m_objectsLoaded);
+			wsprintf(buf, L"Objects loaded: %d", m_modelsLoaded);
 			txtHelper.DrawTextLine(buf);
 			txtHelper.End();
 			return 0;
@@ -84,14 +84,18 @@ namespace
 	private:
 		void resourceLoaded(EventSystem::StrongEventDataPtr resource)
 		{
-			m_objectsLoaded++;
+			std::shared_ptr<Event_ResourceLoaded> loadedResource(std::static_pointer_cast<Event_ResourceLoaded>(resource));
+			if (loadedResource->getType() == Event_ResourceLoaded::ResourceType::Model)
+			{
+				m_modelsLoaded++;
+			}
 		}
 	private:
 		Renderer* m_renderer;
 		Scene::SceneStrongPtr m_scene;
 		Camera::CameraStrongPtr m_camera;
 		EventSystem::DelegateType m_delegate;
-		U32 m_objectsLoaded;
+		U32 m_modelsLoaded;
 	};
 }
 namespace Exports

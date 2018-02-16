@@ -121,7 +121,7 @@ namespace box
 			//TODO: do something clever here.
 
 			{
-				std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded);
+				std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded(Event_ResourceLoaded::ResourceType::Model, ResourceHandle::StrongResourceHandlePtr()));
 				EventSystem::Instance().raiseEvent(event);
 			}
 		}
