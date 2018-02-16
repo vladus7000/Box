@@ -8,6 +8,8 @@ namespace box
 	{
 	public:
 		using SceneStrongPtr = std::shared_ptr<Scene>;
+		using SceneWeakPtr = std::weak_ptr<Scene>;
+
 	public:
 		Scene()
 		{

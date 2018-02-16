@@ -4,8 +4,12 @@
 #include "Render/Renderer.hpp"
 #include "Gameplay\GameView.hpp"
 #include "Scene\Scene.hpp"
+#include "System\ResourceSystem\ResourceEvents.hpp"
+#include "System\EventSystem\EventSystem.hpp"
 
 #include <DXUT11\Core\DXUT.h>
+#include "Render\DXUTHelper.hpp"
+#include "DXUT11\Optional\SDKmisc.h"
 
 using namespace box;
 namespace
@@ -19,13 +23,21 @@ namespace
 		{
 			m_renderer = &Renderer::Instance();
 			m_scene = std::make_shared<Scene>();
+			m_camera = std::make_shared<Camera>();
+			m_objectsLoaded = 0;
+
 			m_renderer->setScene(m_scene);
+			m_renderer->setCamera(m_camera);
+
+			m_delegate = fastdelegate::MakeDelegate(this, &EditorView::resourceLoaded);
+			EventSystem::Instance().add(m_delegate, Event_ResourceLoaded::Type);
 
 			return true;
 		}
 
 		virtual void deinit() override
 		{
+			EventSystem::Instance().remove(m_delegate, Event_ResourceLoaded::Type);
 		}
 
 		virtual void deviceLost() override
@@ -45,6 +57,18 @@ namespace
 			context->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0, 0);
 
 			m_renderer->renderScene(delta);
+
+			auto& txtHelper = DXUT::GetTextHelper();
+			txtHelper.Begin();
+			txtHelper.SetInsertionPos(2, 0);
+			txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+			txtHelper.DrawTextLine(DXUTGetFrameStats(DXUTIsVsyncEnabled()));
+			txtHelper.DrawTextLine(DXUTGetDeviceStats());
+			txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+			wchar_t buf[50];
+			wsprintf(buf, L"Objects loaded: %d", m_objectsLoaded);
+			txtHelper.DrawTextLine(buf);
+			txtHelper.End();
 			return 0;
 		}
 
@@ -58,8 +82,16 @@ namespace
 			return AppMsg::Status::DefaultAction;
 		}
 	private:
+		void resourceLoaded(EventSystem::StrongEventDataPtr resource)
+		{
+			m_objectsLoaded++;
+		}
+	private:
 		Renderer* m_renderer;
 		Scene::SceneStrongPtr m_scene;
+		Camera::CameraStrongPtr m_camera;
+		EventSystem::DelegateType m_delegate;
+		U32 m_objectsLoaded;
 	};
 }
 namespace Exports

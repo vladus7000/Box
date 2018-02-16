@@ -10,7 +10,7 @@
 #include "System\ResourceSystem\Resource.hpp"
 
 #include "System\EventSystem\EventSystem.hpp"
-#include "System\EventSystem\EngineEvents.hpp"
+#include "System\ResourceSystem\ResourceEvents.hpp"
 
 #define LOG(args) printf(args)
 

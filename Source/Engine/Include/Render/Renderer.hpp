@@ -1,6 +1,7 @@
 #pragma once
 #include "System\Patterns\Singleton.hpp"
 #include "Scene\Scene.hpp"
+#include "Camera.hpp"
 
 namespace box
 {
@@ -21,12 +22,17 @@ namespace box
 		void deinit();
 
 		void setScene(Scene::SceneStrongPtr scene) { m_scene = scene; };
+		Scene::SceneWeakPtr getScene() const { return m_scene; }
+
+		void setCamera(Camera::CameraStrongPtr camera) { m_camera = camera; }
+		Camera::CameraWeakPtr getCamera() const { return m_camera; }
 
 		void renderScene(F32 delta);
 		void cullObjects();
 
 	private:
 		Scene::SceneStrongPtr m_scene;
+		Camera::CameraStrongPtr m_camera;
 		RenderObjects m_renderList;
 	};
 }

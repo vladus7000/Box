@@ -7,6 +7,7 @@
 #include "System/Process/Processes/LoadResourceProcess.hpp"
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
+#include "System\ResourceSystem\ResourceEvents.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -118,6 +119,11 @@ namespace box
 		if (assimpScene)
 		{
 			//TODO: do something clever here.
+
+			{
+				std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded);
+				EventSystem::Instance().raiseEvent(event);
+			}
 		}
 	}
 
