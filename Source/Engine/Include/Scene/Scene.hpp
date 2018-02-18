@@ -13,7 +13,7 @@ namespace box
 	public:
 		Scene()
 		{
-			m_root = std::make_shared<SceneNode>();
+			m_root = std::make_shared<SceneNode>(SceneNode::Type::Invalid);
 		}
 		~Scene() = default;
 

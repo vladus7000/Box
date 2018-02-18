@@ -11,11 +11,18 @@
 
 #include <DXUT11\Core\DXUT.h>
 #include "Render\DXUTHelper.hpp"
+#include "Render\GraphicsNode.hpp"
 #include "DXUT11\Optional\SDKmisc.h"
 
 using namespace box;
 namespace
 {
+	template <class T, class U >
+	std::shared_ptr<T> castTo(std::shared_ptr<U> in)
+	{
+		return std::static_pointer_cast<T>(in);
+	}
+
 	class EditorView : public box::GameView
 	{
 	public:
@@ -84,11 +91,25 @@ namespace
 			return AppMsg::Status::DefaultAction;
 		}
 	private:
-		void resourceLoaded(EventSystem::StrongEventDataPtr resource)
+		void resourceLoaded(EventSystem::StrongEventDataPtr in)
 		{
-			std::shared_ptr<Event_ResourceLoaded> loadedResource(std::static_pointer_cast<Event_ResourceLoaded>(resource));
-			if (loadedResource->getType() == Event_ResourceLoaded::ResourceType::Model)
+			auto resource = castTo<Event_ResourceLoaded>(in);
+			if (resource->getType() == Event_ResourceLoaded::ResourceType::Model)
 			{
+				auto handle = resource->getHandle();
+				if (!handle || !handle->getExtra())
+				{
+					return;
+				}
+				
+				std::shared_ptr<GraphicsNode> newNode(new GraphicsNode());
+				
+				auto model = handle->getExtraTyped<Model>();
+
+				newNode->setModel(model);
+
+				auto root = m_scene->getRoot().lock();
+				root->addChild(newNode);
 				m_modelsLoaded++;
 			}
 		}

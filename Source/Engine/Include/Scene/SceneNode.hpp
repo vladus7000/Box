@@ -13,10 +13,20 @@ namespace box
 		using SceneNodeStrongPtr = std::shared_ptr<SceneNode>;
 		using SceneNodeWeakPtr = std::weak_ptr<SceneNode>;
 	public:
-		SceneNode()
+
+		enum class Type
+		{
+			Graphics,
+			Invalid
+		};
+
+		SceneNode(Type type)
 			: m_radius(1.0f)
+			, m_type(type)
 		{}
 		virtual ~SceneNode() = default;
+
+		Type getType() const { return m_type; }
 
 		inline virtual void render(F32 delta)
 		{
@@ -110,6 +120,7 @@ namespace box
 		}
 
 	private:
+		Type m_type;
 		std::vector<SceneNodeStrongPtr> m_children;
 		SceneNode* m_parent;
 		F32 m_radius;
