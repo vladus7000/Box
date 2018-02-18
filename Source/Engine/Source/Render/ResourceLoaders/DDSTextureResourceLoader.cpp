@@ -53,7 +53,7 @@ namespace box
 		box::Resource samplerStateResource(handle->getResource().m_name + ".xml");
 		auto samplerHandleXML = box::ResourceManager::Instance().getHandle(samplerStateResource);
 
-		std::shared_ptr<box::XMLResourceExtraData> xmlData(std::static_pointer_cast<box::XMLResourceExtraData>(samplerHandleXML->getExtra()));
+		auto xmlData = samplerHandleXML->getExtraTyped<box::XMLResourceExtraData>();
 		if (xmlData)
 		{
 			if (auto root = xmlData->getXMLRoot())

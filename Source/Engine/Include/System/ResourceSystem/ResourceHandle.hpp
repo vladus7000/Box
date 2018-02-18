@@ -40,6 +40,10 @@ namespace box
 		const U8* buffer() const { return m_buffer; }
 		U8* buffer() { return m_buffer; }
 		std::shared_ptr<ResourceExtraData> getExtra() { return m_extra; }
+
+		template <class T>
+		std::shared_ptr<T> getExtraTyped() { return std::static_pointer_cast<T>(m_extra); }
+
 		void setExtra(std::shared_ptr<ResourceExtraData> extra) { m_extra = extra; }
 		bool isDataReady() const { return m_status == Status::Ready; }
 		void setDataReady() { m_status = Status::Ready; }

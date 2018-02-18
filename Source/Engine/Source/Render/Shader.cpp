@@ -21,8 +21,7 @@ namespace box
 
 		Resource r(m_name);
 		m_resourceHandle = ResourceManager::Instance().getHandle(r);
-		std::shared_ptr<ShaderResourceExtraData> shaderResources(std::static_pointer_cast<ShaderResourceExtraData>(m_resourceHandle->getExtra()));
-
+		auto shaderResources = m_resourceHandle->getExtraTyped<ShaderResourceExtraData>();
 		if (shaderResources)
 		{
 			m_techniques = shaderResources->m_techniques;

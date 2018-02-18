@@ -69,7 +69,7 @@ namespace DXUT
 
 		box::Resource r(name);
 		auto handle = box::ResourceManager::Instance().getHandle(r);
-		std::shared_ptr<box::TextureResourceExtraData> extra(std::static_pointer_cast<box::TextureResourceExtraData>(handle->getExtra()));
+		auto extra = handle->getExtraTyped<box::TextureResourceExtraData>();
 		if (extra)
 		{
 			result = extra->getTextureData().shaderResourceView;
