@@ -90,6 +90,7 @@ namespace Editor {
 #pragma endregion
 	private: System::Void RenderWindow_Resize(System::Object^  sender, System::EventArgs^  e) {
 		this->panel1->Size = this->ClientSize - System::Drawing::Size(24, 24);
+		Exports::System::Resize(this->panel1->Size.Width, this->panel1->Size.Height);
 	}
 	private: System::Void panel1_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 		(void)sender;

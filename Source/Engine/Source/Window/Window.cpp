@@ -57,9 +57,15 @@ namespace box
 	{
 	}
 
-	void Window::onResize()
+	void Window::resize(U32 width, U32 height)
 	{
-		DXUTResizeDXGIBuffers(0, 0, 0);
+		if((m_windowWidth != width) || (m_windowHeight != height))
+		{
+			m_windowWidth = width;
+			m_windowHeight = height;
+
+			DXUTResizeDXGIBuffers(0, 0, 0);
+		}
 	}
 
 	void Window::pollEvents()

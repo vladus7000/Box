@@ -15,6 +15,8 @@ namespace Exports
 
 		int Update(box::F32 delta);
 		int RenderFrame(box::F32 delta);
+
+		int Resize(int width, int height);
 	}
 
 	namespace Input
