@@ -13,6 +13,10 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "Render/Model.hpp"
+#include <d3d11.h>
+#include <DXUT11\Core\DXUT.h>
+
 namespace
 {
 	const box::U32 DefaultCacheSizeMb = 100;
@@ -115,15 +119,98 @@ namespace box
 	void ResourceManager::importModelFromFile(const std::string& fileName)
 	{
 		Assimp::Importer importer;
-		const aiScene* assimpScene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Quality);
+		const aiScene* assimpScene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Quality | aiProcess_GenUVCoords);
 		if (assimpScene)
 		{
-			//TODO: do something clever here.
-
+			auto rootNode = assimpScene->mRootNode;
+			if (assimpScene->mNumMeshes > 0)
 			{
-				std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded(Event_ResourceLoaded::ResourceType::Model, ResourceHandle::StrongResourceHandlePtr()));
-				EventSystem::Instance().raiseEvent(event);
+				ID3D11DeviceContext* context = DXUTGetD3D11DeviceContext();
+				ID3D11Device* device = DXUTGetD3D11Device();
+
+
+				auto assimpMesh = assimpScene->mMeshes[0];
+				struct SimpleVertexFormat
+				{
+					float pos[3];
+					float tcoord[2];
+					float norm[3];
+				};
+
+				ID3D11Buffer* vertexBuffer = nullptr;
+				ID3D11Buffer* indexBuffer = nullptr;
+				D3D11_BUFFER_DESC vbDesc;
+				vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
+				vbDesc.ByteWidth = assimpMesh->mNumVertices * sizeof(SimpleVertexFormat);
+				vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+				vbDesc.CPUAccessFlags = 0;
+				vbDesc.MiscFlags = 0;
+				vbDesc.StructureByteStride = 0;
+
+				std::vector<SimpleVertexFormat> verts;
+				verts.reserve(assimpMesh->mNumVertices);
+				for (int i = 0; i < assimpMesh->mNumVertices; i++)
+				{
+					verts.push_back(SimpleVertexFormat());
+					verts[i].pos[0] = assimpMesh->mVertices[i].x;
+					verts[i].pos[1] = assimpMesh->mVertices[i].y;
+					verts[i].pos[2] = assimpMesh->mVertices[i].z;
+
+					if (assimpMesh->mTextureCoords[0])
+					{
+						verts[i].tcoord[0] = assimpMesh->mTextureCoords[0][i].x;
+						verts[i].tcoord[1] = assimpMesh->mTextureCoords[0][i].y;
+					}
+					else
+					{
+						verts[i].tcoord[0] = 0.0f;
+						verts[i].tcoord[1] = 0.0f;
+					}
+					verts[i].norm[0] = assimpMesh->mNormals[i].x;
+					verts[i].norm[1] = assimpMesh->mNormals[i].y;
+					verts[i].norm[2] = assimpMesh->mNormals[i].z;
+				}
+
+				D3D11_SUBRESOURCE_DATA initData;
+				initData.pSysMem = verts.data();
+
+				device->CreateBuffer(&vbDesc, &initData, &vertexBuffer);
+
+				std::vector<U16> indices;
+				verts.reserve(assimpMesh->mNumFaces * 3);
+				for (U32 i = 0; i < assimpMesh->mNumFaces; i++)
+				{
+					const auto& face = assimpMesh->mFaces[i];
+					for (U32 j = 0; j < face.mNumIndices; j++)
+					{
+						indices.push_back(face.mIndices[j]);
+					}
+				}
+
+				D3D11_BUFFER_DESC ibDesc;
+				ibDesc.Usage = D3D11_USAGE_IMMUTABLE;
+				ibDesc.ByteWidth = indices.size() * sizeof(U16);
+				ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+				ibDesc.CPUAccessFlags = 0;
+				ibDesc.MiscFlags = 0;
+				ibDesc.StructureByteStride = 0;
+
+				initData.pSysMem = indices.data();
+
+				device->CreateBuffer(&ibDesc, &initData, &indexBuffer);
+
+				Model::ModelStrongPtr model = std::make_shared<Model>(fileName);
+				Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size());
+
+				model->addMesh(mesh);
+				{
+					ResourceHandle::StrongResourceHandlePtr res = std::make_shared<ResourceHandle>(Resource(fileName), nullptr, 0, nullptr);
+					res->setExtra(model);
+					std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded(Event_ResourceLoaded::ResourceType::Model, res));
+					EventSystem::Instance().raiseEvent(event);
+				}
 			}
+
 		}
 	}
 

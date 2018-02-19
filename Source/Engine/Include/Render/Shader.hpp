@@ -12,6 +12,10 @@ namespace box
 	class Shader
 	{
 	public:
+		using ShaderStrongPtr = std::shared_ptr<Shader>;
+		using ShaderWeakPtr = std::weak_ptr<Shader>;
+
+	public:
 		Shader(const std::string& resourceName);
 		~Shader();
 

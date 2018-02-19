@@ -189,6 +189,54 @@ namespace box
 			{
 				releaseAll();
 			}
+
+			bool apply(ID3D11DeviceContext* context)
+			{
+				if (blendState)
+				{
+					FLOAT blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					context->OMSetBlendState(blendState, blendFactor, 0xFFFFFFFF);
+				}
+				if (depthStencilView)
+				{
+					UINT ref = 0;
+					context->OMSetDepthStencilState(depthStencilView, ref);
+				}
+				if (rasterizerState)
+				{
+					context->RSSetState(rasterizerState);
+				}
+				if (inputLayout)
+				{
+					context->IASetInputLayout(inputLayout);
+				}
+				if (hullShader)
+				{
+					context->HSSetShader(hullShader, nullptr, 0);
+				}
+				if (domainShader)
+				{
+					context->DSSetShader(domainShader, nullptr, 0);
+				}
+				if (geometryShader)
+				{
+					context->GSSetShader(geometryShader, nullptr, 0);
+				}
+				if (computeShader)
+				{
+					context->CSSetShader(computeShader, nullptr, 0);
+				}
+				if (pixelShader)
+				{
+					context->PSSetShader(pixelShader, nullptr, 0);
+				}
+				if (vertexShader)
+				{
+					context->VSSetShader(vertexShader, nullptr, 0);
+				}
+				return true;
+			}
+
 			ID3D11BlendState* blendState;
 			ID3D11DepthStencilState* depthStencilView;
 			ID3D11RasterizerState* rasterizerState;
