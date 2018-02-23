@@ -2,6 +2,7 @@
 #include "System\Patterns\Singleton.hpp"
 #include "Scene\Scene.hpp"
 #include "Camera.hpp"
+#include "FrameGlobals.hpp"
 
 namespace box
 {
@@ -30,9 +31,16 @@ namespace box
 		void renderScene(F32 delta);
 		void cullObjects();
 
+
+		ID3D11DeviceContext* getDirectXContext() const { return m_context; }
+		ID3D11Device* getDirectXDevice() const { return m_device; }
+
 	private:
 		Scene::SceneStrongPtr m_scene;
 		Camera::CameraStrongPtr m_camera;
 		RenderObjects m_renderList;
+		ID3D11DeviceContext* m_context;
+		ID3D11Device* m_device;
+		FrameGlobals m_frameGlobals;
 	};
 }

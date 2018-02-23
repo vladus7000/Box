@@ -27,11 +27,15 @@ namespace box
 		virtual void update(F32 delta) {}
 
 		const std::string& getName() const { return m_name; }
-		const Matrix4D& getMatrix() const { return m_cameraMatrix; }
+		const Matrix4D& getViewMatrix() const { return m_viewMatrix; }
+		const Matrix4D& getProjectionMatrix() const { return m_projectionMatrix; }
+		const Vector3D& getPosition() const { return m_position; }
+		const Vector3D& getTarget() const { return m_target; }
 		const Frustum& getFrustum() const { return m_frustum; }
 	private:
 		Frustum m_frustum;
-		Matrix4D m_cameraMatrix;
+		Matrix4D m_viewMatrix;
+		Matrix4D m_projectionMatrix;
 		Vector3D m_position;
 		Vector3D m_target;
 		Vector3D m_up;

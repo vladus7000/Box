@@ -52,6 +52,7 @@ namespace box
 
 	bool Renderer::init()
 	{
+		bool result = true;
 		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new DDSTextureResourceLoader()));
 		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new ShaderResourceLoader()));
 		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new SdkmeshResourceLoader()));
@@ -64,7 +65,15 @@ namespace box
 		DXUTSetCallbackD3D11DeviceDestroyed(OnD3D11DestroyDevice);
 		DXUTSetCallbackD3D11SwapChainResized(OnD3D11ResizedSwapChain);
 		DXUTCreateDevice(D3D_FEATURE_LEVEL_11_0, true, Window::Instance().getWidth(), Window::Instance().getHeight());
-		return true;
+
+		m_context = DXUTGetD3D11DeviceContext();
+		m_device = DXUTGetD3D11Device();
+
+		result &= (m_context && m_device);
+
+		result &= m_frameGlobals.restore(m_device);
+
+		return result;
 	}
 
 	void Renderer::deinit()
@@ -76,6 +85,8 @@ namespace box
 	{
 		if (m_scene)
 		{
+			m_frameGlobals.update(m_context, delta);
+			m_frameGlobals.bind(m_context);
 			m_scene->render(delta);
 		}
 	}
@@ -84,5 +95,4 @@ namespace box
 	{
 
 	}
-
 }

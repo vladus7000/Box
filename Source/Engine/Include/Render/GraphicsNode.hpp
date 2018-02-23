@@ -16,6 +16,8 @@ namespace box
 		void setModel(std::shared_ptr<Model> model) { m_model = model; }
 		std::weak_ptr<Model> getModel(std::shared_ptr<Model> model) const { return m_model; }
 
+		virtual void render(F32 delta) override;
+
 	private:
 		std::shared_ptr<Model> m_model;
 	};
