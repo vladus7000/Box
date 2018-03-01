@@ -20,16 +20,15 @@ namespace box
 		{}
 		virtual ~Camera() = default;
 
-		void initialize(F32 zNear, F32 zFar, F32 w, F32 h, const Vector3D& pos, const Vector3D& target, const Vector3D& up)
+		void initialize(F32 zNear, F32 zFar, F32 aspect, F32 fov, const Vector3D& pos, const Vector3D& target, const Vector3D& up)
 		{
 			m_near = zNear;
 			m_far = zFar;
-			m_w = w;
-			m_h = h;
 			m_position = pos;
 			m_target = target;
 			m_up = up;
-			m_aspect = w / h;
+			m_aspect = aspect;
+			m_fov = fov;
 		}
 
 		virtual void update(F32 delta)
@@ -37,8 +36,9 @@ namespace box
 			if (m_dirty)
 			{
 				m_dirty = false;
-				D3DXMatrixLookAtRH(&m_viewMatrix, &m_position, &m_target, &m_up);
-				D3DXMatrixPerspectiveRH(&m_projectionMatrix, m_w, m_h, m_near, m_far);
+				D3DXMatrixLookAtLH(&m_viewMatrix, &m_position, &m_target, &m_up);
+				D3DXMatrixIdentity(&m_projectionMatrix);
+				D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, m_fov, m_aspect, m_near, m_far);
 			}
 		}
 
@@ -61,8 +61,6 @@ namespace box
 		F32 m_far;
 		F32 m_aspect;
 		F32 m_fov;
-		F32 m_w;
-		F32 m_h;
 		std::string m_name;
 	};
 }

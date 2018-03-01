@@ -63,8 +63,8 @@ namespace box
 		{
 			auto camera = Renderer::Instance().getCamera().lock();
 
-			memcpy(shaderData->cameraViewMatrix, camera->getViewMatrix().m, sizeof(shaderData->cameraViewMatrix));
-			memcpy(shaderData->cameraProjectionMatrix, camera->getProjectionMatrix().m, sizeof(shaderData->cameraProjectionMatrix));
+			memcpy(shaderData->cameraViewMatrix, camera->getViewMatrix().m, sizeof(float) * 16);
+			memcpy(shaderData->cameraProjectionMatrix, camera->getProjectionMatrix().m, sizeof(float) * 16);
 
 			shaderData->cameraPosition[0] = camera->getPosition().x;
 			shaderData->cameraPosition[1] = camera->getPosition().y;

@@ -35,7 +35,9 @@ namespace
 			m_scene = std::make_shared<Scene>();
 			m_camera = std::make_shared<Camera>();
 			
-			m_camera->initialize(0.5f, 500.0f, Window::Instance().getWidth(), Window::Instance().getHeight(), Vector3D(0.0f, 1.0f, -20.0f), Vector3D(0.0f, 0.0f, 0.0f), Vector3D(0.0f, 1.0f, 0.0f));
+			const F32 aspect = (F32)Window::Instance().getWidth() / (F32)Window::Instance().getHeight();
+			const F32 fov = 1.0472f;
+			m_camera->initialize(0.5f, 500.0f, aspect, fov, Vector3D(0.0f, 1.0f, -5.0f), Vector3D(0.0f, 0.0f, 0.0f), Vector3D(0.0f, 1.0f, 0.0f));
 			m_modelsLoaded = 0;
 
 			m_renderer->setScene(m_scene);
