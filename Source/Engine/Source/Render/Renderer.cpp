@@ -5,6 +5,7 @@
 #include "Render\ResourceLoaders\ShaderResourceLoader.hpp"
 #include <Render/ResourceLoaders/SdkmeshResourceLoader.hpp>
 #include "Window\Window.hpp"
+#include "Render\Mesh.hpp"
 
 #include <DXUT11\Core\DXUT.h>
 #include "Render\DXUTHelper.hpp"
@@ -87,12 +88,23 @@ namespace box
 		{
 			m_frameGlobals.update(m_context, delta);
 			m_frameGlobals.bind(m_context);
-			m_scene->render(delta);
+
+			for (auto& it : m_renderList.m_dynamicObjects)
+			{
+				it->render(delta);
+			}
 		}
 	}
 
 	void Renderer::cullObjects()
 	{
-
+		cleanRenderLists();
+		m_scene->cullGraphicsObjects(m_camera->getFrustum(), m_renderList);
 	}
+
+	void Renderer::cleanRenderLists()
+	{
+		m_renderList.clear();
+	}
+
 }

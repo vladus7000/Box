@@ -83,7 +83,7 @@ namespace
 
 		virtual void update(F64 fTime, F32 fElapsedTime) override
 		{
-
+			m_renderer->cullObjects();
 		}
 
 		virtual AppMsg::Status msgProc(const AppMsg& msg) override

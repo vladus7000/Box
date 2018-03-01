@@ -4,6 +4,8 @@
 #include <memory>
 
 #include "Math/Vector3D.hpp"
+#include "Math/Frustum.hpp"
+#include "Render/RenderList.hpp"
 
 namespace box
 {
@@ -118,6 +120,50 @@ namespace box
 			auto foundIt = std::find(m_children.begin(), m_children.end(), child);
 			return (foundIt != m_children.end());
 		}
+
+		Frustum::TestResult cullingTest(const Frustum& frustum)
+		{
+			U32 mask = 0;
+			Frustum::TestResult testResult = frustum.testSphere(m_position, m_radius, mask);
+			return testResult;
+		}
+
+		Frustum::TestResult gatherObjects(const Frustum& frustum, RenderObjects& out)
+		{
+			Frustum::TestResult testResult = cullingTest(frustum);
+
+			if (testResult == Frustum::TestResult::inside)
+			{
+				gatherAllGraphicsObjects(out);
+			}
+			else if (testResult == Frustum::TestResult::intersect)
+			{
+				gatherCurrentNodeGraphicsObjects(out);
+				for (auto& it : m_children)
+				{
+					Frustum::TestResult testResult = it->cullingTest(frustum);
+					if (testResult == Frustum::TestResult::inside || testResult == Frustum::TestResult::intersect)
+					{
+						it->gatherObjects(frustum, out);
+					}
+				}
+			}
+			return testResult;
+		}
+
+		virtual void gatherAllGraphicsObjects(RenderObjects& out)
+		{
+			gatherCurrentNodeGraphicsObjects(out);
+			for (auto& it : m_children)
+			{
+				if (it->getType() == Type::Graphics)
+				{
+					it->gatherAllGraphicsObjects(out);
+				}
+			}
+		}
+
+		virtual void gatherCurrentNodeGraphicsObjects(RenderObjects& out) {}
 
 	private:
 		Type m_type;

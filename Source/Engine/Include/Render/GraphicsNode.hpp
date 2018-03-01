@@ -17,6 +17,7 @@ namespace box
 		std::weak_ptr<Model> getModel(std::shared_ptr<Model> model) const { return m_model; }
 
 		virtual void render(F32 delta) override;
+		virtual void gatherCurrentNodeGraphicsObjects(RenderObjects& out) override;
 
 	private:
 		std::shared_ptr<Model> m_model;

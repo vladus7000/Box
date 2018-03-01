@@ -1,6 +1,8 @@
 #pragma once
 
 #include "SceneNode.hpp"
+#include "Render/RenderList.hpp"
+#include "Math/Frustum.hpp"
 
 namespace box
 {
@@ -39,6 +41,12 @@ namespace box
 		{
 			return m_root;
 		}
+
+		void cullGraphicsObjects(const Frustum& frustum, RenderObjects& out)
+		{
+			m_root->gatherObjects(frustum, out);
+		}
+
 	private:
 		inline virtual void preRender()
 		{

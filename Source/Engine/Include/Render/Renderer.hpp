@@ -3,18 +3,10 @@
 #include "Scene\Scene.hpp"
 #include "Camera.hpp"
 #include "FrameGlobals.hpp"
+#include "RenderList.hpp"
 
 namespace box
 {
-	struct RenderObjects
-	{
-		std::vector<SceneNode> m_staticObjects;
-		std::vector<SceneNode> m_dynamicObjects;
-		std::vector<SceneNode> m_terrainObjects;
-		std::vector<SceneNode> m_alphaObjects;
-		std::vector<SceneNode> m_postObjects;
-	};
-
 	class Renderer
 	{
 		SINGLETON(Renderer);
@@ -36,6 +28,8 @@ namespace box
 		ID3D11Device* getDirectXDevice() const { return m_device; }
 
 	private:
+		void cleanRenderLists();
+
 		Scene::SceneStrongPtr m_scene;
 		Camera::CameraStrongPtr m_camera;
 		RenderObjects m_renderList;
