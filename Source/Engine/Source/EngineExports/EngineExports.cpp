@@ -3,6 +3,7 @@
 #include "System/Engine.hpp"
 #include "System/Input.hpp"
 #include "Render/Renderer.hpp"
+#include "Render/Camera.hpp"
 #include "Gameplay\GameView.hpp"
 #include "Scene\Scene.hpp"
 #include "System\ResourceSystem\ResourceEvents.hpp"
@@ -33,6 +34,8 @@ namespace
 			m_renderer = &Renderer::Instance();
 			m_scene = std::make_shared<Scene>();
 			m_camera = std::make_shared<Camera>();
+			
+			m_camera->initialize(0.5f, 500.0f, Window::Instance().getWidth(), Window::Instance().getHeight(), Vector3D(0.0f, 1.0f, -20.0f), Vector3D(0.0f, 0.0f, 0.0f), Vector3D(0.0f, 1.0f, 0.0f));
 			m_modelsLoaded = 0;
 
 			m_renderer->setScene(m_scene);
@@ -64,6 +67,8 @@ namespace
 
 			ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
 			context->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0, 0);
+
+			m_camera->update(delta);
 
 			m_renderer->renderScene(delta);
 

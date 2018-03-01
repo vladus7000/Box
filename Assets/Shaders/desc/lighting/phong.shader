@@ -31,7 +31,7 @@
 			<DepthStencil>
 				<item name="DepthEnable" value="true"/>
 				<item name="StencilReadMask" value="255"/>
-				<item name="DepthFunc" value="Greater"/>
+				<item name="DepthFunc" value="Less"/>
 			</DepthStencil>
 
 			<BlendDescriptions AlphaToCoverage="true" IndependentBlend="true">

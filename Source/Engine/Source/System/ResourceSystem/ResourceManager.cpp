@@ -170,7 +170,6 @@ namespace box
 					verts[i].norm[1] = assimpMesh->mNormals[i].y;
 					verts[i].norm[2] = assimpMesh->mNormals[i].z;
 				}
-
 				D3D11_SUBRESOURCE_DATA initData;
 				initData.pSysMem = verts.data();
 
@@ -202,7 +201,16 @@ namespace box
 				Model::ModelStrongPtr model = std::make_shared<Model>(fileName);
 				Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size());
 
+				{ ///Adding default material
+					Shader::ShaderStrongPtr shader = std::make_shared<Shader>("desc/lighting/phong.shader");
+					shader->restore();
+					Material::MaterialStrongPtr matarial = std::make_shared<Material>("Default");
+					matarial->setShader(shader);
+					mesh->setMaterial(matarial);
+				}
+
 				model->addMesh(mesh);
+
 				{
 					ResourceHandle::StrongResourceHandlePtr res = std::make_shared<ResourceHandle>(Resource(fileName), nullptr, 0, nullptr);
 					res->setExtra(model);
