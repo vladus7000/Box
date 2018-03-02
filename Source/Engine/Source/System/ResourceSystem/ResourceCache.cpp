@@ -29,6 +29,11 @@ namespace box
 	ResourceCache::ResourceCache(size_t sizeInMb, ResourceFile* resFile)
 		: m_cacheSize(sizeInMb * 1024 * 1024)
 		, m_allocated(0)
+#ifdef GAME_BUILD
+		, m_editorMode(false)
+#else
+		, m_editorMode(true)
+#endif
 	{
 		if (resFile)
 		{

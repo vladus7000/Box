@@ -64,5 +64,6 @@ namespace box
 		ResourceFiles m_resourceFiles;
 		size_t m_cacheSize;
 		size_t m_allocated;
+		const bool m_editorMode;
 	};
 }

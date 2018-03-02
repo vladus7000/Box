@@ -8,6 +8,7 @@
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
 #include "System\ResourceSystem\ResourceEvents.hpp"
+#include "System\ResourceSystem\EditorResourceFolder.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -30,7 +31,7 @@ namespace box
 	{
 		m_cache = new ResourceCache(DefaultCacheSizeMb);
 		ResourceFile* resFile(nullptr);
-
+#ifdef GAME_BUILD
 		{
 			resFile = new ResourceZipFile("Configs.zip");
 			m_cache->addResourceFile(resFile);
@@ -60,7 +61,37 @@ namespace box
 			resFile = new ResourceZipFile("Shaders.zip");
 			m_cache->addResourceFile(resFile);
 		}
+#else
+		{
+			resFile = new EditorResourceFolder("../Assets/Configs/");
+			m_cache->addResourceFile(resFile);
+		}
 
+		{
+			resFile = new EditorResourceFolder("../Assets/Sounds/");
+			m_cache->addResourceFile(resFile);
+		}
+
+		{
+			resFile = new EditorResourceFolder("../Assets/Textures/");
+			m_cache->addResourceFile(resFile);
+		}
+
+		{
+			resFile = new EditorResourceFolder("../Assets/Models/");
+			m_cache->addResourceFile(resFile);
+		}
+
+		{
+			resFile = new EditorResourceFolder("../Assets/Animations/");
+			m_cache->addResourceFile(resFile);
+		}
+
+		{
+			resFile = new EditorResourceFolder("../Assets/Shaders/");
+			m_cache->addResourceFile(resFile);
+		}
+#endif
 
 		bool res = m_cache->init();
 		if (res)
