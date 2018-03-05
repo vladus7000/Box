@@ -72,18 +72,34 @@ namespace box
 	{
 	}
 
+	EditorResourceFolder::~EditorResourceFolder()
+	{
+		for (auto& file : m_files)
+		{
+			fclose(file.handle);
+		}
+		m_files.clear();
+	}
+
 	bool EditorResourceFolder::open()
 	{
 		if (isFolderExists(m_folderName.c_str()))
 		{
 			m_opened = true;
-			getListOfFiles(m_folderName, m_files);
-
-			for (std::string& it : m_files)
+			std::vector<std::string> files;
+			getListOfFiles(m_folderName, files);
+			m_files.reserve(files.size());
+			for (std::string& it : files)
 			{
+				FILE* file = fopen(it.c_str(), "rb");
+				ASSERT(file, "the file should be opened");
 				it.erase(0, m_folderName.size() + 1);
+				
+				fseek(file, 0L, SEEK_END);
+				std::size_t size = ftell(file);
+				fseek(file, 0L, SEEK_SET);
+				m_files.emplace_back(it, size, file);
 			}
-
 		}
 		return m_opened;
 	}
@@ -97,28 +113,41 @@ namespace box
 	{
 		for (const auto& file : m_files)
 		{
-			if (file == r.m_name)
+			if (file.name == r)
 			{
-				return 1;
+				return file.fileSize;
 			}
 		}
-
 		return 0;
 	}
 
 	size_t EditorResourceFolder::getRawResource(const Resource& r, U8* data)
 	{
-		return 0;
+		size_t size = 0;
+		for (const auto& file : m_files)
+		{
+			if (file.name == r)
+			{
+				size = file.fileSize;
+
+				size_t result = fread(data, 1, file.fileSize, file.handle);
+				if (result != size)
+				{
+					size = 0;
+				}
+			}
+		}
+		return size;
 	}
 
 	size_t EditorResourceFolder::getResourcesCount() const
 	{
-		return 0;
+		return m_files.size();
 	}
 
 	std::string EditorResourceFolder::getResourceName(size_t i) const
 	{
-		return "";
+		return m_files[i].name.m_name;
 	}
 
 }

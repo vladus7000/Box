@@ -1,7 +1,11 @@
 #pragma once
 
 #include "ResourceFile.hpp"
+#include "Resource.hpp"
+
 #include <vector>
+
+#include <stdio.h>
 
 namespace box
 {
@@ -9,7 +13,7 @@ namespace box
 	{
 	public:
 		EditorResourceFolder(const std::string& folderName);
-		virtual ~EditorResourceFolder() = default;
+		virtual ~EditorResourceFolder();
 		virtual bool open() override;
 		virtual bool isOpened() const override;
 		virtual  size_t getRawResourceSize(const Resource&) override;
@@ -17,8 +21,21 @@ namespace box
 		virtual size_t getResourcesCount() const override;
 		virtual std::string getResourceName(size_t) const override;
 	private:
+		struct FileWrapper
+		{
+			FileWrapper(const std::string& fileName, std::size_t size, FILE* file)
+				: name(fileName)
+				, fileSize(size)
+				, handle(file)
+				{}
+
+			Resource name;
+			std::size_t fileSize = 0;
+			FILE* handle = nullptr;
+		};
+
 		bool m_opened;
 		std::string m_folderName;
-		std::vector<std::string> m_files;
+		std::vector<FileWrapper> m_files;
 	};
 }

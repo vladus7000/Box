@@ -17,7 +17,12 @@ namespace box
 			m_guid = hash_fn(m_name);
 		}
 
+		bool operator == (const Resource& r) const
+		{
+			return r.m_guid == m_guid;
+		}
+
 		std::string m_name;
-		U64 m_guid; // not used right now
+		U64 m_guid;
 	};
 }
