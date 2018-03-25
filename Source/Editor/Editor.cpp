@@ -18,6 +18,8 @@ void winforms::MyForm::init()
 	initTools();
 
 	Exports::System::StartEngine(m_renderWindow->getHwnd(), 0, nullptr);
+
+	m_recourcesWindow->refreshResourceCollection();
 }
 
 void winforms::MyForm::initTools()
@@ -43,16 +45,16 @@ void winforms::MyForm::initTools()
 	m_soundSystemWindow = gcnew Editor::SoundSystemWindow;
 	m_soundSystemWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
 
-	m_properties = gcnew Editor::Properties;
-	m_properties->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockRight);
-
 	m_sceneView = gcnew Editor::SceneView;
 	m_sceneView->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockRight);
+
+	m_properties = gcnew Editor::PropertiesWindow;
+	m_properties->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockRight);
 
 	m_addObjectWindow = gcnew Editor::AddObject;
 	m_addObjectWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockLeft);
 
-	m_recourcesWindow = gcnew Editor::RecourcesWindow;
+	m_recourcesWindow = gcnew Editor::RecourcesWindow(m_runningEnvironmentWindow, m_properties);
 	m_recourcesWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockLeft);
 }
 

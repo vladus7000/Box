@@ -64,7 +64,7 @@ namespace winforms {
 		Editor::ScriptingWindow^ m_scriptingindow;
 		Editor::SoundSystemWindow^ m_soundSystemWindow;
 		Editor::SceneView^ m_sceneView;
-		Editor::Properties^ m_properties;
+		Editor::PropertiesWindow^ m_properties;
 		Editor::AddObject^ m_addObjectWindow;
 
 	private: WeifenLuo::WinFormsUI::Docking::DockPanel^  dockPanel1;
@@ -512,45 +512,73 @@ namespace winforms {
 #pragma endregion
 
 	private: System::Void buildToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+		(void)sender;
+		(void)e;
 	}
 private: System::Void showRenderWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e){
+	(void)sender;
+	(void)e;
 	m_renderWindow->Show();
 }
 private: System::Void showScriptingWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e){
+	(void)sender;
+	(void)e;
 	m_scriptingindow->Show();
 }
 private: System::Void showCheatWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_cheatWindow->Show();
 }
 private: System::Void showInputWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_inputWindow->Show();
 }
 private: System::Void showNetworkWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_networkWindow->Show();
 }
 private: System::Void showResourcesWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_recourcesWindow->Show();
 }
 private: System::Void showWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_runningEnvironmentWindow->Show();
 }
 private: System::Void showSoundSystemWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_soundSystemWindow->Show();
 }
 private: System::Void showSceneViewWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_sceneView->Show();
 }
 private: System::Void showPropertiesWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_properties->Show();
 }
 private: System::Void showCreateObjectWindowToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	m_addObjectWindow->Show();
 }
 private: System::Void MyForm_Resize(System::Object^  sender, System::EventArgs^  e) {
+	(void)sender;
+	(void)e;
 	this->dockPanel1->Size = this->ClientSize - System::Drawing::Size(0, 52);
 }
 private: System::Void importModelToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 {
+	(void)sender;
+	(void)e;
 	openFileDialog1->Title = "Import Model";
 	openFileDialog1->FileName = "";
 	openFileDialog1->ShowDialog();
@@ -564,6 +592,8 @@ private: System::Void importModelToolStripMenuItem_Click(System::Object^  sender
 }
 
 	private: System::Void onIdle(System::Object^  sender, System::EventArgs^  e) {
+		(void)sender;
+		(void)e;
 		Exports::System::WndProc(m_renderWindow->getHwnd(), 0, 0, 0);
 		Exports::System::RenderFrame(1.0f / 60.0f);
 		Invalidate();

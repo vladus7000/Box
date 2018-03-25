@@ -88,7 +88,11 @@ namespace Editor {
 
 		}
 #pragma endregion
-	private: System::Void RenderWindow_Resize(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void RenderWindow_Resize(System::Object^  sender, System::EventArgs^  e)
+	{
+		(void)sender;
+		(void)e;
+
 		this->panel1->Size = this->ClientSize - System::Drawing::Size(24, 24);
 		Exports::System::Resize(this->panel1->Size.Width, this->panel1->Size.Height);
 	}
@@ -101,19 +105,31 @@ namespace Editor {
 		(void)sender;
 		Exports::Input::OnKeyDown(static_cast<box::U32>(e->KeyCode));
 	}
-	private: System::Void panel1_Click(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void panel1_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		(void)sender;
+		(void)e;
+
 		Exports::Input::OnMouseButtonDown(0, 0, 0);
 	}
 	private: System::Void panel1_Scroll(System::Object^  sender, System::Windows::Forms::ScrollEventArgs^  e) {
+		(void)sender;
+		(void)e;
 		//
 	}
 	private: System::Void panel1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		(void)sender;
+		(void)e;
 		Exports::Input::OnMouseButtonDown(0, 0, 0);
 	}
 	private: System::Void panel1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		(void)sender;
+		(void)e;
 		Exports::Input::OnMouseMove(0, 0);
 	}
 	private: System::Void panel1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		(void)sender;
+		(void)e;
 		Exports::Input::OnMousebuttonUp(0, 0, 0);
 	}
 	};

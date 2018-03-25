@@ -1,6 +1,8 @@
 #pragma once
 
 #include <EngineExports/EngineExports.hpp>
+#include "RunningEnvironmentWindow.h"
+#include "Properties.h"
 
 namespace Editor {
 
@@ -18,16 +20,20 @@ namespace Editor {
 	public ref class RecourcesWindow : public WeifenLuo::WinFormsUI::Docking::DockContent
 	{
 	public:
-		RecourcesWindow(void)
+		RecourcesWindow(RunningEnvironmentWindow^ settings, PropertiesWindow^ propertiesWindow)
 		{
 			InitializeComponent();
 			
 			cachedSizeInBytes = 1024;
 			buffer = new char[cachedSizeInBytes];
 
-			m_settings = gcnew XmlReaderSettings();
+			m_settings = settings;
+			m_propertiesWindow = propertiesWindow;
+			m_XmlReaderSettings = gcnew XmlReaderSettings();
 			m_doc = gcnew XmlDocument();
 		}
+
+		void refreshResourceCollection();
 
 	protected:
 		/// <summary>
@@ -54,8 +60,11 @@ namespace Editor {
 		int cachedSizeInBytes;
 		char* buffer;
 		XmlReader^ m_reader;
-		XmlReaderSettings^ m_settings;
+		XmlReaderSettings^ m_XmlReaderSettings;
 		XmlDocument^ m_doc;
+		RunningEnvironmentWindow^ m_settings;
+		PropertiesWindow^ m_propertiesWindow;
+
 	private: System::Windows::Forms::TreeView^  treeView1;
 	private: System::Windows::Forms::Button^  button2;
 			 /// <summary>
@@ -91,6 +100,8 @@ namespace Editor {
 			this->treeView1->Name = L"treeView1";
 			this->treeView1->Size = System::Drawing::Size(342, 385);
 			this->treeView1->TabIndex = 2;
+			this->treeView1->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &RecourcesWindow::treeView1_NodeMouseClick);
+			this->treeView1->NodeMouseDoubleClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &RecourcesWindow::treeView1_NodeMouseDoubleClick);
 			// 
 			// button2
 			// 
@@ -122,76 +133,48 @@ namespace Editor {
 #pragma endregion
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-		int sizeInBytes = Exports::Resources::GetResourceCollectionSizeForXml();
-		if (sizeInBytes > cachedSizeInBytes)
-		{
-			cachedSizeInBytes = sizeInBytes * 1.5f;
-			delete[] buffer;
-
-			buffer = new char[cachedSizeInBytes];
-		}
-		for (int i = 0; i < cachedSizeInBytes; i++)
-		{
-			buffer[i] = 0;
-		}
-		Exports::Resources::SerializeResourceCollectionToXml(buffer);
-		String^ strNew = gcnew String(buffer);
-
-		array<Byte>^ byteArray = System::Text::Encoding::UTF8->GetBytes(strNew);
-		System::IO::MemoryStream^ stream = gcnew System::IO::MemoryStream(byteArray);
-
-		m_reader = XmlReader::Create(stream, m_settings);
-		m_doc->PreserveWhitespace = true;
-		m_doc->Load(m_reader);
-		m_reader->Close();
-
-		XmlNodeList^ list = m_doc->GetElementsByTagName("Item");
-		this->treeView1->Nodes->Clear();
-
-		System::Windows::Forms::TreeNode^  root = (gcnew System::Windows::Forms::TreeNode(L"Assets"));
-		root->Name = L"Assets";
-		root->Text = L"Assets";
-		this->treeView1->Nodes->Add(root);
-
-		for (int i = 0; i <  list->Count; i++)
-		{
-			String^ path = list->Item(i)->InnerText;
-			array<String^>^ splittedPath = path->Split(L'/');
-
-			System::Windows::Forms::TreeNode^ nextNode = root;
-			for (int j = 2; j < splittedPath->Length; j++)
-			{
-				String^ currentFolder = splittedPath[j];
-
-				bool found = false;
-				for (int nodeI = 0; nodeI < nextNode->Nodes->Count; nodeI++)
-				{
-					System::Windows::Forms::TreeNode^ node = nextNode->Nodes[nodeI];
-					if (node->Name == currentFolder)
-					{
-						found = true;
-						nextNode = node;
-						break;
-					}
-				}
-				if (!found)
-				{
-					System::Windows::Forms::TreeNode^ newNode = (gcnew System::Windows::Forms::TreeNode(currentFolder));
-					newNode->Name = currentFolder;
-					newNode->Text = currentFolder;
-					nextNode->Nodes->Add(newNode);
-					nextNode = newNode;
-				}
-			}
-		}
+		(void)sender;
+		(void)e;
+		refreshResourceCollection();
 	}
 	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e)
 	{
+		(void)sender;
+		(void)e;
 		this->treeView1->CollapseAll();
+		this->treeView1->Nodes[0]->Expand();
 	}
-private: System::Void RecourcesWindow_Resize(System::Object^  sender, System::EventArgs^  e)
+	private: System::Void RecourcesWindow_Resize(System::Object^  sender, System::EventArgs^  e)
+	{
+		(void)sender;
+		(void)e;
+		this->treeView1->Size = this->ClientSize - System::Drawing::Size(8, 35);
+	}
+	private: System::Void treeView1_NodeMouseDoubleClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e)
+	{
+		(void)sender;
+		if (e && e->Node)
+		{
+			String^ fullPath = L"../" + e->Node->FullPath;
+			if (m_settings->isTextFile(fullPath))
+			{
+				System::Diagnostics::Process::Start("\"" + m_settings->getTextEditor() + "\"", fullPath);
+			}
+		}
+
+	}
+private: System::Void treeView1_NodeMouseClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e)
 {
-	this->treeView1->Size = this->ClientSize - System::Drawing::Size(8, 35);
+	(void)sender;
+	if (e && e->Node)
+	{
+		if (e->Node->Nodes->Count == 0)
+		{
+			String^ fullPath = L"../" + e->Node->FullPath;
+			m_propertiesWindow->showInfoAboutFile(fullPath);
+		}
+	}
 }
+
 };
 }
