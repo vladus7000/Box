@@ -32,5 +32,48 @@ namespace Resources
 		box::ResourceManager::Instance().serializeResourceCollectionToXml(out);
 		return 0;
 	}
+
+	int LoadLevelFromXMLFile(const char* fileName)
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int LoadLevelFromXMLBuffer(const char* buffer)
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int GetLevelSizeForXml()
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int SaveLevelToXMLFile(const char* fileName)
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int SerializeLevelToXML(char* out)
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int GetLevelInfoSizeForXml()
+	{
+		CHECK_ENGINE();
+		return 0;
+
+	}
+
+	int SerializeLevelInfoToXml(char* out)
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
 }
 }

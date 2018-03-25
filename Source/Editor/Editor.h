@@ -104,6 +104,9 @@ namespace winforms {
 	private: System::Windows::Forms::ToolStripMenuItem^  showCreateObjectWindowToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  importModelToolStripMenuItem;
 	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
+	private: System::Windows::Forms::ToolStripMenuItem^  loadLevelToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  saveLevelToolStripMenuItem;
+	private: System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
 
 
 	private: System::ComponentModel::IContainer^  components;
@@ -142,6 +145,8 @@ namespace winforms {
 			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->importModelToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->loadLevelToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->saveLevelToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->buildToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->releaseBuildToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->debugToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -172,6 +177,7 @@ namespace winforms {
 			this->createObjectToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->showCreateObjectWindowToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->saveFileDialog1 = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->statusStrip1->SuspendLayout();
 			this->menuStrip1->SuspendLayout();
 			this->SuspendLayout();
@@ -265,7 +271,10 @@ namespace winforms {
 			// 
 			// fileToolStripMenuItem
 			// 
-			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->importModelToolStripMenuItem });
+			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+				this->importModelToolStripMenuItem,
+					this->loadLevelToolStripMenuItem, this->saveLevelToolStripMenuItem
+			});
 			this->fileToolStripMenuItem->Name = L"fileToolStripMenuItem";
 			this->fileToolStripMenuItem->Size = System::Drawing::Size(37, 20);
 			this->fileToolStripMenuItem->Text = L"File";
@@ -276,6 +285,20 @@ namespace winforms {
 			this->importModelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->importModelToolStripMenuItem->Text = L"ImportModel";
 			this->importModelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::importModelToolStripMenuItem_Click);
+			// 
+			// loadLevelToolStripMenuItem
+			// 
+			this->loadLevelToolStripMenuItem->Name = L"loadLevelToolStripMenuItem";
+			this->loadLevelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->loadLevelToolStripMenuItem->Text = L"loadLevel";
+			this->loadLevelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::loadLevelToolStripMenuItem_Click);
+			// 
+			// saveLevelToolStripMenuItem
+			// 
+			this->saveLevelToolStripMenuItem->Name = L"saveLevelToolStripMenuItem";
+			this->saveLevelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveLevelToolStripMenuItem->Text = L"saveLevel";
+			this->saveLevelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::saveLevelToolStripMenuItem_Click);
 			// 
 			// buildToolStripMenuItem
 			// 
@@ -598,5 +621,37 @@ private: System::Void importModelToolStripMenuItem_Click(System::Object^  sender
 		Exports::System::RenderFrame(1.0f / 60.0f);
 		Invalidate();
 	}
+private: System::Void loadLevelToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	(void)sender;
+	(void)e;
+
+	openFileDialog1->Title = "Load Level";
+	openFileDialog1->FileName = "";
+	openFileDialog1->ShowDialog();
+	System::String^ fileName = openFileDialog1->FileName;
+
+	{
+		char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
+		Exports::Resources::LoadLevelFromXMLFile(name);
+		Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+	}
+}
+private: System::Void saveLevelToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	(void)sender;
+	(void)e;
+
+	saveFileDialog1->Title = "Save Level";
+	saveFileDialog1->FileName = "level.xml";
+	saveFileDialog1->ShowDialog();
+	System::String^ fileName = saveFileDialog1->FileName;
+
+	{
+		char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
+		Exports::Resources::SaveLevelToXMLFile(name);
+		Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+	}
+}
 };
 }
