@@ -38,6 +38,9 @@ namespace box
 		void insertToLoadQueue(std::shared_ptr<ResourceHandle> handle);
 		void clearFromLoadQueue(std::shared_ptr<ResourceHandle> handle);
 
+		int getResourceCollectionSizeForXml();
+		void serializeResourceCollectionToXml(char* out);
+
 	private:
 		using ResourceHandleList = std::list<std::shared_ptr<ResourceHandle>>;
 		using ResourceHandleMap = std::map<std::string, std::shared_ptr<ResourceHandle>>;

@@ -12,6 +12,8 @@
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\ResourceSystem\ResourceEvents.hpp"
 
+#include <tinyxml2/tinyxml2.h>
+
 #define LOG(args) printf(args)
 
 namespace box
@@ -236,6 +238,50 @@ namespace box
 	void ResourceCache::clearFromLoadQueue(std::shared_ptr<ResourceHandle> handle)
 	{
 		m_waitingForLoading.erase(handle->m_resource.m_name);
+	}
+
+	int ResourceCache::getResourceCollectionSizeForXml()
+	{
+		int res = 55; // <ResourceCollection></ResourceCollection> + <List></List> + \n
+		for (auto resFile : m_resourceFiles)
+		{
+			size_t size = resFile->getResourcesCount();
+			for (size_t i = 0; i < size; i++)
+			{
+				res += resFile->getFullResourceName(i).length();
+				res += 13; // <Item></Item>
+			}
+		}
+		return res;
+	}
+
+	void ResourceCache::serializeResourceCollectionToXml(char* out)
+	{
+		tinyxml2::XMLDocument xmlDoc;
+		tinyxml2::XMLNode* pRoot = xmlDoc.NewElement("ResourceCollection");
+		xmlDoc.InsertFirstChild(pRoot);
+		tinyxml2::XMLNode* pElement = xmlDoc.NewElement("List");
+
+		for (auto resFile : m_resourceFiles)
+		{
+			size_t size = resFile->getResourcesCount();
+			for (size_t i = 0; i < size; i++)
+			{
+				const std::string& name = resFile->getFullResourceName(i);
+
+				tinyxml2::XMLElement* pListElement = xmlDoc.NewElement("Item");
+				pListElement->SetText(name.c_str());
+
+				pElement->InsertEndChild(pListElement);
+			}
+		}
+		pRoot->InsertEndChild(pElement);
+		
+		tinyxml2::XMLPrinter printer(nullptr, true);
+		
+		xmlDoc.Print(&printer);
+
+		memcpy(out, printer.CStr(), printer.CStrSize());
 	}
 
 	std::shared_ptr<ResourceHandle> ResourceCache::load(const Resource& r)

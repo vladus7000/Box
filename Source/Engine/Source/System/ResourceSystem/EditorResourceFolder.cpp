@@ -145,9 +145,14 @@ namespace box
 		return m_files.size();
 	}
 
-	std::string EditorResourceFolder::getResourceName(size_t i) const
+	const std::string& EditorResourceFolder::getResourceName(size_t i) const
 	{
 		return m_files[i].name.m_name;
+	}
+
+	std::string EditorResourceFolder::getFullResourceName(size_t i) const
+	{
+		return m_folderName + m_files[i].name.m_name;
 	}
 
 }

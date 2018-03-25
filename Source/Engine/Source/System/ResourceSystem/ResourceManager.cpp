@@ -253,4 +253,14 @@ namespace box
 		}
 	}
 
+	int ResourceManager::getResourceCollectionSizeForXml()
+	{
+		return m_cache->getResourceCollectionSizeForXml();
+	}
+
+	void ResourceManager::serializeResourceCollectionToXml(char* out)
+	{
+		m_cache->serializeResourceCollectionToXml(out);
+	}
+
 }

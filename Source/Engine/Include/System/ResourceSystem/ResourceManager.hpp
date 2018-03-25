@@ -24,6 +24,9 @@ namespace box
 
 		void importModelFromFile(const std::string& fileName);
 
+		int getResourceCollectionSizeForXml();
+		void serializeResourceCollectionToXml(char* out);
+
 	private:
 		ResourceCache* m_cache;
 	};
