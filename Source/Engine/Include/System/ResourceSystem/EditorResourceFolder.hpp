@@ -19,7 +19,7 @@ namespace box
 		virtual  size_t getRawResourceSize(const Resource&) override;
 		virtual size_t getRawResource(const Resource&, U8*) override;
 		virtual size_t getResourcesCount() const override;
-		virtual const std::string& getResourceName(size_t) const override;
+		virtual std::string getResourceName(size_t) const override;
 		virtual std::string getFullResourceName(size_t) const override;
 	private:
 		struct FileWrapper

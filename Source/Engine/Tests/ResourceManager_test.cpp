@@ -116,6 +116,11 @@ public:
 	{
 		return m_resFile[i].name;
 	}
+
+	virtual std::string getFullResourceName(size_t i) const override
+	{
+		return m_resFile[i].name;
+	}
 private:
 	std::vector<File> m_resFile;
 };

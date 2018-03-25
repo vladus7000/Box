@@ -5,6 +5,7 @@
 #include "System/Process/ProcessManager.hpp"
 #include "System\Input.hpp"
 #include "System\ResourceSystem\ResourceManager.hpp"
+#include "System\ResourceSystem\ResourceEvents.hpp"
 #include "System\EventSystem\EventSystem.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
 #include "System\Memory\Allocator.hpp"

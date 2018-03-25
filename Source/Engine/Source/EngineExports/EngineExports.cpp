@@ -1,4 +1,5 @@
 #include "StdAfx.hpp"
+#ifdef EDITOR_BUILD
 #include "EngineExports/EngineExports.hpp"
 #include "System/Engine.hpp"
 #include "System/Input.hpp"
@@ -264,3 +265,4 @@ namespace Input
 	}
 } // Input
 }
+#endif

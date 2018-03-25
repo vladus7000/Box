@@ -20,7 +20,8 @@ namespace box
 		virtual  size_t getRawResourceSize(const Resource& r) override;
 		virtual size_t getRawResource(const Resource&, U8* buffer) override;
 		virtual size_t getResourcesCount() const  override;
-		virtual const std::string& getResourceName(size_t i) const  override;
+		virtual std::string getResourceName(size_t i) const  override;
+		virtual std::string getFullResourceName(size_t) const override;
 
 	private:
 		ZipFile* m_zipFile;

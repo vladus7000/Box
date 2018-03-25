@@ -372,7 +372,7 @@ namespace box
 		return m_zipFile->getNumFiles();
 	}
 
-	const std::string& ResourceZipFile::getResourceName(size_t i) const
+	std::string ResourceZipFile::getResourceName(size_t i) const
 	{
 		std::string name("");
 		if (i >= 0 && i < m_zipFile->getNumFiles())
@@ -381,4 +381,15 @@ namespace box
 		}
 		return name;
 	}
+
+	std::string ResourceZipFile::getFullResourceName(size_t i) const
+	{
+		std::string name("");
+		if (i >= 0 && i < m_zipFile->getNumFiles())
+		{
+			name = m_zipFile->getFileName(i);
+		}
+		return name;
+	}
+
 }
