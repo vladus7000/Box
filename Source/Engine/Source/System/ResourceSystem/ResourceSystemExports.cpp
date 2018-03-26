@@ -11,13 +11,35 @@ namespace Exports
 namespace Resources
 {
 #define CHECK_ENGINE() if (!g_engineInstance) { return -1; }
-	int ImportModel(const char* fileName)
+	int ImportStaticModel(const char* fileName)
 	{
 		CHECK_ENGINE();
 
-		box::ResourceManager::Instance().importModelFromFile(fileName);
+		return box::ResourceManager::Instance().importStaticModel(fileName);
+	}
 
-		return 0;
+	int ImportDynamicModel(const char* fileName)
+	{
+		CHECK_ENGINE();
+		return box::ResourceManager::Instance().ImportDynamicModel(fileName);
+	}
+
+	int ImportShader(const char* fileName)
+	{
+		CHECK_ENGINE();
+		return box::ResourceManager::Instance().ImportShader(fileName);
+	}
+
+	int ImportDDSTexture(const char* fileName)
+	{
+		CHECK_ENGINE();
+		return box::ResourceManager::Instance().ImportDDSTexture(fileName);
+	}
+
+	int CompileShader(const char* fileName)
+	{
+		CHECK_ENGINE();
+		return box::ResourceManager::Instance().CompileShader(fileName);
 	}
 
 	int GetResourceCollectionSizeForXml()

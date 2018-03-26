@@ -110,7 +110,7 @@ namespace
 					return;
 				}
 				
-				std::shared_ptr<GraphicsNode> newNode(new GraphicsNode());
+				std::shared_ptr<GraphicsNode> newNode = std::make_shared<GraphicsNode>();
 				
 				auto model = handle->getExtraTyped<Model>();
 
@@ -143,7 +143,7 @@ namespace System
 			return -1;
 		}
 
-		std::shared_ptr<EditorView> editor(new EditorView());
+		std::shared_ptr<EditorView> editor = std::make_shared<EditorView>();
 
 		g_engineInstance = new box::Engine();
 		g_engineInstance->startup(hwnd, argc, argv);

@@ -42,7 +42,7 @@ namespace box
 
 	bool DDSTextureResourceLoader::loadResource(U8* buffer, size_t size, std::shared_ptr<ResourceHandle> handle)
 	{
-		std::shared_ptr<TextureResourceExtraData> extra(new TextureResourceExtraData());
+		std::shared_ptr<TextureResourceExtraData> extra = std::make_shared<TextureResourceExtraData>();
 
 		// Load the Texture
 		if (FAILED(D3DX11CreateShaderResourceViewFromMemory(DXUTGetD3D11Device(), buffer, size, NULL, NULL, &extra->getTextureData().shaderResourceView, NULL)))

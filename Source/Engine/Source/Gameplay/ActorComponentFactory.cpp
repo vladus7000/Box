@@ -10,7 +10,7 @@ namespace box
 	Actor::StrongActorPtr ActorComponentFactory::createActor()
 	{
 		//TODO: lock
-		Actor::StrongActorPtr actor(new Actor(getNextId()));
+		Actor::StrongActorPtr actor = std::make_shared<Actor>((getNextId()));
 		if (actor->init())
 		{
 			auto component = createComponent("TEST");

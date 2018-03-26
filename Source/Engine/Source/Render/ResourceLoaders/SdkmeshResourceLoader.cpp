@@ -8,7 +8,7 @@ namespace box
 {
 	bool SdkmeshResourceLoader::loadResource(U8* buffer, size_t size, std::shared_ptr<ResourceHandle> handle)
 	{
-		std::shared_ptr<SdkmeshResourceExtraData> extra(new SdkmeshResourceExtraData());
+		std::shared_ptr<SdkmeshResourceExtraData> extra = std::make_shared<SdkmeshResourceExtraData>();
 
 		ID3D11Device* device = DXUTGetD3D11Device();
 		auto hr = extra->m_mesh.Create(device, buffer, size);

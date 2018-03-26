@@ -96,9 +96,9 @@ namespace box
 		bool res = m_cache->init();
 		if (res)
 		{
-			m_cache->registerLoader(std::shared_ptr<ResourceLoader>(new XMLResourceLoader()));
-
-			std::shared_ptr<Event_ResourceCacheStarted> event(new Event_ResourceCacheStarted);
+			m_cache->registerLoader(std::make_shared<XMLResourceLoader>());
+			
+			std::shared_ptr<Event_ResourceCacheStarted> event = std::make_shared<Event_ResourceCacheStarted>();
 			EventSystem::Instance().raiseEvent(event);
 		}
 		return res;
@@ -117,8 +117,7 @@ namespace box
 		}
 		else
 		{
-			Process::StrongProcessPtr load(new PreloadProcess(wildcard, m_cache));
-			ProcessManager::Instance().attachProcess(load);
+			ProcessManager::Instance().attachProcess(std::make_shared<PreloadProcess>(wildcard, m_cache));
 		}
 	}
 
@@ -135,8 +134,7 @@ namespace box
 			{
 				handle = std::make_shared<ResourceHandle>(r, nullptr, 0, m_cache);
 				m_cache->insertToLoadQueue(handle);
-				Process::StrongProcessPtr load(new LoadResourceProcess(handle));
-				ProcessManager::Instance().attachProcess(load);
+				ProcessManager::Instance().attachProcess(std::make_shared<LoadResourceProcess>(handle));
 			}
 			return handle;
 		}
@@ -147,9 +145,10 @@ namespace box
 		m_cache->registerLoader(loader);
 	}
 
-	void ResourceManager::importModelFromFile(const std::string& fileName)
+	int ResourceManager::importStaticModel(const std::string& fileName)
 	{
 		Assimp::Importer importer;
+		int res = -1;
 		const aiScene* assimpScene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Quality | aiProcess_GenUVCoords);
 		if (assimpScene)
 		{
@@ -245,12 +244,35 @@ namespace box
 				{
 					ResourceHandle::StrongResourceHandlePtr res = std::make_shared<ResourceHandle>(Resource(fileName), nullptr, 0, nullptr);
 					res->setExtra(model);
-					std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded(Event_ResourceLoaded::ResourceType::Model, res));
-					EventSystem::Instance().raiseEvent(event);
+					EventSystem::Instance().raiseEvent(std::make_shared<Event_ResourceLoaded>(Event_ResourceLoaded::ResourceType::Model, res));
 				}
+
+				res = 0;
 			}
 
 		}
+
+		return res;
+	}
+
+	int ResourceManager::ImportDynamicModel(const std::string& fileName)
+	{
+		return -1;
+	}
+
+	int ResourceManager::ImportShader(const std::string& fileName)
+	{
+		return -1;
+	}
+
+	int ResourceManager::ImportDDSTexture(const std::string& fileName)
+	{
+		return -1;
+	}
+
+	int ResourceManager::CompileShader(const std::string& fileName)
+	{
+		return -1;
 	}
 
 	int ResourceManager::getResourceCollectionSizeForXml()

@@ -134,8 +134,7 @@ namespace box
 		result &= CheatManager::Instance().init();
 
 		{
-			std::shared_ptr<Event_EngineStasted> event(new Event_EngineStasted);
-			EventSystem::Instance().raiseEvent(event);
+			EventSystem::Instance().raiseEvent(std::make_shared<Event_EngineStasted>());
 		}
 		return result;
 	}

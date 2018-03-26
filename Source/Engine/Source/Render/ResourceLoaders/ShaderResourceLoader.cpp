@@ -361,7 +361,7 @@ namespace box
 
 	bool ShaderResourceLoader::loadResource(U8* buffer, size_t size, std::shared_ptr<ResourceHandle> handle)
 	{
-		std::shared_ptr<ShaderResourceExtraData> extra(new ShaderResourceExtraData());
+		std::shared_ptr<ShaderResourceExtraData> extra = std::make_shared<ShaderResourceExtraData>();
 
 		tinyxml2::XMLDocument xmlDoc;
 

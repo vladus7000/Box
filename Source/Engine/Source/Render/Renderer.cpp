@@ -54,9 +54,9 @@ namespace box
 	bool Renderer::init()
 	{
 		bool result = true;
-		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new DDSTextureResourceLoader()));
-		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new ShaderResourceLoader()));
-		ResourceManager::Instance().registerLoader(std::shared_ptr<ResourceLoader>(new SdkmeshResourceLoader()));
+		ResourceManager::Instance().registerLoader(std::make_shared<DDSTextureResourceLoader>());
+		ResourceManager::Instance().registerLoader(std::make_shared<ShaderResourceLoader>());
+		ResourceManager::Instance().registerLoader(std::make_shared<SdkmeshResourceLoader>());
 
 		DXUTSetCallbackDeviceChanging(ModifyDeviceSettings);
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable);

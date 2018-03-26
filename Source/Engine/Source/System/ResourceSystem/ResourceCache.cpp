@@ -366,7 +366,7 @@ namespace box
 			insertToSystem(handle);
 			handle->setDataReady();
 
-			std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded);
+			std::shared_ptr<Event_ResourceLoaded> event = std::make_shared<Event_ResourceLoaded>();
 			EventSystem::Instance().raiseEvent(event);
 
 		}
@@ -460,7 +460,7 @@ namespace box
 		insertToSystem(handle);
 		handle->setDataReady();
 
-		std::shared_ptr<Event_ResourceLoaded> event(new Event_ResourceLoaded);
+		std::shared_ptr<Event_ResourceLoaded> event = std::make_shared<Event_ResourceLoaded>();
 		EventSystem::Instance().raiseEvent(event);
 	}
 

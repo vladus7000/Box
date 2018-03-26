@@ -609,7 +609,7 @@ private: System::Void importModelToolStripMenuItem_Click(System::Object^  sender
 
 	{
 		char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
-		Exports::Resources::ImportModel(name);
+		Exports::Resources::ImportStaticModel(name);
 		Marshal::FreeHGlobal(static_cast<IntPtr>(name));
 	}
 }

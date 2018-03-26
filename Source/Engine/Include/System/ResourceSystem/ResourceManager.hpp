@@ -22,7 +22,13 @@ namespace box
 		std::shared_ptr<ResourceHandle> getHandle(Resource& r, bool async = false);
 		void registerLoader(std::shared_ptr<ResourceLoader> loader);
 
-		void importModelFromFile(const std::string& fileName);
+		int importStaticModel(const std::string& fileName);
+		int ImportDynamicModel(const std::string& fileName);
+
+		int ImportShader(const std::string& fileName);
+		int ImportDDSTexture(const std::string& fileName);
+
+		int CompileShader(const std::string& fileName);
 
 		int getResourceCollectionSizeForXml();
 		void serializeResourceCollectionToXml(char* out);
