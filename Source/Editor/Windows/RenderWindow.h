@@ -116,7 +116,6 @@ namespace Editor {
 		(void)sender;
 		(void)e;
 		Exports::Editor::SetRenderPanelActive(1);
-		Exports::Input::OnMouseButtonDown(0, 0, 0);
 	}
 	private: System::Void panel1_Scroll(System::Object^  sender, System::Windows::Forms::ScrollEventArgs^  e) {
 		(void)sender;
@@ -125,17 +124,17 @@ namespace Editor {
 	private: System::Void panel1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		(void)sender;
 		(void)e;
-		Exports::Input::OnMouseButtonDown(0, 0, 0);
+		Exports::Input::OnMouseButtonDown(e->X, e->Y, 0);
 	}
 	private: System::Void panel1_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		(void)sender;
 		(void)e;
-		Exports::Input::OnMouseMove(0, 0);
+		Exports::Input::OnMouseMove(e->X, e->Y);
 	}
 	private: System::Void panel1_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		(void)sender;
 		(void)e;
-		Exports::Input::OnMousebuttonUp(0, 0, 0);
+		Exports::Input::OnMousebuttonUp(e->X, e->Y, 0);
 	}
 	private: System::Void RenderWindow_Enter(System::Object^  sender, System::EventArgs^  e)
 	{

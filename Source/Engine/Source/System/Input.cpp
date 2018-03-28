@@ -15,48 +15,13 @@ namespace box
 {
 	SINGLETON_ACCESSOR(Input);
 
-	class EditorInputController : public KeyboardHandler, public MouseHandler
-	{
-	public:
-		virtual void keyState(KeyState state[256]) override
-		{
-
-		}
-
-		virtual void onKeyDown(U32 key) override
-		{
-			printf("onKeyDown key %d \n", key);
-		}
-		virtual void onKeyUp(U32 key) override
-		{
-			printf("onKeyUp key %d \n", key);
-		}
-
-		virtual void onMouseMove(U32 x, U32 y) override
-		{
-			printf("mouse onMouseMove\n");
-		}
-		virtual void onMouseButtonDown(U32 x, U32 y, U32 key) override
-		{
-			printf("mouse click\n");
-		}
-		virtual void onMousebuttonUp(U32 x, U32 y, U32 key) override
-		{
-			printf("mouse up\n");
-		}
-	}g_editorInputController;
-
 	bool Input::init()
 	{
-		registerKeyboardHandler(&g_editorInputController);
-		registerMouseHandler(&g_editorInputController);
 		return true;
 	}
 
 	void Input::deinit()
 	{
-		unregisterKeyboardHandler(&g_editorInputController);
-		unregisterMouseHandler(&g_editorInputController);
 		MousedHandlers.clear();
 		KeyboardHandlers.clear();
 	}

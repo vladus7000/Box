@@ -28,7 +28,7 @@ namespace
 
 	EditorView* g_editor = nullptr;
 
-	class EditorView : public box::GameView , public box::KeyboardHandler
+	class EditorView : public box::GameView , public box::KeyboardHandler, public box::MouseHandler
 	{
 	public:
 		virtual ~EditorView() = default;
@@ -39,7 +39,7 @@ namespace
 		void setCameraMovementSpeed(float speed) { m_cameraMovementSpeed = speed; }
 		void setRenderViewActive(bool active) { m_renderViewActive = active; }
 
-		virtual void keyState(KeyState state[256]) override
+		virtual void keyState(const KeyState state[256]) override
 		{
 			if (!m_renderViewActive)
 			{
@@ -68,17 +68,41 @@ namespace
 
 		virtual void onKeyDown(U32 key) override
 		{
-
 		}
 		virtual void onKeyUp(U32 key) override
 		{
+		}
 
+		virtual void onMouseMove(U32 x, U32 y) override
+		{
+			const S32 dx = m_prevMouseX - x;
+			const S32 dy = m_prevMouseY - y;
+
+			if (m_mouseButtonPressed && (dx != 0 || dy != 0))
+			{
+				m_camera->yaw(dx * m_cameraMouseSense);
+				m_camera->pitch(dy * m_cameraMouseSense);
+			}
+			m_prevMouseX = x;
+			m_prevMouseY = y;
+		}
+		virtual void onMouseButtonDown(U32 x, U32 y, U32 key) override
+		{
+			m_mouseButtonPressed = true;
+		}
+		virtual void onMousebuttonUp(U32 x, U32 y, U32 key) override
+		{
+			m_mouseButtonPressed = false;
 		}
 
 		virtual bool restore() override
 		{
 			m_cameraMovementSpeed = 0.03f;
+			m_cameraMouseSense = 0.01f;
 			m_renderViewActive = true;
+			m_mouseButtonPressed = false;
+			m_prevMouseX = 0;
+			m_prevMouseY = 0;
 			g_editor = this;
 			m_renderer = &Renderer::Instance();
 			m_scene = std::make_shared<Scene>();
@@ -95,12 +119,14 @@ namespace
 			m_delegate = fastdelegate::MakeDelegate(this, &EditorView::resourceLoaded);
 			EventSystem::Instance().add(m_delegate, Event_ResourceLoaded::Type);
 			Input::Instance().registerKeyboardHandler(this);
+			Input::Instance().registerMouseHandler(this);
 
 			return true;
 		}
 
 		virtual void deinit() override
 		{
+			Input::Instance().unregisterMouseHandler(this);
 			Input::Instance().unregisterKeyboardHandler(this);
 			EventSystem::Instance().remove(m_delegate, Event_ResourceLoaded::Type);
 			g_editor = nullptr;
@@ -180,6 +206,10 @@ namespace
 		U32 m_modelsLoaded;
 		F32 m_cameraMovementSpeed;
 		bool m_renderViewActive;
+		U32 m_prevMouseX;
+		U32 m_prevMouseY;
+		F32 m_cameraMouseSense;
+		bool m_mouseButtonPressed;
 	};
 }
 

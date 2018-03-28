@@ -26,15 +26,17 @@ namespace box
 			m_near = zNear;
 			m_far = zFar;
 			m_position = pos;
-			m_target = target;
 			m_up = up;
 			m_aspect = aspect;
 			m_fov = fov;
-			m_forvard = m_target - m_position;
+			m_forvard = target - m_position;
 			m_forvard.normalize();
 
 			m_right = m_up.cross(m_forvard);
 			m_right.normalize();
+
+			m_up = m_forvard.cross(m_right);
+			m_up.normalize();
 		}
 
 		virtual void update(F32 delta)
@@ -48,7 +50,8 @@ namespace box
 			if (m_viewDirty)
 			{
 				m_viewDirty = false;
-				D3DXMatrixLookAtLH(&m_viewMatrix, &m_position, &m_target, &m_up);
+				Vector3D tmp = m_position + m_forvard;
+				D3DXMatrixLookAtLH(&m_viewMatrix, &m_position, &tmp, &m_up);
 			}
 		}
 
@@ -57,8 +60,8 @@ namespace box
 		const Matrix4D& getProjectionMatrix() const { return m_projectionMatrix; }
 		const Vector3D& getPosition() const { return m_position; }
 		void setPosition(const Vector3D& pos) { m_position = pos; m_viewDirty = true; }
-		const Vector3D& getTarget() const { return m_target; }
-		void setTarget(const Vector3D& target) { m_target = target; m_viewDirty = true; }
+		const Vector3D& getTarget() const { return m_position + m_forvard; }
+		void setTarget(const Vector3D& target) { m_forvard = target - m_position; m_viewDirty = true; }
 		const Frustum& getFrustum() const { return m_frustum; }
 
 		void setFov(F32 fov) { m_fov = fov; m_projectionDirty = true; }
@@ -68,7 +71,6 @@ namespace box
 		void moveForward(F32 step) {
 			m_viewDirty = true;
 			m_position += m_forvard * step;
-			m_target += m_forvard * step;
 		};
 		void moveBackward(F32 step) { moveForward(-step); };
 
@@ -81,7 +83,46 @@ namespace box
 		{
 			m_viewDirty = true;
 			m_position += m_right * step;
-			m_target += m_right * step;
+		}
+
+		void roll(F32 val)
+		{
+			/*
+			rightVector = (rightVector * cos(roll)) + (upVector * sin(roll))
+			upVector    = forwardVector x rightVector
+			*/
+			m_viewDirty = true;
+
+			m_right = m_right * cosf(val) + m_up * sinf(val);
+			m_right.normalize();
+			m_up = m_forvard.cross(m_right);
+			m_up.normalize();
+		}
+		void pitch(F32 val)
+		{
+			/*
+			forwardVector = (forwardVector * cos(pitch)) + (upVector * sin(pitch))
+			upVector      = forwardVector x rightVector
+			*/
+			m_viewDirty = true;
+
+			m_forvard = m_forvard * cosf(val) + m_up * sinf(val);
+			m_forvard.normalize();
+			m_up = m_forvard.cross(m_right);
+			m_up.normalize();
+		}
+		void yaw(F32 val)
+		{
+			/*
+			forwardVector = (forwardVector * cos(yaw)) - (rightVector * sin(yaw))
+			rightVector   = forwardVector x upVector
+			*/
+			m_viewDirty = true;
+
+			m_forvard = m_forvard * cosf(val) - m_right * sinf(val);
+			m_forvard.normalize();
+			m_right = m_up.cross(m_forvard);
+			m_right.normalize();
 		}
 
 	private:
@@ -91,7 +132,6 @@ namespace box
 		Matrix4D m_viewMatrix;
 		Matrix4D m_projectionMatrix;
 		Vector3D m_position;
-		Vector3D m_target;
 		Vector3D m_forvard;
 		Vector3D m_right;
 		Vector3D m_up;

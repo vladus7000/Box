@@ -29,13 +29,13 @@ namespace box
 			: m_state(State::up)
 		{
 		}
-		inline bool isPressed() { return (m_state == State::firstPress) || (m_state == State::pressed); }
+		inline bool isPressed() const { return (m_state == State::firstPress) || (m_state == State::pressed); }
 	};
 
 	class KeyboardHandler
 	{
 	public:
-		virtual void keyState(KeyState state[256]) = 0;
+		virtual void keyState(const KeyState state[256]) = 0;
 		virtual void onKeyDown(U32 key) = 0;
 		virtual void onKeyUp(U32 key) = 0;
 	};
