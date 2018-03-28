@@ -25,10 +25,11 @@ namespace box
 
 		virtual void onKeyDown(U32 key) override
 		{
-			printf("Registered key %d \n", key);
+			printf("onKeyDown key %d \n", key);
 		}
 		virtual void onKeyUp(U32 key) override
 		{
+			printf("onKeyUp key %d \n", key);
 		}
 
 		virtual void onMouseMove(U32 x, U32 y) override
@@ -44,16 +45,6 @@ namespace box
 			printf("mouse up\n");
 		}
 	}g_editorInputController;
-
-	inline bool isKeyDown(int keyCode)
-	{
-		return ((GetAsyncKeyState(keyCode) & 0x8000) ? 1 : 0);
-	};
-
-	inline bool isKeyUp(int keyCode)
-	{
-		return ((GetAsyncKeyState(keyCode) & 0x8000) ? 0 : 1);
-	};
 
 	bool Input::init()
 	{
@@ -113,9 +104,35 @@ namespace box
 	void Input::poll(F32 delta)
 	{
 		static KeyState keyState[256];
-		for (U32 key = 0; key < 256; key++)
+		for (U32 key = 7; key < 256; key++)
 		{
-			keyState[key].pressed = isKeyDown(key);
+			KeyState& currentKey = keyState[key];
+			const U16 currentState = GetAsyncKeyState(key);
+			const bool pressed = (currentState & 0x8000) != 0;
+			switch (currentKey.m_state)
+			{
+			case KeyState::State::up:
+				if (pressed) currentKey.m_state = KeyState::State::firstPress;
+				break;
+			case KeyState::State::firstPress:
+				if (pressed) currentKey.m_state = KeyState::State::pressed;
+				break;
+			case KeyState::State::pressed:
+				if (!pressed) currentKey.m_state = KeyState::State::firstUp;
+				break;
+			default:
+				break;
+			}
+
+			if (currentKey.m_state == KeyState::State::firstPress)
+			{
+				onKeyDown(key);
+			}
+			if (currentKey.m_state == KeyState::State::firstUp)
+			{
+				currentKey.m_state = KeyState::State::up;
+				onKeyUp(key);
+			}
 		}
 		for (auto it : KeyboardHandlers)
 		{

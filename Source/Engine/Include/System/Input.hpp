@@ -17,8 +17,19 @@ namespace box
 	};
 	struct KeyState
 	{
-		bool isFirstPress;
-		bool pressed;
+		enum class State : U8
+		{
+			up,
+			firstPress,
+			pressed,
+			firstUp,
+		};
+		State m_state;
+		KeyState()
+			: m_state(State::up)
+		{
+		}
+		inline bool isPressed() { return (m_state == State::firstPress) || (m_state == State::pressed); }
 	};
 
 	class KeyboardHandler

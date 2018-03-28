@@ -45,22 +45,22 @@ namespace
 			{
 				return;
 			}
-			if (state[static_cast<U32>(box::ButtonCodes::Key_W)].pressed)
+			if (state[static_cast<U32>(box::ButtonCodes::Key_W)].isPressed())
 			{
 				m_camera->moveForward(m_cameraMovementSpeed);
 			}
 
-			if (state[static_cast<U32>(box::ButtonCodes::Key_S)].pressed)
+			if (state[static_cast<U32>(box::ButtonCodes::Key_S)].isPressed())
 			{
 				m_camera->moveBackward(m_cameraMovementSpeed);
 			}
 
-			if (state[static_cast<U32>(box::ButtonCodes::Key_A)].pressed)
+			if (state[static_cast<U32>(box::ButtonCodes::Key_A)].isPressed())
 			{
 				m_camera->moveLeft(m_cameraMovementSpeed);
 			}
 
-			if (state[static_cast<U32>(box::ButtonCodes::Key_D)].pressed)
+			if (state[static_cast<U32>(box::ButtonCodes::Key_D)].isPressed())
 			{
 				m_camera->moveRight(m_cameraMovementSpeed);
 			}
@@ -255,7 +255,7 @@ namespace Input
 	{
 		CHECK_ENGINE();
 
-		box::Input::Instance().onKeyDown(key);
+	//	box::Input::Instance().onKeyDown(key);
 		return 0;
 	}
 
@@ -263,7 +263,7 @@ namespace Input
 	{
 		if (g_engineInstance)
 		{
-			box::Input::Instance().onKeyUp(key);
+		//	box::Input::Instance().onKeyUp(key);
 			return 0;
 		}
 
