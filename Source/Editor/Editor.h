@@ -282,21 +282,21 @@ namespace winforms {
 			// importModelToolStripMenuItem
 			// 
 			this->importModelToolStripMenuItem->Name = L"importModelToolStripMenuItem";
-			this->importModelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->importModelToolStripMenuItem->Size = System::Drawing::Size(144, 22);
 			this->importModelToolStripMenuItem->Text = L"ImportModel";
 			this->importModelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::importModelToolStripMenuItem_Click);
 			// 
 			// loadLevelToolStripMenuItem
 			// 
 			this->loadLevelToolStripMenuItem->Name = L"loadLevelToolStripMenuItem";
-			this->loadLevelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->loadLevelToolStripMenuItem->Size = System::Drawing::Size(144, 22);
 			this->loadLevelToolStripMenuItem->Text = L"loadLevel";
 			this->loadLevelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::loadLevelToolStripMenuItem_Click);
 			// 
 			// saveLevelToolStripMenuItem
 			// 
 			this->saveLevelToolStripMenuItem->Name = L"saveLevelToolStripMenuItem";
-			this->saveLevelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveLevelToolStripMenuItem->Size = System::Drawing::Size(144, 22);
 			this->saveLevelToolStripMenuItem->Text = L"saveLevel";
 			this->saveLevelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::saveLevelToolStripMenuItem_Click);
 			// 
@@ -653,5 +653,6 @@ private: System::Void saveLevelToolStripMenuItem_Click(System::Object^  sender, 
 		Marshal::FreeHGlobal(static_cast<IntPtr>(name));
 	}
 }
+
 };
 }

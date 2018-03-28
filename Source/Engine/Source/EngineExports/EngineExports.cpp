@@ -24,21 +24,69 @@ namespace
 	{
 		return std::static_pointer_cast<T>(in);
 	}
+	class EditorView;
 
-	class EditorView : public box::GameView
+	EditorView* g_editor = nullptr;
+
+	class EditorView : public box::GameView , public box::KeyboardHandler
 	{
 	public:
 		virtual ~EditorView() = default;
 
+		void setCameraFov(float fov) { m_camera->setFov(fov); }
+		void setCameraZNear(float zNear) { m_camera->setZNear(zNear); }
+		void setCameraZFar(float zFar) { m_camera->setZFar(zFar); }
+		void setCameraMovementSpeed(float speed) { m_cameraMovementSpeed = speed; }
+		void setRenderViewActive(bool active) { m_renderViewActive = active; }
+
+		virtual void keyState(KeyState state[256]) override
+		{
+			if (!m_renderViewActive)
+			{
+				return;
+			}
+			if (state[static_cast<U32>(box::ButtonCodes::Key_W)].pressed)
+			{
+				m_camera->moveForward(m_cameraMovementSpeed);
+			}
+
+			if (state[static_cast<U32>(box::ButtonCodes::Key_S)].pressed)
+			{
+				m_camera->moveBackward(m_cameraMovementSpeed);
+			}
+
+			if (state[static_cast<U32>(box::ButtonCodes::Key_A)].pressed)
+			{
+				m_camera->moveLeft(m_cameraMovementSpeed);
+			}
+
+			if (state[static_cast<U32>(box::ButtonCodes::Key_D)].pressed)
+			{
+				m_camera->moveRight(m_cameraMovementSpeed);
+			}
+		}
+
+		virtual void onKeyDown(U32 key) override
+		{
+
+		}
+		virtual void onKeyUp(U32 key) override
+		{
+
+		}
+
 		virtual bool restore() override
 		{
+			m_cameraMovementSpeed = 0.03f;
+			m_renderViewActive = true;
+			g_editor = this;
 			m_renderer = &Renderer::Instance();
 			m_scene = std::make_shared<Scene>();
 			m_camera = std::make_shared<Camera>();
 			
 			const F32 aspect = (F32)Window::Instance().getWidth() / (F32)Window::Instance().getHeight();
 			const F32 fov = 1.0472f;
-			m_camera->initialize(0.5f, 500.0f, aspect, fov, Vector3D(0.0f, 1.0f, -5.0f), Vector3D(0.0f, 0.0f, 0.0f), Vector3D(0.0f, 1.0f, 0.0f));
+			m_camera->initialize(0.5f, 500.0f, aspect, fov, Vector3D(0.0f, 1.0f, -50.0f), Vector3D(0.0f, 0.0f, 0.0f), Vector3D(0.0f, 1.0f, 0.0f));
 			m_modelsLoaded = 0;
 
 			m_renderer->setScene(m_scene);
@@ -46,13 +94,16 @@ namespace
 
 			m_delegate = fastdelegate::MakeDelegate(this, &EditorView::resourceLoaded);
 			EventSystem::Instance().add(m_delegate, Event_ResourceLoaded::Type);
+			Input::Instance().registerKeyboardHandler(this);
 
 			return true;
 		}
 
 		virtual void deinit() override
 		{
+			Input::Instance().unregisterKeyboardHandler(this);
 			EventSystem::Instance().remove(m_delegate, Event_ResourceLoaded::Type);
+			g_editor = nullptr;
 		}
 
 		virtual void deviceLost() override
@@ -127,12 +178,18 @@ namespace
 		Camera::CameraStrongPtr m_camera;
 		EventSystem::DelegateType m_delegate;
 		U32 m_modelsLoaded;
+		F32 m_cameraMovementSpeed;
+		bool m_renderViewActive;
 	};
 }
+
 namespace Exports
 {
 	using namespace box;
 	Engine* g_engineInstance = nullptr;
+
+#define CHECK_ENGINE() if (!g_engineInstance) { return -1; }
+#define CHECK_EDITOR() if (!g_editor) { return -1; }
 
 namespace System
 {
@@ -142,7 +199,6 @@ namespace System
 		{
 			return -1;
 		}
-
 		std::shared_ptr<EditorView> editor = std::make_shared<EditorView>();
 
 		g_engineInstance = new box::Engine();
@@ -153,10 +209,7 @@ namespace System
 
 	int StopEngine()
 	{
-		if (!g_engineInstance)
-		{
-			return -1;
-		}
+		CHECK_ENGINE();
 
 		g_engineInstance->shutdown();
 		delete g_engineInstance;
@@ -167,29 +220,21 @@ namespace System
 
 	int WndProc(void* hwnd, int msg, int wParam, int lParam)
 	{
-		if (!g_engineInstance)
-		{
-			return -1;
-		}
-
+		CHECK_ENGINE();
+		box::Input::Instance().poll(1.0f / 60.0f);
 		DXUTStaticWndProc(static_cast<HWND>(hwnd), msg, wParam, lParam);
 		return 0;
 	}
 
 	int Update(box::F32 delta)
 	{
-		if (!g_engineInstance)
-		{
-			return -1;
-		}
+		CHECK_ENGINE();
+		return 0;
 	}
 
 	int RenderFrame(box::F32 delta)
 	{
-		if (!g_engineInstance)
-		{
-			return -1;
-		}
+		CHECK_ENGINE();
 
 		DXUTRender3DEnvironment();
 		return 0;
@@ -197,10 +242,7 @@ namespace System
 
 	int Resize(int width, int height)
 	{
-		if (!g_engineInstance)
-		{
-			return -1;
-		}
+		CHECK_ENGINE();
 
 		Window::Instance().resize(width, height);
 		return 0;
@@ -211,13 +253,10 @@ namespace Input
 {
 	int OnKeyDown(U32 key)
 	{
-		if (g_engineInstance)
-		{
-			box::Input::Instance().onKeyDown(key);
-			return 0;
-		}
+		CHECK_ENGINE();
 
-		return -1;
+		box::Input::Instance().onKeyDown(key);
+		return 0;
 	}
 
 	int OnKeyUp(U32 key)
@@ -264,5 +303,61 @@ namespace Input
 		return -1;
 	}
 } // Input
+
+namespace Editor
+{
+
+	int SetRenderPanelActive(int active)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+
+		g_editor->setRenderViewActive((active == 1) ? true : false);
+
+		return 0;
+	}
+
+	int SetCameraFov(float fov)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+
+		g_editor->setCameraFov(fov);
+
+		return 0;
+	}
+
+	int SetCameraZNear(float zNear)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+
+		g_editor->setCameraZNear(zNear);
+
+		return 0;
+	}
+
+	int SetCameraZFar(float zFar)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+
+		g_editor->setCameraZFar(zFar);
+
+		return 0;
+	}
+
+	int SetCameraMovementSpeed(float speed)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+
+		g_editor->setCameraMovementSpeed(speed);
+
+		return 0;
+	}
+
+} // Editor
+
 }
 #endif

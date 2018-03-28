@@ -2,10 +2,8 @@
 #include "System\Input.hpp"
 #include <stdio.h>
 #include <list>
-
-#ifdef GAME_BUILD
 #include <windows.h>
-#endif
+
 
 namespace
 {
@@ -20,6 +18,11 @@ namespace box
 	class EditorInputController : public KeyboardHandler, public MouseHandler
 	{
 	public:
+		virtual void keyState(KeyState state[256]) override
+		{
+
+		}
+
 		virtual void onKeyDown(U32 key) override
 		{
 			printf("Registered key %d \n", key);
@@ -41,6 +44,16 @@ namespace box
 			printf("mouse up\n");
 		}
 	}g_editorInputController;
+
+	inline bool isKeyDown(int keyCode)
+	{
+		return ((GetAsyncKeyState(keyCode) & 0x8000) ? 1 : 0);
+	};
+
+	inline bool isKeyUp(int keyCode)
+	{
+		return ((GetAsyncKeyState(keyCode) & 0x8000) ? 0 : 1);
+	};
 
 	bool Input::init()
 	{
@@ -97,19 +110,19 @@ namespace box
 		}
 	}
 
-#ifdef GAME_BUILD
 	void Input::poll(F32 delta)
 	{
-		for (U32 key = 0; key < 127; key++)
+		static KeyState keyState[256];
+		for (U32 key = 0; key < 256; key++)
 		{
-			if (auto state = GetAsyncKeyState(key) > 0)
-			{
-				onKeyDown(key);
-			}
-
+			keyState[key].pressed = isKeyDown(key);
+		}
+		for (auto it : KeyboardHandlers)
+		{
+			it->keyState(keyState);
 		}
 	}
-#endif
+
 	void Input::onKeyDown(U32 key)
 	{
 		for (auto it : KeyboardHandlers)

@@ -67,7 +67,11 @@ namespace Editor {
 			this->panel1->Scroll += gcnew System::Windows::Forms::ScrollEventHandler(this, &RenderWindow::panel1_Scroll);
 			this->panel1->Click += gcnew System::EventHandler(this, &RenderWindow::panel1_Click);
 			this->panel1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &RenderWindow::panel1_Paint);
+			this->panel1->Enter += gcnew System::EventHandler(this, &RenderWindow::panel1_Enter);
+			this->panel1->Leave += gcnew System::EventHandler(this, &RenderWindow::panel1_Leave);
 			this->panel1->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &RenderWindow::panel1_MouseDown);
+			this->panel1->MouseLeave += gcnew System::EventHandler(this, &RenderWindow::panel1_MouseLeave);
+			this->panel1->MouseHover += gcnew System::EventHandler(this, &RenderWindow::panel1_MouseHover);
 			this->panel1->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &RenderWindow::panel1_MouseMove);
 			this->panel1->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &RenderWindow::panel1_MouseUp);
 			this->panel1->PreviewKeyDown += gcnew System::Windows::Forms::PreviewKeyDownEventHandler(this, &RenderWindow::panel1_PreviewKeyDown);
@@ -83,6 +87,8 @@ namespace Editor {
 			this->HideOnClose = true;
 			this->Name = L"RenderWindow";
 			this->Text = L"RenderWindow";
+			this->Enter += gcnew System::EventHandler(this, &RenderWindow::RenderWindow_Enter);
+			this->Leave += gcnew System::EventHandler(this, &RenderWindow::RenderWindow_Leave);
 			this->Resize += gcnew System::EventHandler(this, &RenderWindow::RenderWindow_Resize);
 			this->ResumeLayout(false);
 
@@ -109,13 +115,12 @@ namespace Editor {
 	{
 		(void)sender;
 		(void)e;
-
+		Exports::Editor::SetRenderPanelActive(1);
 		Exports::Input::OnMouseButtonDown(0, 0, 0);
 	}
 	private: System::Void panel1_Scroll(System::Object^  sender, System::Windows::Forms::ScrollEventArgs^  e) {
 		(void)sender;
 		(void)e;
-		//
 	}
 	private: System::Void panel1_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		(void)sender;
@@ -132,5 +137,45 @@ namespace Editor {
 		(void)e;
 		Exports::Input::OnMousebuttonUp(0, 0, 0);
 	}
-	};
+	private: System::Void RenderWindow_Enter(System::Object^  sender, System::EventArgs^  e)
+	{
+		this->panel1->Focus();
+	}
+	private: System::Void RenderWindow_Leave(System::Object^  sender, System::EventArgs^  e)
+	{
+		
+	}
+	private: System::Void panel1_Enter(System::Object^  sender, System::EventArgs^  e)
+	{
+	}
+	private: System::Void panel1_Leave(System::Object^  sender, System::EventArgs^  e)
+	{
+	}
+	protected: void OnGotFocus(System::EventArgs^  e) override
+	{
+		Invalidate();
+		Exports::Editor::SetRenderPanelActive(1);
+		WeifenLuo::WinFormsUI::Docking::DockContent::OnGotFocus(e);
+	}
+	protected: void OnLostFocus(System::EventArgs^  e) override
+	{
+		Invalidate();
+		Exports::Editor::SetRenderPanelActive(0);
+		WeifenLuo::WinFormsUI::Docking::DockContent::OnLostFocus(e);
+	}
+
+	protected: void OnDeactivate(System::EventArgs^  e) override
+	{
+		Invalidate();
+		Exports::Editor::SetRenderPanelActive(0);
+	}
+	private: System::Void panel1_MouseHover(System::Object^  sender, System::EventArgs^  e)
+	{
+		Exports::Editor::SetRenderPanelActive(1);
+	}
+	private: System::Void panel1_MouseLeave(System::Object^  sender, System::EventArgs^  e)
+	{
+		Exports::Editor::SetRenderPanelActive(0);
+	}
+};
 }

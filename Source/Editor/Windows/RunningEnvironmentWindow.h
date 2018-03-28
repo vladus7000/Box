@@ -1,5 +1,7 @@
 #pragma once
 
+#include <EngineExports/EngineExports.hpp>
+
 namespace Editor {
 
 	using namespace System;
@@ -54,7 +56,20 @@ namespace Editor {
 		System::ComponentModel::Container ^components;
 		XmlReader^ m_reader;
 		XmlReaderSettings^ m_XmlReaderSettings;
-		XmlDocument^ m_doc;
+	private: System::Windows::Forms::GroupBox^  groupBox1;
+	private: System::Windows::Forms::TextBox^  CameraFovTextBox;
+
+	private: System::Windows::Forms::Label^  label2;
+	private: System::Windows::Forms::TextBox^  ZFarTextBox;
+
+	private: System::Windows::Forms::Label^  label4;
+	private: System::Windows::Forms::TextBox^  ZNearTextBox;
+
+	private: System::Windows::Forms::Label^  label3;
+	private: System::Windows::Forms::Button^  button3;
+	private: System::Windows::Forms::TextBox^  CameraSpeedTextBox;
+	private: System::Windows::Forms::Label^  label5;
+			 XmlDocument^ m_doc;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -68,6 +83,17 @@ namespace Editor {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->button3 = (gcnew System::Windows::Forms::Button());
+			this->ZFarTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->ZNearTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->CameraFovTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->CameraSpeedTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->groupBox1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// button1
@@ -110,11 +136,108 @@ namespace Editor {
 			// 
 			this->openFileDialog1->FileName = L"openFileDialog1";
 			// 
+			// groupBox1
+			// 
+			this->groupBox1->Controls->Add(this->CameraSpeedTextBox);
+			this->groupBox1->Controls->Add(this->label5);
+			this->groupBox1->Controls->Add(this->button3);
+			this->groupBox1->Controls->Add(this->ZFarTextBox);
+			this->groupBox1->Controls->Add(this->label4);
+			this->groupBox1->Controls->Add(this->ZNearTextBox);
+			this->groupBox1->Controls->Add(this->label3);
+			this->groupBox1->Controls->Add(this->CameraFovTextBox);
+			this->groupBox1->Controls->Add(this->label2);
+			this->groupBox1->Location = System::Drawing::Point(46, 104);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(522, 154);
+			this->groupBox1->TabIndex = 4;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"CameraSettings";
+			// 
+			// button3
+			// 
+			this->button3->Location = System::Drawing::Point(63, 125);
+			this->button3->Name = L"button3";
+			this->button3->Size = System::Drawing::Size(75, 23);
+			this->button3->TabIndex = 5;
+			this->button3->Text = L"Update";
+			this->button3->UseVisualStyleBackColor = true;
+			this->button3->Click += gcnew System::EventHandler(this, &RunningEnvironmentWindow::button3_Click);
+			// 
+			// ZFarTextBox
+			// 
+			this->ZFarTextBox->Location = System::Drawing::Point(63, 86);
+			this->ZFarTextBox->Name = L"ZFarTextBox";
+			this->ZFarTextBox->Size = System::Drawing::Size(115, 20);
+			this->ZFarTextBox->TabIndex = 8;
+			this->ZFarTextBox->Text = L"500";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(19, 86);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(27, 13);
+			this->label4->TabIndex = 9;
+			this->label4->Text = L"zFar";
+			// 
+			// ZNearTextBox
+			// 
+			this->ZNearTextBox->Location = System::Drawing::Point(63, 60);
+			this->ZNearTextBox->Name = L"ZNearTextBox";
+			this->ZNearTextBox->Size = System::Drawing::Size(115, 20);
+			this->ZNearTextBox->TabIndex = 6;
+			this->ZNearTextBox->Text = L"0.5";
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(19, 60);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(35, 13);
+			this->label3->TabIndex = 7;
+			this->label3->Text = L"zNear";
+			// 
+			// CameraFovTextBox
+			// 
+			this->CameraFovTextBox->Location = System::Drawing::Point(63, 34);
+			this->CameraFovTextBox->Name = L"CameraFovTextBox";
+			this->CameraFovTextBox->Size = System::Drawing::Size(115, 20);
+			this->CameraFovTextBox->TabIndex = 5;
+			this->CameraFovTextBox->Text = L"1.0472";
+			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(19, 34);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(22, 13);
+			this->label2->TabIndex = 5;
+			this->label2->Text = L"fov";
+			// 
+			// CameraSpeedTextBox
+			// 
+			this->CameraSpeedTextBox->Location = System::Drawing::Point(307, 34);
+			this->CameraSpeedTextBox->Name = L"CameraSpeedTextBox";
+			this->CameraSpeedTextBox->Size = System::Drawing::Size(115, 20);
+			this->CameraSpeedTextBox->TabIndex = 10;
+			this->CameraSpeedTextBox->Text = L"0.03";
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(214, 34);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(87, 13);
+			this->label5->TabIndex = 11;
+			this->label5->Text = L"movementSpeed";
+			// 
 			// RunningEnvironmentWindow
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(658, 496);
+			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->button2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->TextEditor);
@@ -124,6 +247,8 @@ namespace Editor {
 			this->HideOnClose = true;
 			this->Name = L"RunningEnvironmentWindow";
 			this->Text = L"RunningEnvironmentWindow";
+			this->groupBox1->ResumeLayout(false);
+			this->groupBox1->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -137,6 +262,13 @@ namespace Editor {
 		openFileDialog1->FileName = "";
 		openFileDialog1->ShowDialog();
 		TextEditor->Text = openFileDialog1->FileName;
+	}
+private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		Exports::Editor::SetCameraFov(System::Convert::ToDouble(this->CameraFovTextBox->Text));
+		Exports::Editor::SetCameraZNear(System::Convert::ToDouble(this->ZNearTextBox->Text));
+		Exports::Editor::SetCameraZFar(System::Convert::ToDouble(this->ZFarTextBox->Text));
+		Exports::Editor::SetCameraMovementSpeed(System::Convert::ToDouble(this->CameraSpeedTextBox->Text));
 	}
 };
 }

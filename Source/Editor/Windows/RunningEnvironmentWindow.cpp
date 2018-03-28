@@ -18,6 +18,10 @@ bool Editor::RunningEnvironmentWindow::isTextFile(System::String^ file)
 		{
 			ret = true;
 		}
+		else if (ext == L"model")
+		{
+			ret = true;
+		}
 		else if (ext == L"xml")
 		{
 			ret = true;

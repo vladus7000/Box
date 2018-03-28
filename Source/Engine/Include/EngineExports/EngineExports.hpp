@@ -27,4 +27,15 @@ namespace Exports
 		int OnMouseButtonDown(box::U32 x, box::U32 y, box::U32 key);
 		int OnMousebuttonUp(box::U32 x, box::U32 y, box::U32 key);
 	}
+
+	namespace Editor
+	{
+		int SetRenderPanelActive(int active);
+
+		int SetCameraFov(float fov);
+		int SetCameraZNear(float zNear);
+		int SetCameraZFar(float zFar);
+		int SetCameraMovementSpeed(float speed);
+	}
+
 }

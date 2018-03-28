@@ -3,9 +3,28 @@
 
 namespace box
 {
+	enum class ButtonCodes
+	{
+		//keyboards
+		Key_W = 0x57,
+		Key_A = 0x41,
+		Key_S = 0x53,
+		Key_D = 0x44,
+		Key_Space = 0x20,
+		Key_Shift = 0xA0, // L shift
+
+
+	};
+	struct KeyState
+	{
+		bool isFirstPress;
+		bool pressed;
+	};
+
 	class KeyboardHandler
 	{
 	public:
+		virtual void keyState(KeyState state[256]) = 0;
 		virtual void onKeyDown(U32 key) = 0;
 		virtual void onKeyUp(U32 key) = 0;
 	};
@@ -38,9 +57,8 @@ namespace box
 		void registerKeyboardHandler(KeyboardHandler* handler);
 		void unregisterKeyboardHandler(KeyboardHandler* handler);
 
-#ifdef GAME_BUILD
 		void poll(F32 delta);
-#endif
+
 #ifdef GAME_BUILD
 	private:
 #endif
