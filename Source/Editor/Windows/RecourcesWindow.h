@@ -171,7 +171,8 @@ private: System::Void treeView1_NodeMouseClick(System::Object^  sender, System::
 		if (e->Node->Nodes->Count == 0)
 		{
 			String^ fullPath = L"../" + e->Node->FullPath;
-			m_propertiesWindow->showInfoAboutFile(fullPath);
+			array<String^>^ splittedPath = fullPath->Split(L'\\');
+			m_propertiesWindow->showInfoAboutFile(fullPath, splittedPath[1], true);
 		}
 	}
 }

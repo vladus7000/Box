@@ -16,6 +16,8 @@
 #include "Render\GraphicsNode.hpp"
 #include "DXUT11\Optional\SDKmisc.h"
 
+#include <stdio.h>
+
 using namespace box;
 namespace
 {
@@ -31,6 +33,11 @@ namespace
 	class EditorView : public box::GameView , public box::KeyboardHandler, public box::MouseHandler
 	{
 	public:
+		enum class ViewMode
+		{
+			Level,
+			Preview
+		};
 		virtual ~EditorView() = default;
 
 		void setCameraFov(float fov) { m_camera->setFov(fov); }
@@ -38,6 +45,37 @@ namespace
 		void setCameraZFar(float zFar) { m_camera->setZFar(zFar); }
 		void setCameraMovementSpeed(float speed) { m_cameraMovementSpeed = speed; }
 		void setRenderViewActive(bool active) { m_renderViewActive = active; }
+		void setViewMode(ViewMode mode) { m_activeViewMode = mode; }
+
+		void SaveLevelToXMLFile(const char* filename)
+		{
+			tinyxml2::XMLDocument xmlDoc;
+			tinyxml2::XMLNode* pRoot = xmlDoc.NewElement("Scene");
+			m_previewScene->serializeToXML(pRoot, xmlDoc);
+			xmlDoc.InsertFirstChild(pRoot);
+
+			FILE* pFile;
+			pFile = fopen(filename, "w");
+
+			tinyxml2::XMLPrinter printer(pFile, false);
+
+			xmlDoc.Print(&printer);
+			
+			fclose(pFile);
+		}
+
+		void addPreviewModelToCollection(const char* descrFileName, const char* srcFileName)
+		{
+			FILE* pFile;
+			tinyxml2::XMLDocument xmlDoc2;
+			pFile = fopen(descrFileName, "w");
+			m_previewModel->setSourceFile(srcFileName);
+			tinyxml2::XMLNode* pRoot = m_previewModel->serializeToXML(nullptr, xmlDoc2);
+			xmlDoc2.InsertFirstChild(pRoot);
+			tinyxml2::XMLPrinter printer2(pFile, false);
+			xmlDoc2.Print(&printer2);
+			fclose(pFile);
+		}
 
 		virtual void keyState(const KeyState state[256]) override
 		{
@@ -104,14 +142,15 @@ namespace
 			m_prevMouseX = 0;
 			m_prevMouseY = 0;
 			g_editor = this;
+			m_activeViewMode = ViewMode::Level;
 			m_renderer = &Renderer::Instance();
 			m_scene = std::make_shared<Scene>();
+			m_previewScene = std::make_shared<Scene>();
 			m_camera = std::make_shared<Camera>();
-			
+
 			const F32 aspect = (F32)Window::Instance().getWidth() / (F32)Window::Instance().getHeight();
 			const F32 fov = 1.0472f;
 			m_camera->initialize(0.5f, 500.0f, aspect, fov, Vector3D(0.0f, 1.0f, -50.0f), Vector3D(0.0f, 0.0f, 0.0f), Vector3D(0.0f, 1.0f, 0.0f));
-			m_modelsLoaded = 0;
 
 			m_renderer->setScene(m_scene);
 			m_renderer->setCamera(m_camera);
@@ -142,6 +181,10 @@ namespace
 			ID3D11Device* device = DXUTGetD3D11Device();
 
 			float ClearColor[4] = { 0.0f, 0.25f, 0.25f, 0.55f };
+			if (m_activeViewMode == ViewMode::Preview)
+			{
+				ClearColor[0] = 0.15f;
+			}
 			ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
 			context->ClearRenderTargetView(pRTV, ClearColor);
 
@@ -153,21 +196,36 @@ namespace
 			m_renderer->renderScene(delta);
 
 			auto& txtHelper = DXUT::GetTextHelper();
+			wchar_t buf[50];
+			if (m_activeViewMode == ViewMode::Level)
+			{
+				wsprintf(buf, L"ViewMode: Level");
+			}
+			else
+			{
+				wsprintf(buf, L"ViewMode: Preview");
+			}
 			txtHelper.Begin();
 			txtHelper.SetInsertionPos(2, 0);
+			txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+			txtHelper.DrawTextLine(buf);
 			txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
 			txtHelper.DrawTextLine(DXUTGetFrameStats(DXUTIsVsyncEnabled()));
 			txtHelper.DrawTextLine(DXUTGetDeviceStats());
-			txtHelper.SetForegroundColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-			wchar_t buf[50];
-			wsprintf(buf, L"Objects loaded: %d", m_modelsLoaded);
-			txtHelper.DrawTextLine(buf);
 			txtHelper.End();
 			return 0;
 		}
 
 		virtual void update(F64 fTime, F32 fElapsedTime) override
 		{
+			if (m_activeViewMode == ViewMode::Level)
+			{
+				m_renderer->setScene(m_scene);
+			}
+			else
+			{
+				m_renderer->setScene(m_previewScene);
+			}
 			m_renderer->cullObjects();
 		}
 
@@ -189,27 +247,37 @@ namespace
 				
 				std::shared_ptr<GraphicsNode> newNode = std::make_shared<GraphicsNode>();
 				
-				auto model = handle->getExtraTyped<Model>();
+				m_previewModel = handle->getExtraTyped<Model>();
 
-				newNode->setModel(model);
+				newNode->setModel(m_previewModel);
 
-				auto root = m_scene->getRoot().lock();
+				std::shared_ptr<box::SceneNode> root;
+				if (m_activeViewMode == ViewMode::Level)
+				{
+					root = m_scene->getRoot().lock();
+				}
+				else
+				{
+					m_previewScene = std::make_shared<Scene>();
+					root = m_previewScene->getRoot().lock();
+				}
 				root->addChild(newNode);
-				m_modelsLoaded++;
 			}
 		}
 	private:
 		Renderer* m_renderer;
 		Scene::SceneStrongPtr m_scene;
+		Scene::SceneStrongPtr m_previewScene;
+		Model::ModelStrongPtr m_previewModel;
 		Camera::CameraStrongPtr m_camera;
 		EventSystem::DelegateType m_delegate;
-		U32 m_modelsLoaded;
 		F32 m_cameraMovementSpeed;
 		bool m_renderViewActive;
 		U32 m_prevMouseX;
 		U32 m_prevMouseY;
 		F32 m_cameraMouseSense;
 		bool m_mouseButtonPressed;
+		ViewMode m_activeViewMode;
 	};
 }
 
@@ -337,12 +405,22 @@ namespace Input
 namespace Editor
 {
 
-	int SetRenderPanelActive(int active)
+	int SetEnabledCameraInput(int active)
 	{
 		CHECK_ENGINE();
 		CHECK_EDITOR();
 
 		g_editor->setRenderViewActive((active == 1) ? true : false);
+
+		return 0;
+	}
+
+	int SetViewMode(int mode)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+
+		g_editor->setViewMode(mode == 0 ? EditorView::ViewMode::Level : EditorView::ViewMode::Preview);
 
 		return 0;
 	}
@@ -384,6 +462,61 @@ namespace Editor
 
 		g_editor->setCameraMovementSpeed(speed);
 
+		return 0;
+	}
+
+	int AddPreviewModelToCollection(const char* descrFileName, const char* srcFileName)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+
+		g_editor->addPreviewModelToCollection(descrFileName, srcFileName);
+
+		return 0;
+	}
+
+	int LoadLevelFromXMLFile(const char* fileName)
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int LoadLevelFromXMLBuffer(const char* buffer)
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int GetLevelSizeForXml()
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int SaveLevelToXMLFile(const char* fileName)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+		g_editor->SaveLevelToXMLFile(fileName);
+		return 0;
+	}
+
+	int SerializeLevelToXML(char* out)
+	{
+		CHECK_ENGINE();
+		return 0;
+	}
+
+	int GetLevelInfoSizeForXml()
+	{
+		CHECK_ENGINE();
+		return 0;
+
+	}
+
+	int SerializeLevelInfoToXml(char* out)
+	{
+		CHECK_ENGINE();
 		return 0;
 	}
 

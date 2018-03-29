@@ -115,7 +115,7 @@ namespace Editor {
 	{
 		(void)sender;
 		(void)e;
-		Exports::Editor::SetRenderPanelActive(1);
+		Exports::Editor::SetEnabledCameraInput(1);
 	}
 	private: System::Void panel1_Scroll(System::Object^  sender, System::Windows::Forms::ScrollEventArgs^  e) {
 		(void)sender;
@@ -138,43 +138,55 @@ namespace Editor {
 	}
 	private: System::Void RenderWindow_Enter(System::Object^  sender, System::EventArgs^  e)
 	{
+		(void)sender;
+		(void)e;
 		this->panel1->Focus();
 	}
 	private: System::Void RenderWindow_Leave(System::Object^  sender, System::EventArgs^  e)
 	{
-		
+		(void)sender;
+		(void)e;
 	}
 	private: System::Void panel1_Enter(System::Object^  sender, System::EventArgs^  e)
 	{
+		(void)sender;
+		(void)e;
 	}
 	private: System::Void panel1_Leave(System::Object^  sender, System::EventArgs^  e)
 	{
+		(void)sender;
+		(void)e;
 	}
 	protected: void OnGotFocus(System::EventArgs^  e) override
 	{
 		Invalidate();
-		Exports::Editor::SetRenderPanelActive(1);
+		Exports::Editor::SetEnabledCameraInput(1);
 		WeifenLuo::WinFormsUI::Docking::DockContent::OnGotFocus(e);
 	}
 	protected: void OnLostFocus(System::EventArgs^  e) override
 	{
 		Invalidate();
-		Exports::Editor::SetRenderPanelActive(0);
+		Exports::Editor::SetEnabledCameraInput(0);
 		WeifenLuo::WinFormsUI::Docking::DockContent::OnLostFocus(e);
 	}
 
 	protected: void OnDeactivate(System::EventArgs^  e) override
 	{
+		(void)e;
 		Invalidate();
-		Exports::Editor::SetRenderPanelActive(0);
+		Exports::Editor::SetEnabledCameraInput(0);
 	}
 	private: System::Void panel1_MouseHover(System::Object^  sender, System::EventArgs^  e)
 	{
-		Exports::Editor::SetRenderPanelActive(1);
+		(void)sender;
+		(void)e;
+		Exports::Editor::SetEnabledCameraInput(1);
 	}
 	private: System::Void panel1_MouseLeave(System::Object^  sender, System::EventArgs^  e)
 	{
-		Exports::Editor::SetRenderPanelActive(0);
+		(void)sender;
+		(void)e;
+		Exports::Editor::SetEnabledCameraInput(0);
 	}
 };
 }

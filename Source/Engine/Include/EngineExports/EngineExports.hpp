@@ -30,12 +30,36 @@ namespace Exports
 
 	namespace Editor
 	{
-		int SetRenderPanelActive(int active);
+		int SetEnabledCameraInput(int active);
+
+		/*
+		* 0 - Level
+		* 1 - Preview model
+		*/
+		int SetViewMode(int mode);
 
 		int SetCameraFov(float fov);
 		int SetCameraZNear(float zNear);
 		int SetCameraZFar(float zFar);
 		int SetCameraMovementSpeed(float speed);
+
+		int AddPreviewModelToCollection(const char* descrFileName, const char* srcFileName);
+
+		int LoadLevelFromXMLFile(const char* fileName);
+		int LoadLevelFromXMLBuffer(const char* buffer);
+
+		/*
+		* Completed level
+		*/
+		int GetLevelSizeForXml();
+		int SaveLevelToXMLFile(const char* fileName);
+		int SerializeLevelToXML(char* out);
+
+		/*
+		* Interaction with editor
+		*/
+		int GetLevelInfoSizeForXml();
+		int SerializeLevelInfoToXml(char* out);
 	}
 
 }

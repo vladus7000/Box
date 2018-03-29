@@ -6,6 +6,7 @@
 #include "Math/Vector3D.hpp"
 #include "Math/Frustum.hpp"
 #include "Render/RenderList.hpp"
+#include <tinyxml2/tinyxml2.h>
 
 namespace box
 {
@@ -164,6 +165,42 @@ namespace box
 		}
 
 		virtual void gatherCurrentNodeGraphicsObjects(RenderObjects& out) {}
+
+		virtual int getSizeForXML() const
+		{
+			int ret = 0;
+			for (auto& it : m_children)
+			{
+				ret += it->getSizeForXML();
+			}
+			return ret;
+		}
+		virtual tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
+		{
+			tinyxml2::XMLElement* sceneNodeElement = doc.NewElement("SceneNode");
+			sceneNodeElement->SetAttribute("radius", m_radius);
+			sceneNodeElement->SetAttribute("X", m_position.x);
+			sceneNodeElement->SetAttribute("Y", m_position.y);
+			sceneNodeElement->SetAttribute("Z", m_position.z);
+
+			for (const auto& it : m_children)
+			{
+				it->serializeToXML(sceneNodeElement, doc);
+			}
+
+			if (node)
+			{
+				node->InsertEndChild(sceneNodeElement);
+			}
+
+			return sceneNodeElement;
+		}
+
+		virtual bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
+		{
+			// todo read xml
+			return false;
+		}
 
 	private:
 		Type m_type;

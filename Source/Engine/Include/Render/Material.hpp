@@ -19,6 +19,7 @@ namespace box
 
 		~Material() = default;
 
+		const std::string getName() { return m_name; }
 		void setShader(Shader::ShaderStrongPtr shader) { m_shader = shader; }
 		Shader::ShaderWeakPtr getShader() const { return m_shader; }
 

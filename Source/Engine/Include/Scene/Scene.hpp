@@ -47,6 +47,21 @@ namespace box
 			m_root->gatherObjects(frustum, out);
 		}
 
+		int getSizeForXML() const
+		{
+			return m_root->getSizeForXML();
+		}
+
+		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
+		{
+			return m_root->serializeToXML(node, doc);
+		}
+
+		bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
+		{
+			return m_root->loadFromXML(node, doc);
+		}
+
 	private:
 		inline virtual void preRender()
 		{

@@ -32,4 +32,30 @@ namespace box
 		}
 	}
 
+	int GraphicsNode::getSizeForXML() const
+	{
+		int ret = SceneNode::getSizeForXML();
+		return ret + m_model->getSizeForXML();
+	}
+
+	tinyxml2::XMLNode* GraphicsNode::serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
+	{
+		SceneNode::serializeToXML(node, doc);
+		tinyxml2::XMLElement* graphicsNode = doc.NewElement("GraphicsNode");
+		m_model->serializeToXML(graphicsNode, doc);
+		if (node)
+		{
+			node->InsertEndChild(graphicsNode);
+		}
+		return graphicsNode;
+	}
+
+	bool GraphicsNode::loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
+	{
+		SceneNode::loadFromXML(node, doc);
+		// Todo read xml and make m_model!!!
+		m_model->loadFromXML(node, doc);
+		return false;
+	}
+
 }

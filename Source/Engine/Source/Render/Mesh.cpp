@@ -32,13 +32,6 @@ namespace box
 		{
 			return;
 		}
-
-		struct SimpleVertexFormat
-		{
-			float pos[3];
-			float tcoord[2];
-			float norm[3];
-		};
 		unsigned int stride = sizeof(SimpleVertexFormat);
 		unsigned int offset = 0;
 
@@ -63,6 +56,40 @@ namespace box
 
 	void Mesh::deviceLost()
 	{
+	}
+
+	void Mesh::setRawVertexBuffer(std::vector<Mesh::SimpleVertexFormat>&& buf)
+	{
+		m_rawVertexBuffer = std::move(buf);
+	}
+
+	void Mesh::setRawIndexBuffer(std::vector<U16>&& buf)
+	{
+		m_rawIndexBuffer = std::move(buf);
+	}
+
+	int Mesh::getSizeForXML() const
+	{
+		return 0;
+	}
+
+	tinyxml2::XMLNode* Mesh::serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
+	{
+		tinyxml2::XMLElement* element = doc.NewElement("Mesh");
+		element->SetAttribute("name", m_name.c_str());
+		element->SetAttribute("materialName", m_material->getName().c_str());
+
+		if (node)
+		{
+			node->InsertEndChild(element);
+		}
+
+		return element;
+	}
+
+	bool Mesh::loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
+	{
+		return false;
 	}
 
 }

@@ -265,10 +265,12 @@ namespace Editor {
 	}
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-		Exports::Editor::SetCameraFov(System::Convert::ToDouble(this->CameraFovTextBox->Text));
-		Exports::Editor::SetCameraZNear(System::Convert::ToDouble(this->ZNearTextBox->Text));
-		Exports::Editor::SetCameraZFar(System::Convert::ToDouble(this->ZFarTextBox->Text));
-		Exports::Editor::SetCameraMovementSpeed(System::Convert::ToDouble(this->CameraSpeedTextBox->Text));
+		(void)sender;
+		(void)e;
+		Exports::Editor::SetCameraFov((float)System::Convert::ToDouble(this->CameraFovTextBox->Text));
+		Exports::Editor::SetCameraZNear((float)System::Convert::ToDouble(this->ZNearTextBox->Text));
+		Exports::Editor::SetCameraZFar((float)System::Convert::ToDouble(this->ZFarTextBox->Text));
+		Exports::Editor::SetCameraMovementSpeed((float)System::Convert::ToDouble(this->CameraSpeedTextBox->Text));
 	}
 };
 }

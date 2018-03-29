@@ -160,28 +160,22 @@ namespace box
 
 
 				auto assimpMesh = assimpScene->mMeshes[0];
-				struct SimpleVertexFormat
-				{
-					float pos[3];
-					float tcoord[2];
-					float norm[3];
-				};
 
 				ID3D11Buffer* vertexBuffer = nullptr;
 				ID3D11Buffer* indexBuffer = nullptr;
 				D3D11_BUFFER_DESC vbDesc;
 				vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
-				vbDesc.ByteWidth = assimpMesh->mNumVertices * sizeof(SimpleVertexFormat);
+				vbDesc.ByteWidth = assimpMesh->mNumVertices * sizeof(Mesh::SimpleVertexFormat);
 				vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 				vbDesc.CPUAccessFlags = 0;
 				vbDesc.MiscFlags = 0;
 				vbDesc.StructureByteStride = 0;
 
-				std::vector<SimpleVertexFormat> verts;
+				std::vector<Mesh::SimpleVertexFormat> verts;
 				verts.reserve(assimpMesh->mNumVertices);
 				for (int i = 0; i < assimpMesh->mNumVertices; i++)
 				{
-					verts.push_back(SimpleVertexFormat());
+					verts.push_back(Mesh::SimpleVertexFormat());
 					verts[i].pos[0] = assimpMesh->mVertices[i].x;
 					verts[i].pos[1] = assimpMesh->mVertices[i].y;
 					verts[i].pos[2] = assimpMesh->mVertices[i].z;
@@ -206,7 +200,7 @@ namespace box
 				device->CreateBuffer(&vbDesc, &initData, &vertexBuffer);
 
 				std::vector<U16> indices;
-				verts.reserve(assimpMesh->mNumFaces * 3);
+				indices.reserve(assimpMesh->mNumFaces * 3);
 				for (U32 i = 0; i < assimpMesh->mNumFaces; i++)
 				{
 					const auto& face = assimpMesh->mFaces[i];
@@ -228,8 +222,11 @@ namespace box
 
 				device->CreateBuffer(&ibDesc, &initData, &indexBuffer);
 
-				Model::ModelStrongPtr model = std::make_shared<Model>(fileName);
+				Model::ModelStrongPtr model = std::make_shared<Model>("previewModel",fileName);
 				Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size());
+
+				mesh->setRawVertexBuffer(std::move(verts));
+				mesh->setRawIndexBuffer(std::move(indices));
 
 				{ ///Adding default material
 					Shader::ShaderStrongPtr shader = std::make_shared<Shader>("desc/lighting/phong.shader");
