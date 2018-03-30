@@ -21,5 +21,6 @@ namespace box
 		virtual size_t getResourcesCount() const = 0;
 		virtual std::string getResourceName(size_t) const = 0;
 		virtual std::string getFullResourceName(size_t) const = 0;
+		virtual void resyncFolder() = 0;
 	};
 }

@@ -22,6 +22,7 @@ namespace box
 		virtual size_t getResourcesCount() const  override;
 		virtual std::string getResourceName(size_t i) const  override;
 		virtual std::string getFullResourceName(size_t) const override;
+		virtual void resyncFolder() override {}
 
 	private:
 		ZipFile* m_zipFile;

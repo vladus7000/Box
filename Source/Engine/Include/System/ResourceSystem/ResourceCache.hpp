@@ -41,6 +41,8 @@ namespace box
 		int getResourceCollectionSizeForXml();
 		void serializeResourceCollectionToXml(char* out);
 
+		void resyncResourceFolders();
+
 	private:
 		using ResourceHandleList = std::list<std::shared_ptr<ResourceHandle>>;
 		using ResourceHandleMap = std::map<std::string, std::shared_ptr<ResourceHandle>>;

@@ -21,7 +21,10 @@ namespace box
 		virtual size_t getResourcesCount() const override;
 		virtual std::string getResourceName(size_t) const override;
 		virtual std::string getFullResourceName(size_t) const override;
+		virtual void resyncFolder() override;
 	private:
+
+		void openFile(std::string& file);
 		struct FileWrapper
 		{
 			FileWrapper(const std::string& fileName, std::size_t size, FILE* file)

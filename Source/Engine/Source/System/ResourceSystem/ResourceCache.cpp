@@ -284,6 +284,14 @@ namespace box
 		memcpy(out, printer.CStr(), printer.CStrSize());
 	}
 
+	void ResourceCache::resyncResourceFolders()
+	{
+		for (auto resFile : m_resourceFiles)
+		{
+			resFile->resyncFolder();
+		}
+	}
+
 	std::shared_ptr<ResourceHandle> ResourceCache::load(const Resource& r)
 	{
 		std::shared_ptr<ResourceHandle> handle;

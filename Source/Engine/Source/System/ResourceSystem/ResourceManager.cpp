@@ -282,4 +282,9 @@ namespace box
 		m_cache->serializeResourceCollectionToXml(out);
 	}
 
+	void ResourceManager::resyncResourceFolders()
+	{
+		m_cache->resyncResourceFolders();
+	}
+
 }

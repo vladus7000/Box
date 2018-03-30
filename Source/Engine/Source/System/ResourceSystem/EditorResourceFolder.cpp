@@ -91,14 +91,7 @@ namespace box
 			m_files.reserve(files.size());
 			for (std::string& it : files)
 			{
-				FILE* file = fopen(it.c_str(), "rb");
-				ASSERT(file, "the file should be opened");
-				it.erase(0, m_folderName.size() + 1);
-				
-				fseek(file, 0L, SEEK_END);
-				std::size_t size = ftell(file);
-				fseek(file, 0L, SEEK_SET);
-				m_files.emplace_back(it, size, file);
+				openFile(it);
 			}
 		}
 		return m_opened;
@@ -153,6 +146,48 @@ namespace box
 	std::string EditorResourceFolder::getFullResourceName(size_t i) const
 	{
 		return m_folderName + m_files[i].name.m_name;
+	}
+
+	void EditorResourceFolder::resyncFolder()
+	{
+		std::vector<std::string> files;
+		std::vector<std::string> filesToAdd(2);
+		getListOfFiles(m_folderName, files);
+		for (std::string& it : files)
+		{
+			bool found = false;
+			std::string tmp = it;
+			tmp.erase(0, m_folderName.size() + 1);
+			std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+			for (const auto& file : m_files)
+			{
+				if (file.name.m_name == tmp)
+				{
+					found = true;
+				}
+			}
+			if (found)
+			{
+				continue;
+			}
+			filesToAdd.push_back(it);
+		}
+		for (auto& it : filesToAdd)
+		{
+			openFile(it);
+		}
+	}
+
+	void EditorResourceFolder::openFile(std::string& file)
+	{
+		FILE* fileHandle = fopen(file.c_str(), "rb");
+		ASSERT(fileHandle, "the file should be opened");
+		file.erase(0, m_folderName.size() + 1);
+
+		fseek(fileHandle, 0L, SEEK_END);
+		std::size_t size = ftell(fileHandle);
+		fseek(fileHandle, 0L, SEEK_SET);
+		m_files.emplace_back(file, size, fileHandle);
 	}
 
 }

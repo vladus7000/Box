@@ -1,6 +1,7 @@
 #pragma once
 
 #include <EngineExports/EngineExports.hpp>
+#include "Globals.hpp"
 
 namespace Editor {
 
@@ -18,13 +19,14 @@ namespace Editor {
 	public ref class PropertiesWindow : public WeifenLuo::WinFormsUI::Docking::DockContent
 	{
 	public:
-		PropertiesWindow(void)
+		PropertiesWindow()
 		{
 			InitializeComponent();
 			
 			m_inCollection = false;
 		}
 
+		void setGlobals(Globals^ globals) { m_globals = globals; }
 		void showInfoAboutFile(String^ file, String^ type, bool inCollection);
 
 	protected:
@@ -49,6 +51,7 @@ namespace Editor {
 
 	private:
 		bool m_inCollection;
+		Globals^ m_globals;
 	private: System::Windows::Forms::TabControl^  tabControl1;
 	private: System::Windows::Forms::TabPage^  tabPage1;
 	private: System::Windows::Forms::TabPage^  tabPage2;
@@ -229,24 +232,6 @@ namespace Editor {
 		(void)sender;
 		(void)e;
 	}
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e)
-	{
-		(void)sender;
-		(void)e;
-
-		char* destFileName = static_cast<char*>(Marshal::StringToHGlobalAnsi(assetPathTextBox->Text).ToPointer());
-		char* srcFileName = static_cast<char*>(Marshal::StringToHGlobalAnsi(assetSrcPathTextBox->Text).ToPointer());
-
-		String^ tmp = assetSrcPathTextBox->Text->Replace(L"/", L"\\");
-		String^ path = System::IO::Path::Combine(L"..\\Assets\\Models\\", tmp);
-		System::IO::Directory::CreateDirectory(System::IO::Path::GetDirectoryName(path));
-		System::IO::File::Copy(fileNameLabel->Text, path);
-
-		Exports::Editor::AddPreviewModelToCollection(destFileName, srcFileName);
-		Marshal::FreeHGlobal(static_cast<IntPtr>(destFileName));
-		Marshal::FreeHGlobal(static_cast<IntPtr>(srcFileName));
-
-		this->tabPage1->Enabled = false;
-	}
+	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
 };
 }

@@ -13,5 +13,7 @@ namespace Exports
 
 		int GetResourceCollectionSizeForXml();
 		int SerializeResourceCollectionToXml(char* out);
+
+		int ResyncResourceFolders();
 	}
 }

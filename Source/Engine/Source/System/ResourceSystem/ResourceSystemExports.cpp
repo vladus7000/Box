@@ -54,5 +54,14 @@ namespace Resources
 		box::ResourceManager::Instance().serializeResourceCollectionToXml(out);
 		return 0;
 	}
+
+	int ResyncResourceFolders()
+	{
+		CHECK_ENGINE();
+		box::ResourceManager::Instance().resyncResourceFolders();
+		return 0;
+
+	}
+
 }
 }

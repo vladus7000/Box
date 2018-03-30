@@ -33,6 +33,8 @@ namespace box
 		int getResourceCollectionSizeForXml();
 		void serializeResourceCollectionToXml(char* out);
 
+		void resyncResourceFolders();
+
 	private:
 		ResourceCache* m_cache;
 	};

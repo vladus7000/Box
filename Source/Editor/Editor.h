@@ -13,6 +13,7 @@
 #include "Windows\SceneView.h"
 #include "Windows\Properties.h"
 #include "Windows\AddObject.h"
+#include "Windows/Globals.hpp"
 
 namespace winforms {
 
@@ -66,6 +67,7 @@ namespace winforms {
 		Editor::SceneView^ m_sceneView;
 		Editor::PropertiesWindow^ m_properties;
 		Editor::AddObject^ m_addObjectWindow;
+		Editor::Globals^ m_globals;
 
 	private: WeifenLuo::WinFormsUI::Docking::DockPanel^  dockPanel1;
 	private: System::Windows::Forms::StatusStrip^  statusStrip1;

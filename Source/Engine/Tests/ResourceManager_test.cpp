@@ -121,6 +121,8 @@ public:
 	{
 		return m_resFile[i].name;
 	}
+
+	virtual void resyncFolder() override {}
 private:
 	std::vector<File> m_resFile;
 };
