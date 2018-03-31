@@ -28,6 +28,7 @@ namespace Editor {
 
 		void setGlobals(Globals^ globals) { m_globals = globals; }
 		void showInfoAboutFile(String^ file, String^ type, bool inCollection);
+		void disableImportForm();
 
 	protected:
 		/// <summary>
@@ -61,6 +62,7 @@ namespace Editor {
 	private: System::Windows::Forms::TextBox^  assetPathTextBox;
 
 	private: System::Windows::Forms::Label^  label3;
+	private: System::Windows::Forms::Label^  importStatusLabel;
 			 /// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -85,6 +87,7 @@ namespace Editor {
 			this->assetPathTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->importStatusLabel = (gcnew System::Windows::Forms::Label());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->SuspendLayout();
@@ -147,6 +150,7 @@ namespace Editor {
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->importStatusLabel);
 			this->tabPage1->Controls->Add(this->label4);
 			this->tabPage1->Controls->Add(this->assetSrcPathTextBox);
 			this->tabPage1->Controls->Add(this->assetPathTextBox);
@@ -164,7 +168,7 @@ namespace Editor {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(6, 52);
+			this->label4->Location = System::Drawing::Point(6, 59);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(76, 13);
 			this->label4->TabIndex = 8;
@@ -172,14 +176,14 @@ namespace Editor {
 			// 
 			// assetSrcPathTextBox
 			// 
-			this->assetSrcPathTextBox->Location = System::Drawing::Point(82, 45);
+			this->assetSrcPathTextBox->Location = System::Drawing::Point(82, 52);
 			this->assetSrcPathTextBox->Name = L"assetSrcPathTextBox";
 			this->assetSrcPathTextBox->Size = System::Drawing::Size(233, 20);
 			this->assetSrcPathTextBox->TabIndex = 7;
 			// 
 			// assetPathTextBox
 			// 
-			this->assetPathTextBox->Location = System::Drawing::Point(82, 19);
+			this->assetPathTextBox->Location = System::Drawing::Point(82, 26);
 			this->assetPathTextBox->Name = L"assetPathTextBox";
 			this->assetPathTextBox->Size = System::Drawing::Size(233, 20);
 			this->assetPathTextBox->TabIndex = 6;
@@ -187,7 +191,7 @@ namespace Editor {
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(17, 22);
+			this->label3->Location = System::Drawing::Point(17, 29);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(59, 13);
 			this->label3->TabIndex = 5;
@@ -203,6 +207,17 @@ namespace Editor {
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"addToScene";
 			this->tabPage2->UseVisualStyleBackColor = true;
+			// 
+			// importStatusLabel
+			// 
+			this->importStatusLabel->AutoSize = true;
+			this->importStatusLabel->ForeColor = System::Drawing::SystemColors::ControlText;
+			this->importStatusLabel->Location = System::Drawing::Point(104, 141);
+			this->importStatusLabel->Name = L"importStatusLabel";
+			this->importStatusLabel->Size = System::Drawing::Size(37, 13);
+			this->importStatusLabel->TabIndex = 6;
+			this->importStatusLabel->Text = L"Status";
+			this->importStatusLabel->Visible = false;
 			// 
 			// PropertiesWindow
 			// 

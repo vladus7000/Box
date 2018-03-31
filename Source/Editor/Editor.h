@@ -290,21 +290,21 @@ namespace winforms {
 			// importModelToolStripMenuItem
 			// 
 			this->importModelToolStripMenuItem->Name = L"importModelToolStripMenuItem";
-			this->importModelToolStripMenuItem->Size = System::Drawing::Size(144, 22);
+			this->importModelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->importModelToolStripMenuItem->Text = L"ImportModel";
 			this->importModelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::importModelToolStripMenuItem_Click);
 			// 
 			// loadLevelToolStripMenuItem
 			// 
 			this->loadLevelToolStripMenuItem->Name = L"loadLevelToolStripMenuItem";
-			this->loadLevelToolStripMenuItem->Size = System::Drawing::Size(144, 22);
+			this->loadLevelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->loadLevelToolStripMenuItem->Text = L"loadLevel";
 			this->loadLevelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::loadLevelToolStripMenuItem_Click);
 			// 
 			// saveLevelToolStripMenuItem
 			// 
 			this->saveLevelToolStripMenuItem->Name = L"saveLevelToolStripMenuItem";
-			this->saveLevelToolStripMenuItem->Size = System::Drawing::Size(144, 22);
+			this->saveLevelToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->saveLevelToolStripMenuItem->Text = L"saveLevel";
 			this->saveLevelToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::saveLevelToolStripMenuItem_Click);
 			// 
@@ -369,6 +369,7 @@ namespace winforms {
 			// 
 			// previewToolStripMenuItem
 			// 
+			this->previewToolStripMenuItem->Enabled = false;
 			this->previewToolStripMenuItem->Name = L"previewToolStripMenuItem";
 			this->previewToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->previewToolStripMenuItem->Text = L"Preview";
@@ -637,16 +638,20 @@ private: System::Void importModelToolStripMenuItem_Click(System::Object^  sender
 	(void)e;
 	openFileDialog1->Title = "Import Static Model";
 	openFileDialog1->FileName = "";
-	openFileDialog1->ShowDialog();
-	System::String^ fileName = openFileDialog1->FileName;
-
+	if (openFileDialog1->ShowDialog() == Windows::Forms::DialogResult::OK)
 	{
-		char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
-		Exports::Editor::SetViewMode(1); // preview
-		Exports::Resources::ImportStaticModel(name);
-		Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+		System::String^ fileName = openFileDialog1->FileName;
 
-		m_properties->showInfoAboutFile(fileName, L"static", false);
+		{
+			char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
+			if (Exports::Resources::ImportStaticModel(name) == 0)
+			{
+				Exports::Editor::ClearPreviewModel();
+				Exports::Editor::SetViewMode(1); // preview
+				m_properties->showInfoAboutFile(fileName, L"static", false);
+			}
+			Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+		}
 	}
 }
 
@@ -664,13 +669,15 @@ private: System::Void loadLevelToolStripMenuItem_Click(System::Object^  sender, 
 
 	openFileDialog1->Title = "Load Level";
 	openFileDialog1->FileName = "";
-	openFileDialog1->ShowDialog();
-	System::String^ fileName = openFileDialog1->FileName;
-
+	if (openFileDialog1->ShowDialog() == Windows::Forms::DialogResult::OK)
 	{
-		char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
-		Exports::Editor::LoadLevelFromXMLFile(name);
-		Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+		System::String^ fileName = openFileDialog1->FileName;
+
+		{
+			char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
+			Exports::Editor::LoadLevelFromXMLFile(name);
+			Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+		}
 	}
 }
 private: System::Void saveLevelToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
@@ -680,13 +687,15 @@ private: System::Void saveLevelToolStripMenuItem_Click(System::Object^  sender, 
 
 	saveFileDialog1->Title = "Save Level";
 	saveFileDialog1->FileName = "level.xml";
-	saveFileDialog1->ShowDialog();
-	System::String^ fileName = saveFileDialog1->FileName;
-
+	if (saveFileDialog1->ShowDialog() == Windows::Forms::DialogResult::OK)
 	{
-		char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
-		Exports::Editor::SaveLevelToXMLFile(name);
-		Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+		System::String^ fileName = saveFileDialog1->FileName;
+
+		{
+			char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
+			Exports::Editor::SaveLevelToXMLFile(name);
+			Marshal::FreeHGlobal(static_cast<IntPtr>(name));
+		}
 	}
 }
 
@@ -695,6 +704,7 @@ private: System::Void saveLevelToolStripMenuItem_Click(System::Object^  sender, 
 		(void)sender;
 		(void)e;
 		Exports::Editor::SetViewMode(0); // level
+		m_properties->disableImportForm();
 	}
 	private: System::Void previewToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 	{

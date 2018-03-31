@@ -15,7 +15,13 @@ void Editor::PropertiesWindow::showInfoAboutFile(System::String^ filepath, Syste
 		fileNameLabel->Text = fileNameLabel->Text->Replace(L"\\", "/");
 		assetPathTextBox->Text = L"../Assets/Models/desc/" + typeLabel->Text + L"/" + System::IO::Path::GetFileNameWithoutExtension(fileNameLabel->Text) + ".model";
 		assetSrcPathTextBox->Text = L"src/" + typeLabel->Text + L"/" + System::IO::Path::GetFileName(fileNameLabel->Text);
+		this->importStatusLabel->Visible = false;
 	}
+}
+
+void Editor::PropertiesWindow::disableImportForm()
+{
+	this->tabPage1->Enabled = false;
 }
 
 System::Void Editor::PropertiesWindow::button1_Click(System::Object^ sender, System::EventArgs^ e)
@@ -36,9 +42,15 @@ System::Void Editor::PropertiesWindow::button1_Click(System::Object^ sender, Sys
 		Exports::Resources::ResyncResourceFolders();
 		m_globals->m_recourcesWindow->refreshResourceCollection();
 		this->tabPage1->Enabled = false;
+		this->importStatusLabel->Visible = true;
+		this->importStatusLabel->Text = "Ok, created desc, and copied src files";
+		this->importStatusLabel->ForeColor = System::Drawing::Color::Green;
 	}
 	catch (...)
 	{
+		this->importStatusLabel->Visible = true;
+		this->importStatusLabel->Text = "Error, probably the same asset exists";
+		this->importStatusLabel->ForeColor = System::Drawing::Color::Red;
 	}
 
 	Marshal::FreeHGlobal(static_cast<IntPtr>(destFileName));

@@ -47,6 +47,8 @@ namespace
 		void setRenderViewActive(bool active) { m_renderViewActive = active; }
 		void setViewMode(ViewMode mode) { m_activeViewMode = mode; }
 
+		void clearPreviewModel() { m_clearPreviewModel = true; }
+
 		void SaveLevelToXMLFile(const char* filename)
 		{
 			tinyxml2::XMLDocument xmlDoc;
@@ -139,6 +141,7 @@ namespace
 			m_cameraMouseSense = 0.01f;
 			m_renderViewActive = true;
 			m_mouseButtonPressed = false;
+			m_clearPreviewModel = false;
 			m_prevMouseX = 0;
 			m_prevMouseY = 0;
 			g_editor = this;
@@ -218,13 +221,20 @@ namespace
 
 		virtual void update(F64 fTime, F32 fElapsedTime) override
 		{
-			if (m_activeViewMode == ViewMode::Level)
+			if (m_clearPreviewModel)
 			{
-				m_renderer->setScene(m_scene);
+				m_clearPreviewModel = false;
+				m_previewScene = std::make_shared<Scene>();
 			}
-			else
+			Scene::SceneStrongPtr scene = m_activeViewMode == ViewMode::Level ? m_scene : m_previewScene;
+			m_renderer->setScene(scene);
+
+			if (m_nodeToAdd)
 			{
-				m_renderer->setScene(m_previewScene);
+				std::shared_ptr<box::SceneNode> root;
+				root = scene->getRoot().lock();
+				root->addChild(m_nodeToAdd);
+				m_nodeToAdd.reset();
 			}
 			m_renderer->cullObjects();
 		}
@@ -245,23 +255,11 @@ namespace
 					return;
 				}
 				
-				std::shared_ptr<GraphicsNode> newNode = std::make_shared<GraphicsNode>();
+				m_nodeToAdd = std::make_shared<GraphicsNode>();
 				
 				m_previewModel = handle->getExtraTyped<Model>();
 
-				newNode->setModel(m_previewModel);
-
-				std::shared_ptr<box::SceneNode> root;
-				if (m_activeViewMode == ViewMode::Level)
-				{
-					root = m_scene->getRoot().lock();
-				}
-				else
-				{
-					m_previewScene = std::make_shared<Scene>();
-					root = m_previewScene->getRoot().lock();
-				}
-				root->addChild(newNode);
+				m_nodeToAdd->setModel(m_previewModel);
 			}
 		}
 	private:
@@ -269,6 +267,7 @@ namespace
 		Scene::SceneStrongPtr m_scene;
 		Scene::SceneStrongPtr m_previewScene;
 		Model::ModelStrongPtr m_previewModel;
+		std::shared_ptr<GraphicsNode> m_nodeToAdd;
 		Camera::CameraStrongPtr m_camera;
 		EventSystem::DelegateType m_delegate;
 		F32 m_cameraMovementSpeed;
@@ -277,6 +276,7 @@ namespace
 		U32 m_prevMouseY;
 		F32 m_cameraMouseSense;
 		bool m_mouseButtonPressed;
+		bool m_clearPreviewModel;
 		ViewMode m_activeViewMode;
 	};
 }
@@ -421,6 +421,16 @@ namespace Editor
 		CHECK_EDITOR();
 
 		g_editor->setViewMode(mode == 0 ? EditorView::ViewMode::Level : EditorView::ViewMode::Preview);
+
+		return 0;
+	}
+
+	int ClearPreviewModel()
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+
+		g_editor->clearPreviewModel();
 
 		return 0;
 	}

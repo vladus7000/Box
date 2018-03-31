@@ -37,6 +37,7 @@ namespace Exports
 		* 1 - Preview model
 		*/
 		int SetViewMode(int mode);
+		int ClearPreviewModel();
 
 		int SetCameraFov(float fov);
 		int SetCameraZNear(float zNear);

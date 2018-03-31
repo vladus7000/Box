@@ -151,7 +151,8 @@ namespace box
 	void EditorResourceFolder::resyncFolder()
 	{
 		std::vector<std::string> files;
-		std::vector<std::string> filesToAdd(2);
+		std::vector<std::string> filesToAdd;
+		filesToAdd.reserve(2);
 		getListOfFiles(m_folderName, files);
 		for (std::string& it : files)
 		{
