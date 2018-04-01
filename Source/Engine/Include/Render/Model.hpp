@@ -15,7 +15,7 @@ namespace box
 		using ModelWeakPtr = std::weak_ptr<Model>;
 
 	public:
-		Model(const std::string& name, const std::string& sourceFile);
+		Model(const std::string& name = "", const std::string& sourceFile = "");
 		~Model() = default;
 
 		void setName(const std::string& name) { m_name = name; }

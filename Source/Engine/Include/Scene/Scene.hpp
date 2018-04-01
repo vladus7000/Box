@@ -54,12 +54,28 @@ namespace box
 
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
 		{
-			return m_root->serializeToXML(node, doc);
+			tinyxml2::XMLNode* scene = doc.NewElement("Scene");
+			tinyxml2::XMLNode* newNode = m_root->serializeToXML(scene, doc);
+
+			if (node)
+			{
+				node->InsertEndChild(scene);
+			}
+
+			return scene;
 		}
 
 		bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
 		{
-			return m_root->loadFromXML(node, doc);
+			if (auto element = node->ToElement())
+			{
+				if (strcmp(element->Name(), "Scene") == 0)
+				{
+					m_root->loadFromXML(element->FirstChild(), doc);
+				}
+			}
+
+			return false;
 		}
 
 	private:

@@ -8,6 +8,8 @@
 #include "Render/RenderList.hpp"
 #include <tinyxml2/tinyxml2.h>
 
+#include "NodeFactory.hpp"
+
 namespace box
 {
 	class SceneNode
@@ -198,7 +200,31 @@ namespace box
 
 		virtual bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
 		{
-			// todo read xml
+			if (auto element = node->ToElement())
+			{
+				if (strcmp(element->Name(), "SceneNode") == 0)
+				{
+					element->QueryFloatAttribute("radius", &m_radius);
+					element->QueryFloatAttribute("x", &m_position.x);
+					element->QueryFloatAttribute("y", &m_position.z);
+					element->QueryFloatAttribute("z", &m_position.y);
+				}
+
+				bool ok = true;
+
+				for (tinyxml2::XMLNode* child = element->FirstChild(); child; child = child->NextSibling())
+				{
+					if (auto element = child->ToElement())
+					{
+						auto node = NodeFactory::CreateNode(element->Name());
+						ok &= node->loadFromXML(child, doc);
+
+						m_children.push_back(node);
+					}
+				}
+
+				return ok;
+			}
 			return false;
 		}
 

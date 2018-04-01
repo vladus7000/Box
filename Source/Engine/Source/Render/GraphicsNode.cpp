@@ -40,21 +40,37 @@ namespace box
 
 	tinyxml2::XMLNode* GraphicsNode::serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
 	{
-		SceneNode::serializeToXML(node, doc);
+		auto newNode = SceneNode::serializeToXML(nullptr, doc);
+
 		tinyxml2::XMLElement* graphicsNode = doc.NewElement("GraphicsNode");
 		m_model->serializeToXML(graphicsNode, doc);
+		graphicsNode->InsertEndChild(newNode);
 		if (node)
 		{
 			node->InsertEndChild(graphicsNode);
 		}
+
 		return graphicsNode;
 	}
 
 	bool GraphicsNode::loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
 	{
-		SceneNode::loadFromXML(node, doc);
-		// Todo read xml and make m_model!!!
-		m_model->loadFromXML(node, doc);
+		if (auto element = node->ToElement())
+		{
+			if (strcmp(element->Name(), "GraphicsNode") == 0)
+			{
+				if (auto modelElement = element->FirstChildElement("Model"))
+				{
+					m_model = std::make_shared<Model>();
+					m_model->loadFromXML(modelElement, doc);
+				}
+				if (auto sceneNodeElement = element->FirstChildElement("SceneNode"))
+				{
+					SceneNode::loadFromXML(sceneNodeElement, doc);
+				}
+				return true;
+			}
+		}
 		return false;
 	}
 

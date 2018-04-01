@@ -53,9 +53,8 @@ namespace
 		void SaveLevelToXMLFile(const char* filename)
 		{
 			tinyxml2::XMLDocument xmlDoc;
-			tinyxml2::XMLNode* pRoot = xmlDoc.NewElement("Scene");
-			m_scene->serializeToXML(pRoot, xmlDoc);
-			xmlDoc.InsertFirstChild(pRoot);
+			tinyxml2::XMLNode* scene = m_scene->serializeToXML(nullptr, xmlDoc);
+			xmlDoc.InsertFirstChild(scene);
 
 			FILE* pFile;
 			pFile = fopen(filename, "w");
@@ -65,6 +64,15 @@ namespace
 			xmlDoc.Print(&printer);
 			
 			fclose(pFile);
+		}
+
+		void loadLevelFromXMLFile(const char* filename)
+		{
+			tinyxml2::XMLDocument xmlDoc;
+			xmlDoc.LoadFile(filename);
+			tinyxml2::XMLNode* pRoot = xmlDoc.FirstChildElement("Scene");
+			m_scene = std::make_shared<Scene>();
+			m_scene->loadFromXML(pRoot, xmlDoc);
 		}
 
 		void addPreviewModelToCollection(const char* modelName, const char* descrFileName, const char* srcFileName)
@@ -515,6 +523,8 @@ namespace Editor
 	int LoadLevelFromXMLFile(const char* fileName)
 	{
 		CHECK_ENGINE();
+		CHECK_EDITOR();
+		g_editor->loadLevelFromXMLFile(fileName);
 		return 0;
 	}
 
