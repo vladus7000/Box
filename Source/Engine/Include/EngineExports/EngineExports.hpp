@@ -44,7 +44,8 @@ namespace Exports
 		int SetCameraZFar(float zFar);
 		int SetCameraMovementSpeed(float speed);
 
-		int AddPreviewModelToCollection(const char* descrFileName, const char* srcFileName);
+		int AddPreviewModelToCollection(const char* modelName, const char* descrFileName, const char* srcFileName);
+		int AddModelToScene(const char* desc);
 
 		int LoadLevelFromXMLFile(const char* fileName);
 		int LoadLevelFromXMLBuffer(const char* buffer);

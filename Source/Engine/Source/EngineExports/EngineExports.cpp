@@ -8,6 +8,7 @@
 #include "Gameplay\GameView.hpp"
 #include "Scene\Scene.hpp"
 #include "System\ResourceSystem\ResourceEvents.hpp"
+#include "System\ResourceSystem\ResourceManager.hpp"
 #include "System\EventSystem\EventSystem.hpp"
 #include "Window\Window.hpp"
 
@@ -53,7 +54,7 @@ namespace
 		{
 			tinyxml2::XMLDocument xmlDoc;
 			tinyxml2::XMLNode* pRoot = xmlDoc.NewElement("Scene");
-			m_previewScene->serializeToXML(pRoot, xmlDoc);
+			m_scene->serializeToXML(pRoot, xmlDoc);
 			xmlDoc.InsertFirstChild(pRoot);
 
 			FILE* pFile;
@@ -66,17 +67,35 @@ namespace
 			fclose(pFile);
 		}
 
-		void addPreviewModelToCollection(const char* descrFileName, const char* srcFileName)
+		void addPreviewModelToCollection(const char* modelName, const char* descrFileName, const char* srcFileName)
 		{
 			FILE* pFile;
 			tinyxml2::XMLDocument xmlDoc2;
 			pFile = fopen(descrFileName, "w");
 			m_previewModel->setSourceFile(srcFileName);
+			m_previewModel->setName(modelName);
 			tinyxml2::XMLNode* pRoot = m_previewModel->serializeToXML(nullptr, xmlDoc2);
 			xmlDoc2.InsertFirstChild(pRoot);
 			tinyxml2::XMLPrinter printer2(pFile, false);
 			xmlDoc2.Print(&printer2);
 			fclose(pFile);
+		}
+
+		void addModelToScene(const char* desc)
+		{
+			Resource r(desc);
+
+			auto handle = box::ResourceManager::Instance().getHandle(r);
+			if (!handle || !handle->getExtra())
+			{
+				return;
+			}
+
+			m_nodeToAdd = std::make_shared<GraphicsNode>();
+
+			m_previewModel = handle->getExtraTyped<Model>();
+
+			m_nodeToAdd->setModel(m_previewModel);
 		}
 
 		virtual void keyState(const KeyState state[256]) override
@@ -475,13 +494,21 @@ namespace Editor
 		return 0;
 	}
 
-	int AddPreviewModelToCollection(const char* descrFileName, const char* srcFileName)
+	int AddPreviewModelToCollection(const char* modelName, const char* descrFileName, const char* srcFileName)
 	{
 		CHECK_ENGINE();
 		CHECK_EDITOR();
 
-		g_editor->addPreviewModelToCollection(descrFileName, srcFileName);
+		g_editor->addPreviewModelToCollection(modelName, descrFileName, srcFileName);
 
+		return 0;
+	}
+
+	int AddModelToScene(const char* desc)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+		g_editor->addModelToScene(desc);
 		return 0;
 	}
 

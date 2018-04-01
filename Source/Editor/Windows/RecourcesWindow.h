@@ -155,7 +155,7 @@ namespace Editor {
 		(void)sender;
 		if (e && e->Node)
 		{
-			String^ fullPath = L"../" + e->Node->FullPath;
+			String^ fullPath = L"..\\" + e->Node->FullPath;
 			if (m_settings->isTextFile(fullPath))
 			{
 				System::Diagnostics::Process::Start("\"" + m_settings->getTextEditor() + "\"", fullPath);

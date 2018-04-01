@@ -11,11 +11,11 @@ namespace Exports
 namespace Resources
 {
 #define CHECK_ENGINE() if (!g_engineInstance) { return -1; }
-	int ImportStaticModel(const char* fileName)
+	int ImportStaticModel(const char* fileName, const char* modelName)
 	{
 		CHECK_ENGINE();
 
-		return box::ResourceManager::Instance().importStaticModel(fileName);
+		return box::ResourceManager::Instance().importStaticModel(fileName, modelName);
 	}
 
 	int ImportDynamicModel(const char* fileName)

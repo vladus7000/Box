@@ -145,10 +145,85 @@ namespace box
 		m_cache->registerLoader(loader);
 	}
 
-	int ResourceManager::importStaticModel(const std::string& fileName)
+	int ResourceManager::importStaticModel(const std::string& fileName, const std::string& modelName)
 	{
+		std::vector<box::Mesh::MeshStrongPtr> meshes = loadStaticModelFromFile(fileName);
+		if (meshes.size() > 0)
+		{
+			Model::ModelStrongPtr model = std::make_shared<Model>(modelName, fileName);
+			Shader::ShaderStrongPtr shader = std::make_shared<Shader>("desc/lighting/phong.shader");
+			shader->restore();
+			Material::MaterialStrongPtr matarial = std::make_shared<Material>("Default");
+			matarial->setShader(shader);
+
+			for (auto& mesh : meshes)
+			{
+				mesh->setMaterial(matarial);
+				model->addMesh(mesh);
+			}
+
+			{
+				ResourceHandle::StrongResourceHandlePtr res = std::make_shared<ResourceHandle>(Resource(fileName), nullptr, 0, nullptr);
+				res->setExtra(model);
+				EventSystem::Instance().raiseEvent(std::make_shared<Event_ResourceLoaded>(Event_ResourceLoaded::ResourceType::Model, res));
+			}
+
+			return 0;
+		}
+
+		return -1;
+	}
+
+	int ResourceManager::ImportDynamicModel(const std::string& fileName)
+	{
+		return -1;
+	}
+
+	void ResourceManager::loadModel(const std::string& fileName, Model& model)
+	{
+		std::vector<box::Mesh::MeshStrongPtr> meshes = loadStaticModelFromFile(fileName);
+
+		for (auto& mesh : meshes)
+		{
+			model.addMesh(mesh);
+		}
+	}
+
+	int ResourceManager::ImportShader(const std::string& fileName)
+	{
+		return -1;
+	}
+
+	int ResourceManager::ImportDDSTexture(const std::string& fileName)
+	{
+		return -1;
+	}
+
+	int ResourceManager::CompileShader(const std::string& fileName)
+	{
+		return -1;
+	}
+
+	int ResourceManager::getResourceCollectionSizeForXml()
+	{
+		return m_cache->getResourceCollectionSizeForXml();
+	}
+
+	void ResourceManager::serializeResourceCollectionToXml(char* out)
+	{
+		m_cache->serializeResourceCollectionToXml(out);
+	}
+
+	void ResourceManager::resyncResourceFolders()
+	{
+		m_cache->resyncResourceFolders();
+	}
+
+	std::vector<box::Mesh::MeshStrongPtr> ResourceManager::loadStaticModelFromFile(const std::string& fileName)
+	{
+		std::vector<box::Mesh::MeshStrongPtr> ret;
+
 		Assimp::Importer importer;
-		int res = -1;
 		const aiScene* assimpScene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Quality | aiProcess_GenUVCoords);
 		if (assimpScene)
 		{
@@ -222,69 +297,16 @@ namespace box
 
 				device->CreateBuffer(&ibDesc, &initData, &indexBuffer);
 
-				Model::ModelStrongPtr model = std::make_shared<Model>("previewModel",fileName);
 				Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size());
 
 				mesh->setRawVertexBuffer(std::move(verts));
 				mesh->setRawIndexBuffer(std::move(indices));
 
-				{ ///Adding default material
-					Shader::ShaderStrongPtr shader = std::make_shared<Shader>("desc/lighting/phong.shader");
-					shader->restore();
-					Material::MaterialStrongPtr matarial = std::make_shared<Material>("Default");
-					matarial->setShader(shader);
-					mesh->setMaterial(matarial);
-				}
-
-				model->addMesh(mesh);
-
-				{
-					ResourceHandle::StrongResourceHandlePtr res = std::make_shared<ResourceHandle>(Resource(fileName), nullptr, 0, nullptr);
-					res->setExtra(model);
-					EventSystem::Instance().raiseEvent(std::make_shared<Event_ResourceLoaded>(Event_ResourceLoaded::ResourceType::Model, res));
-				}
-
-				res = 0;
+				ret.push_back(mesh);
 			}
-
 		}
 
-		return res;
-	}
-
-	int ResourceManager::ImportDynamicModel(const std::string& fileName)
-	{
-		return -1;
-	}
-
-	int ResourceManager::ImportShader(const std::string& fileName)
-	{
-		return -1;
-	}
-
-	int ResourceManager::ImportDDSTexture(const std::string& fileName)
-	{
-		return -1;
-	}
-
-	int ResourceManager::CompileShader(const std::string& fileName)
-	{
-		return -1;
-	}
-
-	int ResourceManager::getResourceCollectionSizeForXml()
-	{
-		return m_cache->getResourceCollectionSizeForXml();
-	}
-
-	void ResourceManager::serializeResourceCollectionToXml(char* out)
-	{
-		m_cache->serializeResourceCollectionToXml(out);
-	}
-
-	void ResourceManager::resyncResourceFolders()
-	{
-		m_cache->resyncResourceFolders();
+		return ret;
 	}
 
 }

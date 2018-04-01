@@ -18,10 +18,11 @@ namespace box
 		Model(const std::string& name, const std::string& sourceFile);
 		~Model() = default;
 
+		void setName(const std::string& name) { m_name = name; }
 		virtual const std::string& getName() const { return m_name; }
 
-		virtual void setSourceFile(const std::string& name) { m_sourceFile = name; }
-		virtual const std::string& getSourceFile() const { return m_sourceFile; }
+		void setSourceFile(const std::string& name) { m_sourceFile = name; }
+		const std::string& getSourceFile() const { return m_sourceFile; }
 
 		void addMesh(Mesh::MeshStrongPtr mesh) { m_meshes.push_back(mesh); }
 		U32 getMeshesCount() const { return static_cast<U32>(m_meshes.size()); }

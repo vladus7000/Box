@@ -4,6 +4,7 @@
 #include "Render\ResourceLoaders\DDSTextureResourceLoader.hpp"
 #include "Render\ResourceLoaders\ShaderResourceLoader.hpp"
 #include <Render/ResourceLoaders/SdkmeshResourceLoader.hpp>
+#include <Render/ResourceLoaders/ModelResourceLoader.hpp>
 #include "Window\Window.hpp"
 #include "Render\Mesh.hpp"
 
@@ -57,6 +58,7 @@ namespace box
 		ResourceManager::Instance().registerLoader(std::make_shared<DDSTextureResourceLoader>());
 		ResourceManager::Instance().registerLoader(std::make_shared<ShaderResourceLoader>());
 		ResourceManager::Instance().registerLoader(std::make_shared<SdkmeshResourceLoader>());
+		ResourceManager::Instance().registerLoader(std::make_shared<ModelResourceLoader>());
 
 		DXUTSetCallbackDeviceChanging(ModifyDeviceSettings);
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable);

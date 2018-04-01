@@ -1,5 +1,6 @@
 #include "StdAfx.hpp"
 #include "Render/Model.hpp"
+#include "System/ResourceSystem/ResourceManager.hpp"
 
 namespace box
 {
@@ -43,6 +44,36 @@ namespace box
 
 	bool Model::loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
 	{
+		if (auto element = node->ToElement())
+		{
+			if (strcmp(element->Name(), "Model") == 0)
+			{
+				if (const char* name = element->Attribute("name"))
+				{
+					m_name = name;
+				}
+				
+				const char* sourceFile = element->Attribute("sourceFile");
+
+				if (sourceFile)
+				{
+					m_sourceFile = sourceFile;
+
+					std::string filePath("../Assets/Models/");
+					filePath += sourceFile;
+					ResourceManager::Instance().loadModel(filePath, *this);
+
+					tinyxml2::XMLElement* meshElement = element->FirstChildElement("Mesh");
+					for (const auto& mesh : m_meshes)
+					{
+						mesh->loadFromXML(meshElement, doc);
+						meshElement = meshElement->NextSiblingElement("Mesh");
+					}
+
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 

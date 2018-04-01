@@ -89,6 +89,28 @@ namespace box
 
 	bool Mesh::loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
 	{
+		if (auto element = node->ToElement())
+		{
+			if (strcmp(element->Name(), "Mesh") == 0)
+			{
+				if (const char* name = element->Attribute("name"))
+				{
+					m_name = name;
+				}
+				const char* materialName = element->Attribute("materialName");
+
+				if (materialName)
+				{
+					Shader::ShaderStrongPtr shader = std::make_shared<Shader>("desc/lighting/phong.shader");
+					shader->restore();
+					Material::MaterialStrongPtr matarial = std::make_shared<Material>("Default");
+					matarial->setShader(shader);
+					setMaterial(matarial);
+					return true;
+				}
+
+			}
+		}
 		return false;
 	}
 

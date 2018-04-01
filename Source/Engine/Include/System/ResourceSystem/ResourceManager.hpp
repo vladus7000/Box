@@ -8,6 +8,8 @@
 #include "ResourceHandle.hpp"
 #include "ResourceCache.hpp"
 
+#include "Render/Model.hpp"
+
 namespace box
 {
 	class ResourceManager
@@ -22,8 +24,10 @@ namespace box
 		std::shared_ptr<ResourceHandle> getHandle(Resource& r, bool async = false);
 		void registerLoader(std::shared_ptr<ResourceLoader> loader);
 
-		int importStaticModel(const std::string& fileName);
+		int importStaticModel(const std::string& fileName, const std::string& modelName);
 		int ImportDynamicModel(const std::string& fileName);
+
+		void loadModel(const std::string& fileName, Model& model);
 
 		int ImportShader(const std::string& fileName);
 		int ImportDDSTexture(const std::string& fileName);
@@ -36,6 +40,7 @@ namespace box
 		void resyncResourceFolders();
 
 	private:
+		std::vector<Mesh::MeshStrongPtr> loadStaticModelFromFile(const std::string& fileName);
 		ResourceCache* m_cache;
 	};
 }

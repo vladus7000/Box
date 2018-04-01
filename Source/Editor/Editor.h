@@ -643,13 +643,15 @@ private: System::Void importModelToolStripMenuItem_Click(System::Object^  sender
 		System::String^ fileName = openFileDialog1->FileName;
 
 		{
-			char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
-			if (Exports::Resources::ImportStaticModel(name) == 0)
+			char* fullPath = static_cast<char*>(Marshal::StringToHGlobalAnsi(fileName).ToPointer());
+			char* name = static_cast<char*>(Marshal::StringToHGlobalAnsi( System::IO::Path::GetFileNameWithoutExtension(fileName)).ToPointer());
+			if (Exports::Resources::ImportStaticModel(fullPath, name) == 0)
 			{
 				Exports::Editor::ClearPreviewModel();
 				Exports::Editor::SetViewMode(1); // preview
 				m_properties->showInfoAboutFile(fileName, L"static", false);
 			}
+			Marshal::FreeHGlobal(static_cast<IntPtr>(fullPath));
 			Marshal::FreeHGlobal(static_cast<IntPtr>(name));
 		}
 	}
