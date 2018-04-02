@@ -53,6 +53,7 @@ System::Void Editor::PropertiesWindow::button1_Click(System::Object^ sender, Sys
 	{
 		String^ tmp = assetSrcPathTextBox->Text->Replace(L"/", L"\\");
 		String^ path = System::IO::Path::Combine(L"..\\Assets\\Models\\", tmp);
+		System::IO::Directory::CreateDirectory(System::IO::Path::GetDirectoryName(assetPathTextBox->Text));
 		System::IO::Directory::CreateDirectory(System::IO::Path::GetDirectoryName(path));
 		System::IO::File::Copy(fileNameLabel->Text, path);
 
