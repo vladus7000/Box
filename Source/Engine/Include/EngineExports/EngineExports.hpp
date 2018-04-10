@@ -62,6 +62,8 @@ namespace Exports
 		*/
 		int GetLevelInfoSizeForXml();
 		int SerializeLevelInfoToXml(char* out);
+
+		int UpdateEnvironmentSettings(const char* xml);
 	}
 
 }

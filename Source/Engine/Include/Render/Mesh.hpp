@@ -42,7 +42,7 @@ namespace box
 		void deviceLost();
 
 		void setRawVertexBuffer(std::vector<Mesh::SimpleVertexFormat>&& buf);
-		void setRawIndexBuffer(std::vector<U16>&& buf);
+		void setRawIndexBuffer(std::vector<U32>&& buf);
 
 		int getSizeForXML() const;
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const;
@@ -56,7 +56,7 @@ namespace box
 		U32 m_indexCount;
 
 		std::vector<Mesh::SimpleVertexFormat> m_rawVertexBuffer;
-		std::vector<U16> m_rawIndexBuffer;
+		std::vector<U32> m_rawIndexBuffer;
 		std::string m_name;
 	};
 }

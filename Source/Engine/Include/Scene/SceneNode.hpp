@@ -205,9 +205,9 @@ namespace box
 				if (strcmp(element->Name(), "SceneNode") == 0)
 				{
 					element->QueryFloatAttribute("radius", &m_radius);
-					element->QueryFloatAttribute("x", &m_position.x);
-					element->QueryFloatAttribute("y", &m_position.z);
-					element->QueryFloatAttribute("z", &m_position.y);
+					element->QueryFloatAttribute("X", &m_position.x);
+					element->QueryFloatAttribute("Y", &m_position.y);
+					element->QueryFloatAttribute("Z", &m_position.z);
 				}
 
 				bool ok = true;

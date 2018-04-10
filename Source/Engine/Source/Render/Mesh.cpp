@@ -1,6 +1,7 @@
 #include "StdAfx.hpp"
 #include "Render/Mesh.hpp"
 #include <DXUT11\Core\DXUT.h>
+#include "System/ResourceSystem/ResourceManager.hpp"
 
 namespace box
 {
@@ -35,7 +36,7 @@ namespace box
 		unsigned int stride = sizeof(SimpleVertexFormat);
 		unsigned int offset = 0;
 
-		context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+		context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 
 		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -63,7 +64,7 @@ namespace box
 		m_rawVertexBuffer = std::move(buf);
 	}
 
-	void Mesh::setRawIndexBuffer(std::vector<U16>&& buf)
+	void Mesh::setRawIndexBuffer(std::vector<U32>&& buf)
 	{
 		m_rawIndexBuffer = std::move(buf);
 	}
@@ -101,14 +102,15 @@ namespace box
 
 				if (materialName)
 				{
-					Shader::ShaderStrongPtr shader = std::make_shared<Shader>("desc/lighting/phong.shader");
-					shader->restore();
-					Material::MaterialStrongPtr matarial = std::make_shared<Material>("Default");
-					matarial->setShader(shader);
-					setMaterial(matarial);
-					return true;
+					Resource r("desc/default.material");
+					auto handle = ResourceManager::Instance().getHandle(r);
+					auto material = handle->getExtraTyped<Material>();
+					if (material)
+					{
+						setMaterial(material);
+						return true;
+					}
 				}
-
 			}
 		}
 		return false;

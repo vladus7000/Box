@@ -1,0 +1,3 @@
+<Model name="map" sourceFile="src/static/map.obj">
+    <Mesh name="" materialName="Default"/>
+</Model>

@@ -2,6 +2,7 @@
 
 void Editor::RecourcesWindow::refreshResourceCollection()
 {
+	m_propertiesWindow->clearComboBoxes();
 	int sizeInBytes = Exports::Resources::GetResourceCollectionSizeForXml();
 	if (sizeInBytes > cachedSizeInBytes)
 	{
@@ -61,6 +62,12 @@ void Editor::RecourcesWindow::refreshResourceCollection()
 				newNode->Text = currentFolder;
 				nextNode->Nodes->Add(newNode);
 				nextNode = newNode;
+
+				if (currentFolder->Contains(L"."))
+				{
+					String^ fullPath = L"../" + newNode->FullPath;
+					m_propertiesWindow->addResourceToComboBoxes(fullPath);
+				}
 			}
 		}
 	}

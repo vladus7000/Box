@@ -3,6 +3,7 @@
 #include "SceneNode.hpp"
 #include "Render/RenderList.hpp"
 #include "Math/Frustum.hpp"
+#include "EnvironmentSettings.hpp"
 
 namespace box
 {
@@ -47,6 +48,13 @@ namespace box
 			m_root->gatherObjects(frustum, out);
 		}
 
+		void updateEnvironmentSettings(tinyxml2::XMLNode* node)
+		{
+			m_environment.updateEnvironmentSettings(node);
+		}
+
+		const EnvironmentSettings& getEnvironmentSettings() const { return m_environment; }
+
 		int getSizeForXML() const
 		{
 			return m_root->getSizeForXML();
@@ -89,5 +97,6 @@ namespace box
 		}
 	private:
 		SceneNode::SceneNodeStrongPtr m_root;
+		EnvironmentSettings m_environment;
 	};
 }

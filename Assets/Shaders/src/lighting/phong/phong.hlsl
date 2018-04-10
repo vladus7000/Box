@@ -6,6 +6,7 @@ cbuffer ShaderData : register(b0)
 	float4 cameraTarget;
 	float4 screenW_screenH_0_0;
 	float3 sunDirection;
+	float3 sunColor;
 };
 
 struct VertexShaderInput
@@ -34,12 +35,15 @@ PixelShaderInput t1_VsMain(VertexShaderInput input)
 
 	output.texCoord = input.texCoord;
 	output.normal = input.normal;
-	output.posPixel = input.pos;
+	output.posPixel = output.pos;
 
 	return output;
 }
 
 float4 t1_psMain(PixelShaderInput input) : SV_TARGET
 {
-	return float4(1.0, 0.0, 0.0, 1.0);
+	float3 normal = normalize(input.normal);
+	float3 posPixel	= input.posPixel;
+	float3 intensity = float3(0.3, 0.3, 0.3) * sunColor * saturate(dot(normal, normalize(sunDirection))) + float3(0.3, 0.3, 0.3);
+	return float4(intensity, 1.0);
 }

@@ -8,17 +8,17 @@
 
 namespace box
 {
-	class ShaderResourceExtraData : public ResourceExtraData
-	{
-	public:
-		ShaderResourceExtraData() = default;
-		~ShaderResourceExtraData() = default;
-
-		virtual const std::string& getName() const { return "ShaderResourceExtraData"; }
-
-	public:
-		friend class ShaderTextureResourceLoader;
-		class Technique
+//	class ShaderResourceExtraData : public ResourceExtraData
+//	{
+//	public:
+//		ShaderResourceExtraData() = default;
+//		~ShaderResourceExtraData() = default;
+//
+//		virtual const std::string& getName() const { return "ShaderResourceExtraData"; }
+//
+//	public:
+//		friend class ShaderTextureResourceLoader;
+		/*class Technique
 		{
 			void releaseAll()
 			{
@@ -199,7 +199,7 @@ namespace box
 				}
 				if (depthStencilView)
 				{
-					UINT ref = 0;
+					UINT ref = 1;
 					context->OMSetDepthStencilState(depthStencilView, ref);
 				}
 				if (rasterizerState)
@@ -249,7 +249,7 @@ namespace box
 			ID3D11PixelShader* pixelShader;
 			ID3D11VertexShader* vertexShader;
 			std::string name;
-		};
-		std::vector<Technique> m_techniques;
-	};
+		};*/
+		//std::vector<Technique> m_techniques;
+	//};
 }

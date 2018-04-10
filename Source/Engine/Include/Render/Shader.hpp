@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Technique.hpp"
 #include "System/ResourceSystem/ResourceHandle.hpp"
-#include <Render/ResourceLoaders/ShaderResourceExtraData.hpp>
+#include <Render/ShaderEnvironmentProviders/ShaderEnvironmentProvider.hpp>
+#include "System/ResourceSystem/ResourceExtraData.hpp"
 
 #include <D3D11.h>
 #include <string>
@@ -9,7 +11,7 @@
 
 namespace box
 {
-	class Shader
+	class Shader : public ResourceExtraData
 	{
 	public:
 		using ShaderStrongPtr = std::shared_ptr<Shader>;
@@ -17,7 +19,7 @@ namespace box
 
 	public:
 		Shader(const std::string& resourceName);
-		~Shader();
+		virtual ~Shader();
 
 		void restore();
 		void lostDevice();
@@ -28,8 +30,12 @@ namespace box
 		U32 getNumTechniques() const { return static_cast<U32>(m_techniques.size()); }
 		void setActiveTechnique(U32 tech) { ASSERT(tech < m_techniques.size() && m_activeTechnique != -1); m_activeTechnique = tech; }
 
-		const ShaderResourceExtraData::Technique& getActiveTechnique() const { return m_techniques[m_activeTechnique]; }
-		ShaderResourceExtraData::Technique& getActiveTechnique() { return m_techniques[m_activeTechnique]; }
+		const Technique& getActiveTechnique() const { return m_techniques[m_activeTechnique]; }
+		Technique& getActiveTechnique() { return m_techniques[m_activeTechnique]; }
+
+		ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong getEnvProvider() const { return m_envProvider; }
+		void setProvider(ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong provider) { m_envProvider = provider; }
+		void updateEnvironment() { m_envProvider->prepareShader(*this); };
 
 		//ID3D11BlendState* getBlendState() const { return m_techniques[m_activeTechnique].blendState; }
 		//ID3D11DepthStencilView* getDepthStencilView() const { m_techniques[m_activeTechnique].depthStencilView; }
@@ -43,12 +49,14 @@ namespace box
 		//ID3D11VertexShader* getVertexShader() const { return m_techniques[m_activeTechnique].vertexShader; }
 
 	private:
+		friend class ShaderResourceLoader;
 		void deinit();
 
 	private:
 		S32 m_activeTechnique;
 		std::string m_name;
 		std::shared_ptr<ResourceHandle> m_resourceHandle;
-		std::vector<ShaderResourceExtraData::Technique> m_techniques;
+		std::vector<Technique> m_techniques;
+		ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong m_envProvider;
 	};
 }

@@ -12,6 +12,8 @@ namespace box
 		float cameraPosition[4];
 		float cameraTarget[4];
 		float screenW_screenH_0_0[4];
+		float sunPosition[4];
+		float sunColor[4];
 	};
 
 	FrameGlobals::FrameGlobals()
@@ -80,8 +82,25 @@ namespace box
 			shaderData->screenW_screenH_0_0[1] = static_cast<F32>(Window::Instance().getHeight());
 			shaderData->screenW_screenH_0_0[2] = 0.0f;
 			shaderData->screenW_screenH_0_0[3] = 0.0f;
+
+			shaderData->sunPosition[0] = m_sunPosition.x;
+			shaderData->sunPosition[1] = m_sunPosition.y;
+			shaderData->sunPosition[2] = m_sunPosition.z;
+			shaderData->sunPosition[3] = 1.0f;
+
+			shaderData->sunColor[0] = m_sunColor.x;
+			shaderData->sunColor[1] = m_sunColor.y;
+			shaderData->sunColor[2] = m_sunColor.z;
+			shaderData->sunColor[3] = 1.0f;
 		}
 		context->Unmap(m_frameConstants, 0);
 
 	}
+
+	void FrameGlobals::updateEnvironmentSettings(const EnvironmentSettings& settings)
+	{
+		m_sunPosition = settings.sunPosition;
+		m_sunColor = settings.sunColor;
+	}
+
 }

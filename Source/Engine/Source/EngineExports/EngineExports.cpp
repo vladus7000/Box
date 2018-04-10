@@ -106,6 +106,18 @@ namespace
 			m_nodeToAdd->setModel(m_previewModel);
 		}
 
+		void updateEnvironmentSettings(const char* xml)
+		{
+			tinyxml2::XMLDocument xmlDoc;
+			size_t size = strlen(xml);
+			tinyxml2::XMLError result = xmlDoc.Parse(xml, size);
+			if (result == tinyxml2::XMLError::XML_SUCCESS)
+			{
+				tinyxml2::XMLElement* root = xmlDoc.RootElement();
+				m_scene->updateEnvironmentSettings(root);
+			}
+		}
+
 		virtual void keyState(const KeyState state[256]) override
 		{
 			if (!m_renderViewActive)
@@ -564,6 +576,15 @@ namespace Editor
 	int SerializeLevelInfoToXml(char* out)
 	{
 		CHECK_ENGINE();
+		return 0;
+	}
+
+	int UpdateEnvironmentSettings(const char* xml)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+		g_editor->updateEnvironmentSettings(xml);
+		return 0;
 		return 0;
 	}
 

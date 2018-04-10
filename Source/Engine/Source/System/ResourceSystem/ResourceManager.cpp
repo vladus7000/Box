@@ -91,6 +91,10 @@ namespace box
 			resFile = new EditorResourceFolder("../Assets/Shaders/");
 			m_cache->addResourceFile(resFile);
 		}
+		{
+			resFile = new EditorResourceFolder("../Assets/Materials/");
+			m_cache->addResourceFile(resFile);
+		}
 #endif
 
 		bool res = m_cache->init();
@@ -151,14 +155,12 @@ namespace box
 		if (meshes.size() > 0)
 		{
 			Model::ModelStrongPtr model = std::make_shared<Model>(modelName, fileName);
-			Shader::ShaderStrongPtr shader = std::make_shared<Shader>("desc/lighting/phong.shader");
-			shader->restore();
-			Material::MaterialStrongPtr matarial = std::make_shared<Material>("Default");
-			matarial->setShader(shader);
-
+			Resource r("desc/default.material");
+			auto handle = ResourceManager::Instance().getHandle(r);
+			auto material = handle->getExtraTyped<Material>();
 			for (auto& mesh : meshes)
 			{
-				mesh->setMaterial(matarial);
+				mesh->setMaterial(material);
 				model->addMesh(mesh);
 			}
 
@@ -274,7 +276,7 @@ namespace box
 
 				device->CreateBuffer(&vbDesc, &initData, &vertexBuffer);
 
-				std::vector<U16> indices;
+				std::vector<U32> indices;
 				indices.reserve(assimpMesh->mNumFaces * 3);
 				for (U32 i = 0; i < assimpMesh->mNumFaces; i++)
 				{
@@ -287,7 +289,7 @@ namespace box
 
 				D3D11_BUFFER_DESC ibDesc;
 				ibDesc.Usage = D3D11_USAGE_IMMUTABLE;
-				ibDesc.ByteWidth = indices.size() * sizeof(U16);
+				ibDesc.ByteWidth = indices.size() * sizeof(U32);
 				ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 				ibDesc.CPUAccessFlags = 0;
 				ibDesc.MiscFlags = 0;

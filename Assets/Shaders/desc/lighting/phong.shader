@@ -1,4 +1,4 @@
-<shader file="src/lighting/phong/phong.hlsl">
+<shader file="src/lighting/phong/phong.hlsl" provider="DefaultShaderEnvironmentProvider">
 
 <techniques>
 	<techique name="t1">
@@ -25,16 +25,18 @@
 			
 			<Rasterizer>
 				<item name="FillMode" value="Solid"/>
-				<item name="CullMode" value="None"/>
+				<item name="CullMode" value="Back"/>
 			</Rasterizer>
 
 			<DepthStencil>
 				<item name="DepthEnable" value="true"/>
+				<item name="WriteMask" value="MaskAll"/>
 				<item name="StencilReadMask" value="255"/>
+				<item name="StencilWriteMask" value="255"/>
 				<item name="DepthFunc" value="Less"/>
 			</DepthStencil>
 
-			<BlendDescriptions AlphaToCoverage="true" IndependentBlend="true">
+			<BlendDescriptions AlphaToCoverage="false" IndependentBlend="false">
 				<RT name="0">
 					<item name="BlendEnable" value="false" />
 					<item name="ColorSrc" value="InvDstColor" />
@@ -43,7 +45,7 @@
 					<item name="AlphaSrc" value="Src1Alpha" />
 					<item name="AlphaDst" value="DstAlpha" />
 					<item name="AlphaOp" value="RevSubstract" />
-					<item name="WriteMask" value="Blue"/>
+					<item name="WriteMask" value="All"/>
 				</RT>
 			</BlendDescriptions>
 

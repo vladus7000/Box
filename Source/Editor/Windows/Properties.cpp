@@ -18,6 +18,14 @@ void Editor::PropertiesWindow::showInfoAboutFile(System::String^ filepath, Syste
 		modelNameTextBox->Text = name;
 		this->importStatusLabel->Visible = false;
 	}
+	else
+	{
+		m_descriptionPath = getResourcePathFromFullPath(fileNameLabel->Text);
+		if (type == "Materials")
+		{
+			updateMaterialUI(fileNameLabel->Text);
+		}
+	}
 }
 
 void Editor::PropertiesWindow::disableImportForm()
@@ -39,6 +47,87 @@ System::String^ Editor::PropertiesWindow::getResourcePathFromFullPath(System::St
 		}
 	}
 	return tmp;
+}
+
+void Editor::PropertiesWindow::addResourceToComboBoxes(System::String^ fullPath)
+{
+	fullPath = fullPath->Replace(L"\\", "/");
+	System::String^ resName = getResourcePathFromFullPath(fullPath);
+	System::String^ ext = System::IO::Path::GetExtension(fullPath);
+
+	if (ext == ".shader")
+	{
+		addShader(resName);
+	}
+	else if (ext == ".material")
+	{
+		addMaterial(resName);
+	}
+	else if (ext == ".dds")
+	{
+		addTexture(resName);
+	}
+}
+
+void Editor::PropertiesWindow::addShader(System::String^ descName)
+{
+	materialSelectShaderComboBox->Items->Add(descName);
+	materialSelectShaderComboBox->SelectedIndex = 0;
+
+	shaderSelectShaderComboBox->Items->Add(descName);
+	shaderSelectShaderComboBox->SelectedIndex = 0;
+}
+
+void Editor::PropertiesWindow::addMaterial(System::String^ descName)
+{
+	selectMaterialComboBox->Items->Add(descName);
+	selectMaterialComboBox->SelectedIndex = 0;
+}
+
+void Editor::PropertiesWindow::addTexture(System::String^ descName)
+{
+	textureSlot1ComboBox->Items->Add(descName);
+	textureSlot2ComboBox->Items->Add(descName);
+	textureSlot3ComboBox->Items->Add(descName);
+
+	textureSlot1ComboBox->SelectedIndex = 0;
+	textureSlot2ComboBox->SelectedIndex = 0;
+	textureSlot3ComboBox->SelectedIndex = 0;
+}
+
+void Editor::PropertiesWindow::clearComboBoxes()
+{
+	materialSelectShaderComboBox->Items->Clear();
+	shaderSelectShaderComboBox->Items->Clear();
+	selectMaterialComboBox->Items->Clear();
+	textureSlot1ComboBox->Items->Clear();
+	textureSlot2ComboBox->Items->Clear();
+	textureSlot3ComboBox->Items->Clear();
+}
+
+void Editor::PropertiesWindow::updateMaterialUI(System::String^ fileName)
+{
+	System::Xml::XmlDocument xmlDoc;
+	xmlDoc.Load(fileName);
+	System::Xml::XmlElement^ root = xmlDoc.DocumentElement;
+	if (root)
+	{
+		materialDescPathTextBox->Text = m_descriptionPath;
+		materialNameTextBox->Text = root->GetAttribute("name")->ToString();
+
+		System::Xml::XmlElement^ shader = (System::Xml::XmlElement^)root->FirstChild;
+		materialSelectShaderComboBox->Text = shader->GetAttribute("desc")->ToString();
+		System::Xml::XmlElement^ textures = (System::Xml::XmlElement^)shader->NextSibling;
+
+		System::Xml::XmlElement^ slot1 = (System::Xml::XmlElement^)textures->FirstChild;
+		textureSlot1ComboBox->Text = slot1->GetAttribute("desc")->ToString();
+
+		System::Xml::XmlElement^ slot2 = (System::Xml::XmlElement^)slot1->NextSibling;
+		textureSlot2ComboBox->Text = slot2->GetAttribute("desc")->ToString();
+
+		System::Xml::XmlElement^ slot3 = (System::Xml::XmlElement^)slot2->NextSibling;
+		textureSlot3ComboBox->Text = slot3->GetAttribute("desc")->ToString();
+	}
 }
 
 System::Void Editor::PropertiesWindow::button1_Click(System::Object^ sender, System::EventArgs^ e)
@@ -79,6 +168,9 @@ System::Void Editor::PropertiesWindow::button1_Click(System::Object^ sender, Sys
 
 System::Void Editor::PropertiesWindow::previewModelClick(System::Object^ sender, System::EventArgs^ e)
 {
+	(void)sender;
+	(void)e;
+
 	char* desc = static_cast<char*>(Marshal::StringToHGlobalAnsi(getResourcePathFromFullPath(fileNameLabel->Text)).ToPointer());
 	Exports::Editor::ClearPreviewModel();
 	if (Exports::Editor::AddModelToScene(desc) == 0)
@@ -90,10 +182,52 @@ System::Void Editor::PropertiesWindow::previewModelClick(System::Object^ sender,
 
 System::Void Editor::PropertiesWindow::addToSceneClick(System::Object^ sender, System::EventArgs^ e)
 {
+	(void)sender;
+	(void)e;
+
 	char* desc = static_cast<char*>(Marshal::StringToHGlobalAnsi(getResourcePathFromFullPath(fileNameLabel->Text)).ToPointer());
 	if (Exports::Editor::AddModelToScene(desc) == 0)
 	{
 		Exports::Editor::SetViewMode(0);
 	}
 	Marshal::FreeHGlobal(static_cast<IntPtr>(desc));
+}
+
+System::Void Editor::PropertiesWindow::newMaterial_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	(void)sender;
+	(void)e;
+	System::Xml::XmlDocument xmlDoc;
+	System::Xml::XmlElement^ rootMaterial = xmlDoc.CreateElement(L"Material");
+	
+	rootMaterial->SetAttribute("name", materialNameTextBox->Text);
+
+	{
+		System::Xml::XmlElement ^el = xmlDoc.CreateElement(L"Shader");
+		el->SetAttribute("desc", materialSelectShaderComboBox->GetItemText(materialSelectShaderComboBox->SelectedItem));
+		rootMaterial->AppendChild(el);
+	}
+	{
+		System::Xml::XmlElement ^text = xmlDoc.CreateElement(L"Textures");
+		{
+			System::Xml::XmlElement ^el = xmlDoc.CreateElement(L"slot1");
+			el->SetAttribute("desc", textureSlot1ComboBox->GetItemText(textureSlot1ComboBox->SelectedItem));
+			text->AppendChild(el);
+		}
+		{
+			System::Xml::XmlElement ^el = xmlDoc.CreateElement(L"slot2");
+			el->SetAttribute("desc", textureSlot2ComboBox->GetItemText(textureSlot2ComboBox->SelectedItem));
+			text->AppendChild(el);
+		}
+		{
+			System::Xml::XmlElement ^el = xmlDoc.CreateElement(L"slot3");
+			el->SetAttribute("desc", textureSlot3ComboBox->GetItemText(textureSlot3ComboBox->SelectedItem));
+			text->AppendChild(el);
+		}
+		rootMaterial->AppendChild(text);
+	}
+	xmlDoc.AppendChild(rootMaterial);
+
+	System::IO::Directory::CreateDirectory(System::IO::Path::GetDirectoryName("../Assets/Materials/" + materialDescPathTextBox->Text));
+	xmlDoc.Save("../Assets/Materials/" + materialDescPathTextBox->Text);
 }

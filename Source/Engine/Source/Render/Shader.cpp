@@ -20,12 +20,12 @@ namespace box
 		deinit();
 
 		Resource r(m_name);
-		m_resourceHandle = ResourceManager::Instance().getHandle(r);
-		auto shaderResources = m_resourceHandle->getExtraTyped<ShaderResourceExtraData>();
-		if (shaderResources)
-		{
-			m_techniques = shaderResources->m_techniques;
-		}
+		//m_resourceHandle = ResourceManager::Instance().getHandle(r);
+		//auto shaderResources = m_resourceHandle->getExtraTyped<ShaderResourceExtraData>();
+		//if (shaderResources)
+		//{
+		//	m_techniques = shaderResources->m_techniques;
+		//}
 	}
 
 	void Shader::lostDevice()

@@ -1,9 +1,11 @@
 #include "StdAfx.hpp"
 #include <Render/ResourceLoaders/XmlHelper.hpp>
 #include <Render/ResourceLoaders/ShaderResourceLoader.hpp>
-#include <Render/ResourceLoaders/ShaderResourceExtraData.hpp>
+#include <Render/Technique.hpp>
+#include <Render/Shader.hpp>
 #include <System/ResourceSystem/ResourceHandle.hpp>
 #include <System/ResourceSystem/ResourceManager.hpp>
+#include <Render/ShaderEnvironmentProviders/DefaultShaderEnvironmentProvider.hpp>
 
 #include <DXUT11\Core\DXUT.h>
 #include <d3dx11tex.h>
@@ -196,7 +198,7 @@ namespace box
 		return true;
 	}
 
-	bool parseVS(tinyxml2::XMLElement* vsRoot, ShaderResourceExtraData::Technique& out, Common& common)
+	bool parseVS(tinyxml2::XMLElement* vsRoot, Technique& out, Common& common)
 	{
 		const char* entryPoint = vsRoot->Attribute("entryPoint");
 		const char* shaderModel = vsRoot->Attribute("shaderModel");
@@ -261,7 +263,7 @@ namespace box
 		return ret;
 	}
 
-	bool parsePS(tinyxml2::XMLElement* psRoot, ShaderResourceExtraData::Technique& out, Common& common)
+	bool parsePS(tinyxml2::XMLElement* psRoot, Technique& out, Common& common)
 	{
 		const char* entryPoint = psRoot->Attribute("entryPoint");
 		const char* shaderModel = psRoot->Attribute("shaderModel");
@@ -335,7 +337,7 @@ namespace box
 		return out.pixelShader != nullptr;
 	}
 
-	bool parseTechnique(tinyxml2::XMLNode* techniqueRoot, ShaderResourceExtraData::Technique& out, Common& common)
+	bool parseTechnique(tinyxml2::XMLNode* techniqueRoot, Technique& out, Common& common)
 	{
 		auto element = techniqueRoot->ToElement();
 		if (const char* techniqueName = element->Attribute("name"))
@@ -359,30 +361,47 @@ namespace box
 		return (vsOK && psOK);
 	}
 
+	ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong getProvider(const char* name)
+	{
+		if (strcmp(name, "DefaultShaderEnvironmentProvider") == 0)
+		{
+			return std::make_shared<DefaultShaderEnvironmentProvider>();
+		}
+
+		return ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong();
+	}
+
 	bool ShaderResourceLoader::loadResource(U8* buffer, size_t size, std::shared_ptr<ResourceHandle> handle)
 	{
-		std::shared_ptr<ShaderResourceExtraData> extra = std::make_shared<ShaderResourceExtraData>();
+		std::shared_ptr<Shader> extra = std::make_shared<Shader>(handle->getResource().m_name);
 
 		tinyxml2::XMLDocument xmlDoc;
 
 		tinyxml2::XMLError result = xmlDoc.Parse(reinterpret_cast<const char*>(buffer), size);
 		if (result == tinyxml2::XMLError::XML_SUCCESS)
 		{
+			const char* shaderEnvironmentProvider = nullptr;
+
 			tinyxml2::XMLNode* root = xmlDoc.RootElement();
 			Common ShaderCommon;
 
 			if (auto element = root->ToElement())
 			{
 				ShaderCommon.fileName = element->Attribute("file");
+				shaderEnvironmentProvider = element->Attribute("provider");
 			}
 
 			bool ok = false;
 			do
 			{
-				if (!ShaderCommon.fileName)
+				if (!ShaderCommon.fileName
+				 || !shaderEnvironmentProvider)
 				{
 					break;
 				}
+
+				extra->setProvider(getProvider(shaderEnvironmentProvider));
+
 				box::Resource samplerStateResource(ShaderCommon.fileName);
 				auto shaderCode = box::ResourceManager::Instance().getHandle(samplerStateResource);
 				if (shaderCode->getStatus() == ResourceHandle::Status::Ready)
@@ -436,7 +455,7 @@ namespace box
 				{
 					for (auto child = techniques->FirstChild(); child; child = child->NextSibling())
 					{
-						ShaderResourceExtraData::Technique t;
+						Technique t;
 						if (parseTechnique(child, t, ShaderCommon))
 						{
 							extra->m_techniques.emplace_back(t);

@@ -5,6 +5,7 @@
 #include "Render\ResourceLoaders\ShaderResourceLoader.hpp"
 #include <Render/ResourceLoaders/SdkmeshResourceLoader.hpp>
 #include <Render/ResourceLoaders/ModelResourceLoader.hpp>
+#include <Render/ResourceLoaders/MaterialResourceLoader.hpp>
 #include "Window\Window.hpp"
 #include "Render\Mesh.hpp"
 
@@ -59,6 +60,7 @@ namespace box
 		ResourceManager::Instance().registerLoader(std::make_shared<ShaderResourceLoader>());
 		ResourceManager::Instance().registerLoader(std::make_shared<SdkmeshResourceLoader>());
 		ResourceManager::Instance().registerLoader(std::make_shared<ModelResourceLoader>());
+		ResourceManager::Instance().registerLoader(std::make_shared<MaterialResourceLoader>());
 
 		DXUTSetCallbackDeviceChanging(ModifyDeviceSettings);
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable);
@@ -88,6 +90,7 @@ namespace box
 	{
 		if (m_scene)
 		{
+			m_frameGlobals.updateEnvironmentSettings(m_scene->getEnvironmentSettings());
 			m_frameGlobals.update(m_context, delta);
 			m_frameGlobals.bind(m_context);
 

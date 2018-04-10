@@ -1,0 +1,8 @@
+<Material name="Default">
+  <Shader desc="desc/default.shader" />
+  <Textures>
+    <slot1 desc="" />
+    <slot2 desc="" />
+    <slot3 desc="" />
+  </Textures>
+</Material>
