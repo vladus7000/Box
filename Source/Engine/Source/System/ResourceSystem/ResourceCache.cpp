@@ -14,8 +14,6 @@
 
 #include <tinyxml2/tinyxml2.h>
 
-#define LOG(args) printf(args)
-
 namespace box
 {
 	class DefaultResourceLoader : public ResourceLoader
@@ -177,17 +175,17 @@ namespace box
 
 	void ResourceCache::memoryHasBeenFreed(size_t size)
 	{
-		LOG("ResCache memoryHasBeenFreed\n");
+		printf("ResCache memoryHasBeenFreed %d bytes \n", size);
 		m_allocated -= size;
 	}
 
 	std::shared_ptr<ResourceHandle> ResourceCache::find(const Resource& r)
 	{
-		LOG("ResCache find\n");
 		std::shared_ptr<ResourceHandle> handle;
 		auto foundIt = m_resources.find(r.m_name);
 		if (foundIt != m_resources.end())
 		{
+			printf("ResCache find in cache: %s \n", r.m_name.c_str());
 			handle = foundIt->second;
 		}
 		else
@@ -195,6 +193,7 @@ namespace box
 			auto foundIt = m_waitingForLoading.find(r.m_name);
 			if (foundIt != m_waitingForLoading.end())
 			{
+				printf("ResCache find in waitingForLoading: %s \n", r.m_name.c_str());
 				handle = foundIt->second;
 			}
 		}
@@ -203,7 +202,6 @@ namespace box
 
 	const U8* ResourceCache::update(std::shared_ptr<ResourceHandle> handle)
 	{
-		LOG("ResCache update\n");
 		auto foundIt = std::find_if(m_lru.begin(), m_lru.end(), [&](std::shared_ptr<ResourceHandle> element)
 		{
 			if (element->m_resource.m_name == handle->m_resource.m_name)
@@ -292,8 +290,14 @@ namespace box
 		}
 	}
 
+#define MAKE_SPACES() for (int i = 1; i < indent; i++) printf("  ")
+
 	std::shared_ptr<ResourceHandle> ResourceCache::load(const Resource& r)
 	{
+		static int indent = 0;
+		indent++;
+		MAKE_SPACES();
+		printf("Request for loading: %s \n", r.m_name.c_str());
 		std::shared_ptr<ResourceHandle> handle;
 		std::shared_ptr<ResourceLoader> loader;
 
@@ -301,14 +305,19 @@ namespace box
 		{
 			if (wildcardMatch(it->getPattern().c_str(), r.m_name.c_str()))
 			{
+				MAKE_SPACES();
+				printf("found loader: %s \n", it->getPattern().c_str());
 				loader = it;
 				break;
 			}
 		}
 		if (!loader)
 		{
+			MAKE_SPACES();
+			printf("[ERR] loader NOT found for %s \n", r.m_name.c_str());
 			handle = std::make_shared<ResourceHandle>(r, nullptr, 0, this);
 			handle->m_status = ResourceHandle::Status::LoaderNotDound;
+			indent--;
 			return handle;
 		}
 
@@ -328,12 +337,14 @@ namespace box
 		{
 			handle = std::make_shared<ResourceHandle>(r, nullptr, 0, this);
 			handle->m_status = ResourceHandle::Status::ResourceNotFound;
+			indent--;
 			return handle;
 		}
 		U8* rawBuffer = loader->useRawFile() ? allocate(rawSize) : new U8[rawSize];
 
 		if (!rawBuffer)
 		{
+			indent--;
 			return handle;
 		}
 
@@ -352,6 +363,7 @@ namespace box
 
 			if (!buffer && size > 0)
 			{
+				indent--;
 				return handle;
 			}
 
@@ -365,20 +377,23 @@ namespace box
 
 			if (!success)
 			{
+				indent--;
 				return std::shared_ptr<ResourceHandle>();
 			}
 		}
 
 		if (handle)
 		{
+			MAKE_SPACES();
+			printf("Resource loaded: %s \n", r.m_name.c_str());
 			insertToSystem(handle);
 			handle->setDataReady();
 
 			std::shared_ptr<Event_ResourceLoaded> event = std::make_shared<Event_ResourceLoaded>();
 			EventSystem::Instance().raiseEvent(event);
-
 		}
 
+		indent--;
 		return handle;
 	}
 
@@ -492,7 +507,7 @@ namespace box
 
 	bool ResourceCache::makeRoom(size_t size)
 	{
-		LOG("ResCache make room\n");
+		printf("ResCache make room %d bytes \n", size);
 		if (size > m_cacheSize)
 		{
 			return false;
@@ -513,7 +528,7 @@ namespace box
 
 	U8* ResourceCache::allocate(size_t size)
 	{
-		LOG("ResCache allocate\n");
+		printf("ResCache allocate %d bytes \n", size);
 		if (!makeRoom(size))
 		{
 			return nullptr;
@@ -527,12 +542,12 @@ namespace box
 
 	void ResourceCache::freeOneResource()
 	{
-		LOG("ResCache freeOneResource\n");
 		auto gonner = m_lru.end();
 		gonner--;
 
 		auto handle = *gonner;
 
+		printf("ResCache freeOneResource %s \n", handle->m_resource.m_name.c_str());
 		m_lru.pop_back();
 		m_resources.erase(handle->m_resource.m_name);
 	}

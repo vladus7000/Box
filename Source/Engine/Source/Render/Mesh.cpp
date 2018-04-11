@@ -102,7 +102,7 @@ namespace box
 
 				if (materialName)
 				{
-					Resource r("desc/default.material");
+					Resource r(materialName);
 					auto handle = ResourceManager::Instance().getHandle(r);
 					auto material = handle->getExtraTyped<Material>();
 					if (material)
