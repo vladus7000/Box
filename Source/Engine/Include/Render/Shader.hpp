@@ -35,7 +35,6 @@ namespace box
 
 		ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong getEnvProvider() const { return m_envProvider; }
 		void setProvider(ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong provider) { m_envProvider = provider; }
-		void updateEnvironment() { m_envProvider->prepareShader(*this); };
 
 		//ID3D11BlendState* getBlendState() const { return m_techniques[m_activeTechnique].blendState; }
 		//ID3D11DepthStencilView* getDepthStencilView() const { m_techniques[m_activeTechnique].depthStencilView; }

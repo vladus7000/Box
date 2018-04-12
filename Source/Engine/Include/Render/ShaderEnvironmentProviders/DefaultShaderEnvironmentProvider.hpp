@@ -12,6 +12,6 @@ namespace box
 
 		std::string getName() { return "DefaultShaderEnvironmentProvider"; }
 
-		virtual void prepareShader(Shader& shader) override;
+		virtual void prepareShader(Shader& shader, const Material& material) override;
 	};
 }

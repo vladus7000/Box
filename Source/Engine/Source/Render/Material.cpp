@@ -1,12 +1,22 @@
 #include "StdAfx.hpp"
 #include "Render/Material.hpp"
 #include "System/ResourceSystem/ResourceManager.hpp"
+#include "Render\ResourceLoaders\TextureResourceExtraData.hpp"
 
 namespace box
 {
+
+	Material::~Material()
+	{
+		for (U32 i = 0; i < MaxTextures; i++)
+		{
+			SAVE_RELEASE(m_textures[i]);
+		}
+	}
+
 	bool Material::apply(ID3D11DeviceContext* context)
 	{
-		m_shader->updateEnvironment();
+		m_shader->getEnvProvider()->prepareShader(*m_shader, *this);
 		m_shader->setActiveTechnique(0);
 		Technique& technique =  m_shader->getActiveTechnique();
 		return technique.apply(context);
@@ -19,13 +29,14 @@ namespace box
 
 	bool Material::loadFromXML(tinyxml2::XMLNode* node)
 	{
-		if (auto element = node->ToElement())
+		bool ok = false;
+		if (auto rootElement = node->ToElement())
 		{
-			if (strcmp(element->Name(), "Material") == 0)
+			if (strcmp(rootElement->Name(), "Material") == 0)
 			{
-				const char* name = element->Attribute("name");
+				const char* name = rootElement->Attribute("name");
 				m_name = name;
-				if (auto shaderElement = element->FirstChildElement("Shader"))
+				if (auto shaderElement = rootElement->FirstChildElement("Shader"))
 				{
 					if (const char* desc = shaderElement->Attribute("desc"))
 					{
@@ -35,13 +46,38 @@ namespace box
 						if (shader)
 						{
 							m_shader = shader;
-							return true;
+							ok = true;
 						}
 					}
+				}
 
+				if (auto textureElement = rootElement->FirstChildElement("Textures"))
+				{
+					parseTexureSlot(textureElement, 0, "slot1");
+					parseTexureSlot(textureElement, 1, "slot2");
+					parseTexureSlot(textureElement, 2, "slot3");
 				}
 			}
 		}
-		return false;
+		return ok;
 	}
+
+	void Material::parseTexureSlot(tinyxml2::XMLElement* root, U32 slot, const char* name)
+	{
+		if (auto slotElement = root->FirstChildElement(name))
+		{
+			if (const char* desc = slotElement->Attribute("desc"))
+			{
+				Resource r(desc);
+				auto handle = ResourceManager::Instance().getHandle(r);
+				auto extra = handle->getExtraTyped<box::TextureResourceExtraData>();
+				if (extra)
+				{
+					m_textures[slot] = extra->getTextureData().shaderResourceView;
+					m_textures[slot]->AddRef();
+				}
+			}
+		}
+	}
+
 }

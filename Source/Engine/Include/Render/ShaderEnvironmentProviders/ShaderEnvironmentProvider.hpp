@@ -6,6 +6,7 @@
 namespace box
 {
 	class Shader;
+	class Material;
 
 	class ShaderEnvironmentProvider
 	{
@@ -18,6 +19,6 @@ namespace box
 	
 		virtual std::string getName() = 0;
 
-		virtual void prepareShader(Shader& shader) = 0;
+		virtual void prepareShader(Shader& shader, const Material& material) = 0;
 	};
 }
