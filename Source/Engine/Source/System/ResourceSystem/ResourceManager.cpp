@@ -158,6 +158,7 @@ namespace box
 			Resource r("desc/default.material");
 			auto handle = ResourceManager::Instance().getHandle(r);
 			auto material = handle->getExtraTyped<Material>();
+
 			for (auto& mesh : meshes)
 			{
 				mesh->setMaterial(material);
@@ -232,79 +233,94 @@ namespace box
 			auto rootNode = assimpScene->mRootNode;
 			if (assimpScene->mNumMeshes > 0)
 			{
-				ID3D11DeviceContext* context = DXUTGetD3D11DeviceContext();
-				ID3D11Device* device = DXUTGetD3D11Device();
-
-
-				auto assimpMesh = assimpScene->mMeshes[0];
-
-				ID3D11Buffer* vertexBuffer = nullptr;
-				ID3D11Buffer* indexBuffer = nullptr;
-				D3D11_BUFFER_DESC vbDesc;
-				vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
-				vbDesc.ByteWidth = assimpMesh->mNumVertices * sizeof(Mesh::SimpleVertexFormat);
-				vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-				vbDesc.CPUAccessFlags = 0;
-				vbDesc.MiscFlags = 0;
-				vbDesc.StructureByteStride = 0;
-
-				std::vector<Mesh::SimpleVertexFormat> verts;
-				verts.reserve(assimpMesh->mNumVertices);
-				for (int i = 0; i < assimpMesh->mNumVertices; i++)
+				for (U32 meshI = 0; meshI < assimpScene->mNumMeshes; meshI++)
 				{
-					verts.push_back(Mesh::SimpleVertexFormat());
-					verts[i].pos[0] = assimpMesh->mVertices[i].x;
-					verts[i].pos[1] = assimpMesh->mVertices[i].y;
-					verts[i].pos[2] = assimpMesh->mVertices[i].z;
+					ID3D11DeviceContext* context = DXUTGetD3D11DeviceContext();
+					ID3D11Device* device = DXUTGetD3D11Device();
 
-					if (assimpMesh->mTextureCoords[0])
+
+					auto assimpMesh = assimpScene->mMeshes[meshI];
+
+					ID3D11Buffer* vertexBuffer = nullptr;
+					ID3D11Buffer* indexBuffer = nullptr;
+					D3D11_BUFFER_DESC vbDesc;
+					vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
+					vbDesc.ByteWidth = assimpMesh->mNumVertices * sizeof(Mesh::SimpleVertexFormat);
+					vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+					vbDesc.CPUAccessFlags = 0;
+					vbDesc.MiscFlags = 0;
+					vbDesc.StructureByteStride = 0;
+
+					std::vector<Mesh::SimpleVertexFormat> verts;
+					verts.reserve(assimpMesh->mNumVertices);
+					for (int i = 0; i < assimpMesh->mNumVertices; i++)
 					{
-						verts[i].tcoord[0] = assimpMesh->mTextureCoords[0][i].x;
-						verts[i].tcoord[1] = assimpMesh->mTextureCoords[0][i].y;
+						verts.push_back(Mesh::SimpleVertexFormat());
+						verts[i].pos[0] = assimpMesh->mVertices[i].x;
+						verts[i].pos[1] = assimpMesh->mVertices[i].y;
+						verts[i].pos[2] = assimpMesh->mVertices[i].z;
+
+						if (assimpMesh->mTextureCoords[0])
+						{
+							verts[i].tcoord[0] = assimpMesh->mTextureCoords[0][i].x;
+							verts[i].tcoord[1] = assimpMesh->mTextureCoords[0][i].y;
+						}
+						else
+						{
+							verts[i].tcoord[0] = 0.0f;
+							verts[i].tcoord[1] = 0.0f;
+						}
+						verts[i].norm[0] = assimpMesh->mNormals[i].x;
+						verts[i].norm[1] = assimpMesh->mNormals[i].y;
+						verts[i].norm[2] = assimpMesh->mNormals[i].z;
+					}
+					D3D11_SUBRESOURCE_DATA initData;
+					initData.pSysMem = verts.data();
+
+					device->CreateBuffer(&vbDesc, &initData, &vertexBuffer);
+
+					std::vector<U32> indices;
+					indices.reserve(assimpMesh->mNumFaces * 3);
+					for (U32 i = 0; i < assimpMesh->mNumFaces; i++)
+					{
+						const auto& face = assimpMesh->mFaces[i];
+						for (U32 j = 0; j < face.mNumIndices; j++)
+						{
+							indices.push_back(face.mIndices[j]);
+						}
+					}
+
+					D3D11_BUFFER_DESC ibDesc;
+					ibDesc.Usage = D3D11_USAGE_IMMUTABLE;
+					ibDesc.ByteWidth = indices.size() * sizeof(U32);
+					ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+					ibDesc.CPUAccessFlags = 0;
+					ibDesc.MiscFlags = 0;
+					ibDesc.StructureByteStride = 0;
+
+					initData.pSysMem = indices.data();
+
+					device->CreateBuffer(&ibDesc, &initData, &indexBuffer);
+
+					Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size());
+
+					if (assimpMesh->mName.length > 0)
+					{
+						const char* name = assimpMesh->mName.C_Str();
+						mesh->setName(name);
 					}
 					else
 					{
-						verts[i].tcoord[0] = 0.0f;
-						verts[i].tcoord[1] = 0.0f;
+						char buf[50];
+						snprintf(buf, 50, "mesh_%d\0", meshI);
+						mesh->setName(buf);
 					}
-					verts[i].norm[0] = assimpMesh->mNormals[i].x;
-					verts[i].norm[1] = assimpMesh->mNormals[i].y;
-					verts[i].norm[2] = assimpMesh->mNormals[i].z;
+#ifdef EDITOR_BUILD
+					mesh->setRawVertexBuffer(std::move(verts));
+					mesh->setRawIndexBuffer(std::move(indices));
+#endif
+					ret.push_back(mesh);
 				}
-				D3D11_SUBRESOURCE_DATA initData;
-				initData.pSysMem = verts.data();
-
-				device->CreateBuffer(&vbDesc, &initData, &vertexBuffer);
-
-				std::vector<U32> indices;
-				indices.reserve(assimpMesh->mNumFaces * 3);
-				for (U32 i = 0; i < assimpMesh->mNumFaces; i++)
-				{
-					const auto& face = assimpMesh->mFaces[i];
-					for (U32 j = 0; j < face.mNumIndices; j++)
-					{
-						indices.push_back(face.mIndices[j]);
-					}
-				}
-
-				D3D11_BUFFER_DESC ibDesc;
-				ibDesc.Usage = D3D11_USAGE_IMMUTABLE;
-				ibDesc.ByteWidth = indices.size() * sizeof(U32);
-				ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-				ibDesc.CPUAccessFlags = 0;
-				ibDesc.MiscFlags = 0;
-				ibDesc.StructureByteStride = 0;
-
-				initData.pSysMem = indices.data();
-
-				device->CreateBuffer(&ibDesc, &initData, &indexBuffer);
-
-				Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size());
-
-				mesh->setRawVertexBuffer(std::move(verts));
-				mesh->setRawIndexBuffer(std::move(indices));
-
-				ret.push_back(mesh);
 			}
 		}
 

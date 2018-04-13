@@ -78,7 +78,7 @@ namespace box
 	{
 		tinyxml2::XMLElement* element = doc.NewElement("Mesh");
 		element->SetAttribute("name", m_name.c_str());
-		element->SetAttribute("materialName", m_material->getName().c_str());
+		element->SetAttribute("materialName", m_material->getSrcFile().c_str());
 
 		if (node)
 		{

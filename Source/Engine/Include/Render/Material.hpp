@@ -30,6 +30,8 @@ namespace box
 
 		const std::string& getName() const override { return m_name; }
 		void setName(const std::string& name) { m_name = name; }
+		void setSrcFile(const std::string& file) { m_srcFile = file; }
+		const std::string& getSrcFile() const { return m_srcFile; }
 		void setShader(Shader::ShaderStrongPtr shader) { m_shader = shader; }
 		Shader::ShaderWeakPtr getShader() const { return m_shader; }
 
@@ -47,6 +49,7 @@ namespace box
 		friend class MaterialResourceLoader;
 		Shader::ShaderStrongPtr m_shader;
 		std::string m_name;
+		std::string m_srcFile;
 
 		ID3D11ShaderResourceView* m_textures[MaxTextures];
 	};

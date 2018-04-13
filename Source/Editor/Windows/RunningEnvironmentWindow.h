@@ -27,6 +27,8 @@ namespace Editor {
 			m_doc = gcnew XmlDocument();
 		}
 
+		void updateEnvironmentSettings();
+
 		String^ getTextEditor();
 		bool isTextFile(String^ file);
 

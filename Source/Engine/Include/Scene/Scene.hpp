@@ -63,6 +63,9 @@ namespace box
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
 		{
 			tinyxml2::XMLNode* scene = doc.NewElement("Scene");
+
+			m_environment.serializeToXML(scene, doc);
+
 			tinyxml2::XMLNode* newNode = m_root->serializeToXML(scene, doc);
 
 			if (node)
@@ -75,15 +78,23 @@ namespace box
 
 		bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
 		{
+			bool ok = false;
 			if (auto element = node->ToElement())
 			{
 				if (strcmp(element->Name(), "Scene") == 0)
 				{
-					m_root->loadFromXML(element->FirstChild(), doc);
+					if (auto envSettings = element->FirstChildElement("EnvironmentSettings"))
+					{
+						ok &= m_environment.loadFromXML(envSettings);
+					}
+					if (auto nodeElement = element->FirstChildElement("SceneNode"))
+					{
+						ok &= m_root->loadFromXML(nodeElement, doc);
+					}
 				}
 			}
 
-			return false;
+			return ok;
 		}
 
 	private:

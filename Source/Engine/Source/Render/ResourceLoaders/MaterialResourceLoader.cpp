@@ -19,6 +19,7 @@ namespace box
 
 			if (extra->loadFromXML(root))
 			{
+				extra->setSrcFile(handle->getResource().m_name);
 				handle->setExtra(extra);
 			}
 

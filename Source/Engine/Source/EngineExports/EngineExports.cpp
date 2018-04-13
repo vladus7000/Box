@@ -108,13 +108,14 @@ namespace
 
 		void updateEnvironmentSettings(const char* xml)
 		{
-			tinyxml2::XMLDocument xmlDoc;
+			m_envSettings.Clear();
 			size_t size = strlen(xml);
-			tinyxml2::XMLError result = xmlDoc.Parse(xml, size);
+			tinyxml2::XMLError result = m_envSettings.Parse(xml, size);
 			if (result == tinyxml2::XMLError::XML_SUCCESS)
 			{
-				tinyxml2::XMLElement* root = xmlDoc.RootElement();
+				tinyxml2::XMLElement* root = m_envSettings.RootElement();
 				m_scene->updateEnvironmentSettings(root);
+				m_previewScene->updateEnvironmentSettings(root);
 			}
 		}
 
@@ -211,6 +212,7 @@ namespace
 			Input::Instance().unregisterKeyboardHandler(this);
 			EventSystem::Instance().remove(m_delegate, Event_ResourceLoaded::Type);
 			g_editor = nullptr;
+			m_envSettings.Clear();
 		}
 
 		virtual void deviceLost() override
@@ -264,6 +266,10 @@ namespace
 			{
 				m_clearPreviewModel = false;
 				m_previewScene = std::make_shared<Scene>();
+				if (tinyxml2::XMLElement* root = m_envSettings.RootElement())
+				{
+					m_previewScene->updateEnvironmentSettings(root);
+				}
 			}
 			Scene::SceneStrongPtr scene = m_activeViewMode == ViewMode::Level ? m_scene : m_previewScene;
 			m_renderer->setScene(scene);
@@ -317,6 +323,7 @@ namespace
 		bool m_mouseButtonPressed;
 		bool m_clearPreviewModel;
 		ViewMode m_activeViewMode;
+		tinyxml2::XMLDocument m_envSettings;
 	};
 }
 

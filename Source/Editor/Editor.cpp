@@ -20,6 +20,7 @@ void winforms::MyForm::init()
 	Exports::System::StartEngine(m_renderWindow->getHwnd(), 0, nullptr);
 
 	m_recourcesWindow->refreshResourceCollection();
+	m_runningEnvironmentWindow->updateEnvironmentSettings();
 }
 
 void winforms::MyForm::initTools()
