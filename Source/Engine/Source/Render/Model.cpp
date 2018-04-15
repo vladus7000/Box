@@ -42,7 +42,7 @@ namespace box
 		return modelElement;
 	}
 
-	bool Model::loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
+	bool Model::loadFromXML(tinyxml2::XMLNode* node)
 	{
 		if (auto element = node->ToElement())
 		{
@@ -66,7 +66,7 @@ namespace box
 					tinyxml2::XMLElement* meshElement = element->FirstChildElement("Mesh");
 					for (const auto& mesh : m_meshes)
 					{
-						mesh->loadFromXML(meshElement, doc);
+						mesh->loadFromXML(meshElement);
 						meshElement = meshElement->NextSiblingElement("Mesh");
 					}
 

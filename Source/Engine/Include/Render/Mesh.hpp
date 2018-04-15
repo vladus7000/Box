@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "VertexFormats.hpp"
 #include "Material.hpp"
 #include "Math/Matrix4D.hpp"
 #include <tinyxml2/tinyxml2.h>
@@ -15,15 +16,8 @@ namespace box
 		using MeshStrongPtr = std::shared_ptr<Mesh>;
 		using MeshWeakPtr = std::weak_ptr<Mesh>;
 
-		struct SimpleVertexFormat
-		{
-			float pos[3];
-			float tcoord[2];
-			float norm[3];
-		};
-
 	public:
-		Mesh(ID3D11Buffer* vertex, ID3D11Buffer* index, U32 count);
+		Mesh(ID3D11Buffer* vertex, ID3D11Buffer* index, U32 count, U32 vertSize, D3D_PRIMITIVE_TOPOLOGY topology);
 		~Mesh();
 
 		void setMaterial(Material::MaterialStrongPtr material) { m_material = material; } // TODO: check input vertex format
@@ -41,12 +35,9 @@ namespace box
 		void restore();
 		void deviceLost();
 
-		void setRawVertexBuffer(std::vector<Mesh::SimpleVertexFormat>&& buf);
-		void setRawIndexBuffer(std::vector<U32>&& buf);
-
 		int getSizeForXML() const;
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const;
-		bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc);
+		bool loadFromXML(tinyxml2::XMLNode* node);
 
 	private:
 		Material::MaterialStrongPtr m_material;
@@ -54,9 +45,9 @@ namespace box
 		ID3D11Buffer* m_vertexBuffer;
 		ID3D11Buffer* m_indexBuffer;
 		U32 m_indexCount;
+		U32 m_vertexSize;
+		D3D_PRIMITIVE_TOPOLOGY m_topology;
 
-		std::vector<Mesh::SimpleVertexFormat> m_rawVertexBuffer;
-		std::vector<U32> m_rawIndexBuffer;
 		std::string m_name;
 	};
 }

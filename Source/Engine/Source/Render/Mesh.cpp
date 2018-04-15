@@ -6,12 +6,13 @@
 namespace box
 {
 
-	Mesh::Mesh(ID3D11Buffer* vertex, ID3D11Buffer* index, U32 count)
+	Mesh::Mesh(ID3D11Buffer* vertex, ID3D11Buffer* index, U32 count, U32 vertSize, D3D_PRIMITIVE_TOPOLOGY topology)
 		: m_vertexBuffer(vertex)
 		, m_indexBuffer(index)
 		, m_indexCount(count)
+		, m_vertexSize(vertSize)
+		, m_topology(topology)
 	{
-
 	}
 
 	Mesh::~Mesh()
@@ -33,13 +34,13 @@ namespace box
 		{
 			return;
 		}
-		unsigned int stride = sizeof(SimpleVertexFormat);
+		unsigned int stride = m_vertexSize;
 		unsigned int offset = 0;
 
 		context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 
-		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		context->IASetPrimitiveTopology(m_topology);
 		context->DrawIndexed(m_indexCount, 0, 0);
 	}
 
@@ -57,16 +58,6 @@ namespace box
 
 	void Mesh::deviceLost()
 	{
-	}
-
-	void Mesh::setRawVertexBuffer(std::vector<Mesh::SimpleVertexFormat>&& buf)
-	{
-		m_rawVertexBuffer = std::move(buf);
-	}
-
-	void Mesh::setRawIndexBuffer(std::vector<U32>&& buf)
-	{
-		m_rawIndexBuffer = std::move(buf);
 	}
 
 	int Mesh::getSizeForXML() const
@@ -88,7 +79,7 @@ namespace box
 		return element;
 	}
 
-	bool Mesh::loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
+	bool Mesh::loadFromXML(tinyxml2::XMLNode* node)
 	{
 		if (auto element = node->ToElement())
 		{

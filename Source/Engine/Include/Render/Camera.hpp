@@ -29,13 +29,13 @@ namespace box
 			m_up = up;
 			m_aspect = aspect;
 			m_fov = fov;
-			m_forvard = target - m_position;
-			m_forvard.normalize();
+			m_forward = target - m_position;
+			m_forward.normalize();
 
-			m_right = m_up.cross(m_forvard);
+			m_right = m_up.cross(m_forward);
 			m_right.normalize();
 
-			m_up = m_forvard.cross(m_right);
+			m_up = m_forward.cross(m_right);
 			m_up.normalize();
 		}
 
@@ -50,7 +50,7 @@ namespace box
 			if (m_viewDirty)
 			{
 				m_viewDirty = false;
-				Vector3D tmp = m_position + m_forvard;
+				Vector3D tmp = m_position + m_forward;
 				D3DXMatrixLookAtLH(&m_viewMatrix, &m_position, &tmp, &m_up);
 			}
 		}
@@ -60,8 +60,8 @@ namespace box
 		const Matrix4D& getProjectionMatrix() const { return m_projectionMatrix; }
 		const Vector3D& getPosition() const { return m_position; }
 		void setPosition(const Vector3D& pos) { m_position = pos; m_viewDirty = true; }
-		const Vector3D& getTarget() const { return m_position + m_forvard; }
-		void setTarget(const Vector3D& target) { m_forvard = target - m_position; m_viewDirty = true; }
+		const Vector3D& getTarget() const { return m_position + m_forward; }
+		void setTarget(const Vector3D& target) { m_forward = target - m_position; m_viewDirty = true; }
 		const Frustum& getFrustum() const { return m_frustum; }
 
 		void setFov(F32 fov) { m_fov = fov; m_projectionDirty = true; }
@@ -70,7 +70,7 @@ namespace box
 
 		void moveForward(F32 step) {
 			m_viewDirty = true;
-			m_position += m_forvard * step;
+			m_position += m_forward * step;
 		};
 		void moveBackward(F32 step) { moveForward(-step); };
 
@@ -95,7 +95,7 @@ namespace box
 
 			m_right = m_right * cosf(val) + m_up * sinf(val);
 			m_right.normalize();
-			m_up = m_forvard.cross(m_right);
+			m_up = m_forward.cross(m_right);
 			m_up.normalize();
 		}
 		void pitch(F32 val)
@@ -106,9 +106,9 @@ namespace box
 			*/
 			m_viewDirty = true;
 
-			m_forvard = m_forvard * cosf(val) + m_up * sinf(val);
-			m_forvard.normalize();
-			m_up = m_forvard.cross(m_right);
+			m_forward = m_forward * cosf(val) + m_up * sinf(val);
+			m_forward.normalize();
+			m_up = m_forward.cross(m_right);
 			m_up.normalize();
 		}
 		void yaw(F32 val)
@@ -119,10 +119,92 @@ namespace box
 			*/
 			m_viewDirty = true;
 
-			m_forvard = m_forvard * cosf(val) - m_right * sinf(val);
-			m_forvard.normalize();
-			m_right = m_up.cross(m_forvard);
+			m_forward = m_forward * cosf(val) - m_right * sinf(val);
+			m_forward.normalize();
+			m_right = m_up.cross(m_forward);
 			m_right.normalize();
+		}
+
+		int getSizeForXML() const
+		{
+
+		}
+
+		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
+		{
+			tinyxml2::XMLElement* root = doc.NewElement("Camera");
+
+			{
+				tinyxml2::XMLElement* element = doc.NewElement("Position");
+				m_position.serializeToXMLElement(element);
+				root->InsertEndChild(element);
+			}
+			{
+				tinyxml2::XMLElement* element = doc.NewElement("Forward");
+				m_forward.serializeToXMLElement(element);
+				root->InsertEndChild(element);
+			}
+			{
+				tinyxml2::XMLElement* element = doc.NewElement("Right");
+				m_right.serializeToXMLElement(element);
+				root->InsertEndChild(element);
+			}
+			{
+				tinyxml2::XMLElement* element = doc.NewElement("Up");
+				m_up.serializeToXMLElement(element);
+				root->InsertEndChild(element);
+			}
+			root->SetAttribute("Near", m_near);
+			root->SetAttribute("Far", m_far);
+			root->SetAttribute("Aspect", m_aspect);
+			root->SetAttribute("Fov", m_fov);
+			root->SetAttribute("Name", m_name.c_str());
+
+			if (node)
+			{
+				node->InsertEndChild(root);
+			}
+
+			return root;
+		}
+
+		bool loadFromXML(tinyxml2::XMLNode* node)
+		{
+			bool ok = false;
+			if (auto root = node->ToElement())
+			{
+				if (strcmp(root->Name(), "Camera") == 0)
+				{
+					ok = true;
+					m_viewDirty = m_projectionDirty = true;
+					if (auto element = root->FirstChildElement("Position"))
+					{
+						m_position.loadFromXMLElement(element);
+					}
+					if (auto element = root->FirstChildElement("Forward"))
+					{
+						m_forward.loadFromXMLElement(element);
+					}
+					if (auto element = root->FirstChildElement("Right"))
+					{
+						m_right.loadFromXMLElement(element);
+					}
+					if (auto element = root->FirstChildElement("Up"))
+					{
+						m_up.loadFromXMLElement(element);
+					}
+
+					root->QueryFloatAttribute("Near", &m_near);
+					root->QueryFloatAttribute("Far", &m_far);
+					root->QueryFloatAttribute("Aspect", &m_aspect);
+					root->QueryFloatAttribute("Fov", &m_fov);
+					if (const char* name = root->Attribute("Name"))
+					{
+						m_name = name;
+					}
+				}
+			}
+			return ok;
 		}
 
 	private:
@@ -132,7 +214,7 @@ namespace box
 		Matrix4D m_viewMatrix;
 		Matrix4D m_projectionMatrix;
 		Vector3D m_position;
-		Vector3D m_forvard;
+		Vector3D m_forward;
 		Vector3D m_right;
 		Vector3D m_up;
 		F32 m_near;

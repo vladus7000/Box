@@ -17,7 +17,7 @@ bool ModelResourceLoader::loadResource(U8* buffer, size_t size, std::shared_ptr<
 	{
 		tinyxml2::XMLNode* root = xmlDoc.RootElement();
 
-		if (extra->loadFromXML(root, xmlDoc))
+		if (extra->loadFromXML(root))
 		{
 			handle->setExtra(extra);
 		}

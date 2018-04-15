@@ -21,9 +21,9 @@ namespace box
 
 		int getSizeForXML() const override;
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const override;
-		bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) override;
+		bool loadFromXML(tinyxml2::XMLNode* node) override;
 
-	private:
+	protected:
 		std::shared_ptr<Model> m_model;
 	};
 }

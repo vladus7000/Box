@@ -15,6 +15,7 @@
 #include <DXUT11\Core\DXUT.h>
 #include "Render\DXUTHelper.hpp"
 #include "Render\GraphicsNode.hpp"
+#include "Render\GridNode.hpp"
 #include "DXUT11\Optional\SDKmisc.h"
 
 #include <stdio.h>
@@ -203,6 +204,8 @@ namespace
 			Input::Instance().registerKeyboardHandler(this);
 			Input::Instance().registerMouseHandler(this);
 
+			m_grid = std::make_shared<GridNode>();
+			m_scene->getRoot().lock()->addChild(m_grid);
 			return true;
 		}
 
@@ -324,6 +327,7 @@ namespace
 		bool m_clearPreviewModel;
 		ViewMode m_activeViewMode;
 		tinyxml2::XMLDocument m_envSettings;
+		std::shared_ptr<GridNode> m_grid;
 	};
 }
 

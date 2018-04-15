@@ -4,6 +4,7 @@
 #include "Render/RenderList.hpp"
 #include "Math/Frustum.hpp"
 #include "EnvironmentSettings.hpp"
+#include "Render/Camera.hpp"
 
 namespace box
 {
@@ -53,6 +54,9 @@ namespace box
 			m_environment.updateEnvironmentSettings(node);
 		}
 
+		void setCamera(Camera::CameraStrongPtr camera) { m_camera = camera; }
+		Camera::CameraStrongPtr getCamara() const { return m_camera; }
+
 		const EnvironmentSettings& getEnvironmentSettings() const { return m_environment; }
 
 		int getSizeForXML() const
@@ -65,6 +69,10 @@ namespace box
 			tinyxml2::XMLNode* scene = doc.NewElement("Scene");
 
 			m_environment.serializeToXML(scene, doc);
+			if (m_camera)
+			{
+				m_camera->serializeToXML(scene, doc);
+			}
 
 			tinyxml2::XMLNode* newNode = m_root->serializeToXML(scene, doc);
 
@@ -79,17 +87,25 @@ namespace box
 		bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
 		{
 			bool ok = false;
-			if (auto element = node->ToElement())
+			if (auto root = node->ToElement())
 			{
-				if (strcmp(element->Name(), "Scene") == 0)
+				if (strcmp(root->Name(), "Scene") == 0)
 				{
-					if (auto envSettings = element->FirstChildElement("EnvironmentSettings"))
+					if (auto envSettings = root->FirstChildElement("EnvironmentSettings"))
 					{
 						ok &= m_environment.loadFromXML(envSettings);
 					}
-					if (auto nodeElement = element->FirstChildElement("SceneNode"))
+					if (auto element = root->FirstChildElement("Camera"))
 					{
-						ok &= m_root->loadFromXML(nodeElement, doc);
+						if (!m_camera)
+						{
+							m_camera = std::make_shared<Camera>();
+						}
+						ok &= m_camera->loadFromXML(element);
+					}
+					if (auto nodeElement = root->FirstChildElement("SceneNode"))
+					{
+						ok &= m_root->loadFromXML(nodeElement);
 					}
 				}
 			}
@@ -107,7 +123,9 @@ namespace box
 			m_root->postRender();
 		}
 	private:
+		
 		SceneNode::SceneNodeStrongPtr m_root;
 		EnvironmentSettings m_environment;
+		Camera::CameraStrongPtr m_camera;
 	};
 }

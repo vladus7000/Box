@@ -181,10 +181,7 @@ namespace box
 		{
 			tinyxml2::XMLElement* sceneNodeElement = doc.NewElement("SceneNode");
 			sceneNodeElement->SetAttribute("radius", m_radius);
-			sceneNodeElement->SetAttribute("X", m_position.x);
-			sceneNodeElement->SetAttribute("Y", m_position.y);
-			sceneNodeElement->SetAttribute("Z", m_position.z);
-
+			m_position.serializeToXMLElement(sceneNodeElement);
 			for (const auto& it : m_children)
 			{
 				it->serializeToXML(sceneNodeElement, doc);
@@ -198,16 +195,14 @@ namespace box
 			return sceneNodeElement;
 		}
 
-		virtual bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
+		virtual bool loadFromXML(tinyxml2::XMLNode* node)
 		{
 			if (auto element = node->ToElement())
 			{
 				if (strcmp(element->Name(), "SceneNode") == 0)
 				{
 					element->QueryFloatAttribute("radius", &m_radius);
-					element->QueryFloatAttribute("X", &m_position.x);
-					element->QueryFloatAttribute("Y", &m_position.y);
-					element->QueryFloatAttribute("Z", &m_position.z);
+					m_position.loadFromXMLElement(element);
 				}
 
 				bool ok = true;
@@ -217,7 +212,7 @@ namespace box
 					if (auto element = child->ToElement())
 					{
 						auto node = NodeFactory::CreateNode(element->Name());
-						ok &= node->loadFromXML(child, doc);
+						ok &= node->loadFromXML(child);
 
 						m_children.push_back(node);
 					}

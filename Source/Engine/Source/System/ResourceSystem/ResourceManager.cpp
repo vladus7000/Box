@@ -238,24 +238,23 @@ namespace box
 					ID3D11DeviceContext* context = DXUTGetD3D11DeviceContext();
 					ID3D11Device* device = DXUTGetD3D11Device();
 
-
 					auto assimpMesh = assimpScene->mMeshes[meshI];
 
 					ID3D11Buffer* vertexBuffer = nullptr;
 					ID3D11Buffer* indexBuffer = nullptr;
 					D3D11_BUFFER_DESC vbDesc;
 					vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
-					vbDesc.ByteWidth = assimpMesh->mNumVertices * sizeof(Mesh::SimpleVertexFormat);
+					vbDesc.ByteWidth = assimpMesh->mNumVertices * sizeof(VFs::PosTcoordNorm);
 					vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 					vbDesc.CPUAccessFlags = 0;
 					vbDesc.MiscFlags = 0;
 					vbDesc.StructureByteStride = 0;
 
-					std::vector<Mesh::SimpleVertexFormat> verts;
+					std::vector<VFs::PosTcoordNorm> verts;
 					verts.reserve(assimpMesh->mNumVertices);
 					for (int i = 0; i < assimpMesh->mNumVertices; i++)
 					{
-						verts.push_back(Mesh::SimpleVertexFormat());
+						verts.push_back(VFs::PosTcoordNorm());
 						verts[i].pos[0] = assimpMesh->mVertices[i].x;
 						verts[i].pos[1] = assimpMesh->mVertices[i].y;
 						verts[i].pos[2] = assimpMesh->mVertices[i].z;
@@ -302,7 +301,7 @@ namespace box
 
 					device->CreateBuffer(&ibDesc, &initData, &indexBuffer);
 
-					Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size());
+					Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size(), sizeof(VFs::PosTcoordNorm), D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 					if (assimpMesh->mName.length > 0)
 					{
@@ -315,10 +314,6 @@ namespace box
 						snprintf(buf, 50, "mesh_%d\0", meshI);
 						mesh->setName(buf);
 					}
-#ifdef EDITOR_BUILD
-					mesh->setRawVertexBuffer(std::move(verts));
-					mesh->setRawIndexBuffer(std::move(indices));
-#endif
 					ret.push_back(mesh);
 				}
 			}

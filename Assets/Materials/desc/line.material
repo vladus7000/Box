@@ -1,0 +1,8 @@
+<Material name="LineMaterial">
+  <Shader desc="desc/line.shader" />
+  <Textures>
+    <slot1 desc="" />
+    <slot2 desc="" />
+    <slot3 desc="" />
+  </Textures>
+</Material>

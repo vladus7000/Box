@@ -2,6 +2,7 @@
 
 #include <D3D11.h>
 #include <d3dx9math.h>
+#include <tinyxml2/tinyxml2.h>
 
 namespace box
 {
@@ -74,6 +75,21 @@ namespace box
 			Vector3D ret;
 			D3DXVec3Cross(&ret, &v1, &v2);
 			return ret;
+		}
+
+		void serializeToXMLElement(tinyxml2::XMLElement* element) const
+		{
+			element->SetAttribute("X", x);
+			element->SetAttribute("Y", y);
+			element->SetAttribute("Z", z);
+		}
+
+		bool loadFromXMLElement(tinyxml2::XMLElement* element)
+		{
+			element->QueryFloatAttribute("X", &x);
+			element->QueryFloatAttribute("Y", &y);
+			element->QueryFloatAttribute("Z", &z);
+			return true;
 		}
 	};
 }

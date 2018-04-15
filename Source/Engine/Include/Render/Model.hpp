@@ -30,7 +30,7 @@ namespace box
 		
 		int getSizeForXML() const;
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const;
-		bool loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc);
+		bool loadFromXML(tinyxml2::XMLNode* node);
 
 	private:
 		std::string m_name;

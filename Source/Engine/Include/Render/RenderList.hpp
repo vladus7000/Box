@@ -17,6 +17,7 @@ namespace box
 		std::vector<std::shared_ptr<Mesh>> m_terrainObjects;
 		std::vector<std::shared_ptr<Mesh>> m_alphaObjects;
 		std::vector<std::shared_ptr<Mesh>> m_postObjects;
+		std::vector<std::shared_ptr<Mesh>> m_editorObjects;
 
 		void clear()
 		{
@@ -25,6 +26,7 @@ namespace box
 			m_terrainObjects.clear();
 			m_alphaObjects.clear();
 			m_postObjects.clear();
+			m_editorObjects.clear();
 		}
 	};
 }

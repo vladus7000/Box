@@ -53,7 +53,7 @@ namespace box
 		return graphicsNode;
 	}
 
-	bool GraphicsNode::loadFromXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc)
+	bool GraphicsNode::loadFromXML(tinyxml2::XMLNode* node)
 	{
 		if (auto element = node->ToElement())
 		{
@@ -62,11 +62,11 @@ namespace box
 				if (auto modelElement = element->FirstChildElement("Model"))
 				{
 					m_model = std::make_shared<Model>();
-					m_model->loadFromXML(modelElement, doc);
+					m_model->loadFromXML(modelElement);
 				}
 				if (auto sceneNodeElement = element->FirstChildElement("SceneNode"))
 				{
-					SceneNode::loadFromXML(sceneNodeElement, doc);
+					SceneNode::loadFromXML(sceneNodeElement);
 				}
 				return true;
 			}
