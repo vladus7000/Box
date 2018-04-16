@@ -6,25 +6,29 @@
 #include <functional>
 
 #include "System/Patterns/Singleton.hpp"
-#include "Component.hpp"
-#include "Actor.hpp"
 
 namespace box
 {
+	class Actor;
+	class Component;
+
 	class ActorComponentFactory
 	{
 		SINGLETON(ActorComponentFactory);
 	public:
-		using ComponentCreatorFunc = std::function<Component*(void)>;
+		using ComponentCreatorFunc = std::function<std::shared_ptr<Component>(U64)>;
+		using ActorCreatorFunc = std::function<std::shared_ptr<Actor>(U64)>;
 
 		void registerComponentCreator(const std::string& name, ComponentCreatorFunc& f) { m_componentCreators[name] = f; }
+		void registerActorCreator(const std::string& name, ActorCreatorFunc& f) { m_actorCreators[name] = f; }
 
-		Actor::StrongActorPtr createActor();
-		Component::StrongComponentPtr createComponent(const std::string& name);
+		std::shared_ptr<Actor> createActor(const std::string& name);
+		std::shared_ptr<Component> createComponent(const std::string& name);
 
 	private:
 		U64 getNextId();
 	private:
 		std::map<std::string, ComponentCreatorFunc> m_componentCreators;
+		std::map<std::string, ActorCreatorFunc> m_actorCreators;
 	};
 }

@@ -2,32 +2,33 @@
 #include "StdAfx.hpp"
 
 #include "Gameplay/ActorComponentFactory.hpp"
+#include "Gameplay/Component.hpp"
+#include "Gameplay/Actor.hpp"
+
 
 namespace box
 {
 	SINGLETON_ACCESSOR(ActorComponentFactory);
 
-	Actor::StrongActorPtr ActorComponentFactory::createActor()
+	Actor::StrongActorPtr ActorComponentFactory::createActor(const std::string& name)
 	{
 		//TODO: lock
-		Actor::StrongActorPtr actor = std::make_shared<Actor>((getNextId()));
-		if (actor->init())
+		Actor::StrongActorPtr actor;
+		auto foundIt = m_actorCreators.find(name);
+		if (foundIt != m_actorCreators.end())
 		{
-			auto component = createComponent("TEST");
+			ActorCreatorFunc f = foundIt->second;
+			actor = f(getNextId());
 
-			if (component)
-			{
-				component->setOwner(actor);
-				actor->addComponent(component);
-			}
-			else
+			if (actor && !actor->init())
 			{
 				actor.reset();
 			}
-		}
-		else
-		{
-			actor.reset();
+
+			if (actor)
+			{
+				actor->postInit();
+			}
 		}
 		return actor;
 	}
@@ -40,7 +41,7 @@ namespace box
 		if (foundIt != m_componentCreators.end())
 		{
 			ComponentCreatorFunc f = foundIt->second;
-			component.reset(f());
+			component = f(getNextId());
 
 			if (component && !component->init())
 			{

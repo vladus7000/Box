@@ -120,6 +120,46 @@ namespace
 			}
 		}
 
+		U32 getActorsXml(char* out, U32 buffMaxCapacity)
+		{
+			tinyxml2::XMLDocument xmlDoc;
+			tinyxml2::XMLNode* pRoot = xmlDoc.NewElement("Actors");
+			xmlDoc.InsertFirstChild(pRoot);
+
+			//TODO:
+
+			tinyxml2::XMLPrinter printer(nullptr, true);
+
+			xmlDoc.Print(&printer);
+
+			if (buffMaxCapacity <= printer.CStrSize())
+			{
+				memcpy(out, printer.CStr(), printer.CStrSize());
+				return 0;
+			}
+			return printer.CStrSize() - buffMaxCapacity;
+		}
+
+		int getActorInfo(unsigned int actorID, char* out, unsigned int buffMaxCapacity)
+		{
+			tinyxml2::XMLDocument xmlDoc;
+			tinyxml2::XMLNode* pRoot = xmlDoc.NewElement("ActorInfo");
+			xmlDoc.InsertFirstChild(pRoot);
+
+			//TODO:
+
+			tinyxml2::XMLPrinter printer(nullptr, true);
+
+			xmlDoc.Print(&printer);
+
+			if (buffMaxCapacity <= printer.CStrSize())
+			{
+				memcpy(out, printer.CStr(), printer.CStrSize());
+				return 0;
+			}
+			return printer.CStrSize() - buffMaxCapacity;
+		}
+
 		virtual void keyState(const KeyState state[256]) override
 		{
 			if (!m_renderViewActive)
@@ -596,7 +636,20 @@ namespace Editor
 		CHECK_EDITOR();
 		g_editor->updateEnvironmentSettings(xml);
 		return 0;
-		return 0;
+	}
+
+	int GetActorsXml(char* out, unsigned int buffMaxCapacity)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+		return g_editor->getActorsXml(out, buffMaxCapacity);
+	}
+
+	int GetActorInfo(unsigned int actorID, char* out, unsigned int buffMaxCapacity)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+		return g_editor->getActorInfo(actorID, out, buffMaxCapacity);
 	}
 
 } // Editor

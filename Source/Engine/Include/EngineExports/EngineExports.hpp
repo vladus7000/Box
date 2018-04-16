@@ -64,6 +64,12 @@ namespace Exports
 		int SerializeLevelInfoToXml(char* out);
 
 		int UpdateEnvironmentSettings(const char* xml);
+
+		/*
+		* Actors
+		*/
+		int GetActorsXml(char* out, unsigned int buffMaxCapacity);
+		int GetActorInfo(unsigned int actorID, char* out, unsigned int buffMaxCapacity);
 	}
 
 }
