@@ -2,16 +2,24 @@
 
 #include "ShaderEnvironmentProvider.hpp"
 
+struct ID3D11Buffer;
+
 namespace box
 {
 	class DefaultShaderEnvironmentProvider : public ShaderEnvironmentProvider
 	{
 	public:
-		DefaultShaderEnvironmentProvider() = default;
-		virtual ~DefaultShaderEnvironmentProvider() {}
+		DefaultShaderEnvironmentProvider();
+		virtual ~DefaultShaderEnvironmentProvider();
 
 		std::string getName() { return "DefaultShaderEnvironmentProvider"; }
 
-		virtual void prepareShader(Shader& shader, const Material& material) override;
+		virtual void onDeviceLost() override;
+		virtual bool restore(ID3D11Device* device) override;
+
+		virtual void prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const Mesh& mesh) override;
+
+	private:
+		ID3D11Buffer* m_constants;
 	};
 }

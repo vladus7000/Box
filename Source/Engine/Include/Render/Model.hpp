@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <tinyxml2/tinyxml2.h>
+#include "Gameplay/Components/TransformComponent.hpp"
 
 namespace box
 {
@@ -27,7 +28,10 @@ namespace box
 		void addMesh(Mesh::MeshStrongPtr mesh) { m_meshes.push_back(mesh); }
 		U32 getMeshesCount() const { return static_cast<U32>(m_meshes.size()); }
 		Mesh::MeshWeakPtr getMeshAt(U32 i) { return m_meshes[i]; }
-		
+
+		void setTransform(TransformComponent* transform);
+		TransformComponent* getTransform() const { return m_transform; }
+
 		int getSizeForXML() const;
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const;
 		bool loadFromXML(tinyxml2::XMLNode* node);
@@ -36,5 +40,6 @@ namespace box
 		std::string m_name;
 		std::string m_sourceFile;
 		std::vector<Mesh::MeshStrongPtr> m_meshes;
+		TransformComponent* m_transform;
 	};
 }

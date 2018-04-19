@@ -19,6 +19,7 @@
 #include "System\Process\ProcessManager.hpp"
 #include "System\EventSystem\EngineEvents.hpp"
 #include "Gameplay\GameView.hpp"
+#include "Gameplay\ActorComponentFactory.hpp"
 #include <DXUT11\Core\DXUT.h>
 
 #include <vector>
@@ -112,6 +113,7 @@ namespace box
 			NetworkManager::Instance();
 			CheatManager::Instance();
 			EventSystem::Instance();
+			ActorComponentFactory::Instance();
 		}
 		result &= Allocator::Instance().init();
 		result &= EventSystem::Instance().init();

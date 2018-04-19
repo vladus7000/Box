@@ -16,7 +16,6 @@ namespace box
 
 	bool Material::apply(ID3D11DeviceContext* context)
 	{
-		m_shader->getEnvProvider()->prepareShader(*m_shader, *this);
 		m_shader->setActiveTechnique(0);
 		Technique& technique =  m_shader->getActiveTechnique();
 		return technique.apply(context);

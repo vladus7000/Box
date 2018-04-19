@@ -17,6 +17,9 @@
 #include "Render\GraphicsNode.hpp"
 #include "Render\GridNode.hpp"
 #include "DXUT11\Optional\SDKmisc.h"
+#include "Gameplay/Actor.hpp"
+#include "Gameplay/Components/GraphicsComponent.hpp"
+#include "Gameplay/Components/TransformComponent.hpp"
 
 #include <stdio.h>
 
@@ -100,11 +103,17 @@ namespace
 				return;
 			}
 
-			m_nodeToAdd = std::make_shared<GraphicsNode>();
 
 			m_previewModel = handle->getExtraTyped<Model>();
 
-			m_nodeToAdd->setModel(m_previewModel);
+			//m_nodeToAdd = std::make_shared<GraphicsNode>();
+			//m_nodeToAdd->setModel(m_previewModel);
+			if (auto graphicsComponent = m_actor->getComponent<GraphicsComponent>(0xaf249c44LL).lock())
+			{
+				auto transform = m_actor->getComponent<TransformComponent>(0x30bc59df).lock();
+				graphicsComponent->m_graphicsNode->setModel(m_previewModel);
+				m_previewModel->setTransform(transform.get());
+			}
 		}
 
 		void updateEnvironmentSettings(const char* xml)
@@ -246,6 +255,19 @@ namespace
 
 			m_grid = std::make_shared<GridNode>();
 			m_scene->getRoot().lock()->addChild(m_grid);
+
+			m_actor = std::make_shared<Actor>(1);
+
+
+			auto transformComponent = std::make_shared<TransformComponent>();
+			auto graphicsComponent = std::make_shared<GraphicsComponent>();
+			graphicsComponent->setOwner(m_actor);
+			transformComponent->setOwner(m_actor);
+			m_actor->addComponent(transformComponent);
+			m_actor->addComponent(graphicsComponent);
+
+			m_scene->getRoot().lock()->addChild(graphicsComponent->m_graphicsNode);
+
 			return true;
 		}
 
@@ -305,6 +327,9 @@ namespace
 
 		virtual void update(F64 fTime, F32 fElapsedTime) override
 		{
+			auto transform = m_actor->getComponent<TransformComponent>(TransformComponent::ComponentID).lock();
+			static float f = 0.0f;
+			D3DXMatrixTranslation(&transform->m_transformMatrix, 0.0f, f += 0.001f, 0.0f);
 			if (m_clearPreviewModel)
 			{
 				m_clearPreviewModel = false;
@@ -343,11 +368,16 @@ namespace
 					return;
 				}
 				
-				m_nodeToAdd = std::make_shared<GraphicsNode>();
 				
 				m_previewModel = handle->getExtraTyped<Model>();
 
-				m_nodeToAdd->setModel(m_previewModel);
+				//m_nodeToAdd = std::make_shared<GraphicsNode>();
+				//m_nodeToAdd->setModel(m_previewModel);
+
+				if (auto graphicsComponent = m_actor->getComponent<GraphicsComponent>(GraphicsComponent::ComponentID).lock())
+				{
+					graphicsComponent->m_graphicsNode->setModel(m_previewModel);
+				}
 			}
 		}
 	private:
@@ -368,6 +398,7 @@ namespace
 		ViewMode m_activeViewMode;
 		tinyxml2::XMLDocument m_envSettings;
 		std::shared_ptr<GridNode> m_grid;
+		Actor::StrongActorPtr m_actor;
 	};
 }
 

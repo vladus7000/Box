@@ -9,6 +9,12 @@ namespace box
 	class Matrix4D : public D3DXMATRIX
 	{
 	public:
+
+		void setIdentity()
+		{
+			D3DXMatrixIdentity(this);
+		}
+
 		void serializeToXMLElement(tinyxml2::XMLElement* element) const
 		{
 			element->SetAttribute("E11", _11);

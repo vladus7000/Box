@@ -12,6 +12,7 @@ namespace box
 		, m_indexCount(count)
 		, m_vertexSize(vertSize)
 		, m_topology(topology)
+		, m_transform(nullptr)
 	{
 	}
 
@@ -19,6 +20,7 @@ namespace box
 	{
 		SAVE_RELEASE(m_vertexBuffer);
 		SAVE_RELEASE(m_indexBuffer);
+		m_transform = nullptr;
 	}
 
 	void Mesh::render(F32 delta)
@@ -26,14 +28,14 @@ namespace box
 		ID3D11DeviceContext* context = DXUTGetD3D11DeviceContext();
 		ID3D11Device* device = DXUTGetD3D11Device();
 
-		if (!m_material || !m_indexBuffer || !m_vertexBuffer || !m_indexCount)
+		if (!m_indexBuffer || !m_vertexBuffer || !m_indexCount)
 		{
 			return;
 		}
-		if (!m_material->apply(context))
-		{
-			return;
-		}
+		//if (!m_material->apply(context))
+		//{
+		//	return;
+		//}
 		unsigned int stride = m_vertexSize;
 		unsigned int offset = 0;
 

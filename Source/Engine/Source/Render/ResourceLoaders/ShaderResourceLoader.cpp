@@ -361,14 +361,37 @@ namespace box
 		return (vsOK && psOK);
 	}
 
-	ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong getProvider(const char* name)
+	class DataProviders
 	{
-		if (strcmp(name, "DefaultShaderEnvironmentProvider") == 0)
+	public:
+		DataProviders()
 		{
-			return std::make_shared<DefaultShaderEnvironmentProvider>();
+			auto device = DXUTGetD3D11Device();
+			{
+				auto provider = std::make_shared<DefaultShaderEnvironmentProvider>();
+				provider->restore(device);
+				m_providers["DefaultShaderEnvironmentProvider"] = provider;
+			}
 		}
 
-		return ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong();
+		ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong get(const std::string& name)
+		{
+			
+			auto foundIt = m_providers.find(name);
+			if (foundIt != m_providers.end())
+			{
+				return foundIt->second;
+			}
+			return ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong();
+		}
+	private:
+		std::map<std::string, ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong> m_providers;
+	};
+
+	ShaderEnvironmentProvider::ShaderEnvironmentProviderStrong getProvider(const char* name)
+	{
+		static DataProviders Providers;
+		return Providers.get(name);
 	}
 
 	bool ShaderResourceLoader::loadResource(U8* buffer, size_t size, std::shared_ptr<ResourceHandle> handle)

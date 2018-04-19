@@ -33,7 +33,7 @@ namespace box
 		void setSrcFile(const std::string& file) { m_srcFile = file; }
 		const std::string& getSrcFile() const { return m_srcFile; }
 		void setShader(Shader::ShaderStrongPtr shader) { m_shader = shader; }
-		Shader::ShaderWeakPtr getShader() const { return m_shader; }
+		Shader::ShaderStrongPtr getShader() const { return m_shader; }
 
 		bool apply(ID3D11DeviceContext* context);
 

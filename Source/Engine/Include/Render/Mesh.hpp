@@ -5,6 +5,7 @@
 #include "Material.hpp"
 #include "Math/Matrix4D.hpp"
 #include <tinyxml2/tinyxml2.h>
+#include "Gameplay/Components/TransformComponent.hpp"
 
 #include <d3d11.h>
 
@@ -26,8 +27,8 @@ namespace box
 		void setName(const std::string& name) { m_name = name; }
 		const std::string& getName() { return m_name; }
 
-		void setWorldMatrix(const Matrix4D& world) { m_worldMatrix = world; }
-		const Matrix4D& getWorldMatrix() const { return m_worldMatrix; }
+		//void setWorldMatrix(const Matrix4D& world) { m_worldMatrix = world; }
+		//const Matrix4D& getWorldMatrix() const { return m_worldMatrix; }
 
 		void render(F32 delta);
 		void preRender();
@@ -35,18 +36,22 @@ namespace box
 		void restore();
 		void deviceLost();
 
+		void setTransform(TransformComponent* transform) { m_transform = transform; }
+		TransformComponent* getTransform() const { return m_transform; }
+
 		int getSizeForXML() const;
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const;
 		bool loadFromXML(tinyxml2::XMLNode* node);
 
 	private:
 		Material::MaterialStrongPtr m_material;
-		Matrix4D m_worldMatrix;
+		//Matrix4D m_worldMatrix;
 		ID3D11Buffer* m_vertexBuffer;
 		ID3D11Buffer* m_indexBuffer;
 		U32 m_indexCount;
 		U32 m_vertexSize;
 		D3D_PRIMITIVE_TOPOLOGY m_topology;
+		TransformComponent* m_transform;
 
 		std::string m_name;
 	};

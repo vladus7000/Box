@@ -9,6 +9,12 @@ cbuffer ShaderData : register(b0)
 	float3 sunColor;
 };
 
+cbuffer ModelData : register(b1)
+{
+	float4x4 worldMatrix;
+};
+
+
 struct VertexShaderInput
 {
 	float3 pos : POSITION;
@@ -30,6 +36,7 @@ PixelShaderInput t1_VsMain(VertexShaderInput input)
 	PixelShaderInput output;
 
 	float4x4 m = mul(cameraProjectionMatrix, cameraViewMatrix);
+	m = mul(m, worldMatrix);
 	
 	output.pos = mul(m, float4(input.pos, 1.0f));
 

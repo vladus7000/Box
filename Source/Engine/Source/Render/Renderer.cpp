@@ -96,7 +96,15 @@ namespace box
 
 			for (auto& it : m_renderList.m_dynamicObjects)
 			{
-				it->render(delta);
+				if (auto material = it->getMaterial().lock())
+				{
+					auto shader = material->getShader();
+					auto provider = shader->getEnvProvider();
+
+					provider->prepareShader(m_context, *shader, *material, *it);
+					material->apply(m_context);
+					it->render(delta);
+				}
 			}
 		}
 	}

@@ -17,13 +17,13 @@ namespace box
 		Component() {}
 		virtual ~Component() {}
 
-		virtual bool init() {};
+		virtual bool init() { return true; };
 		virtual void deinit() {};
 
-		virtual void update(F32 delta) = 0;
+		virtual void update(F32 delta) {};
 
 		ComponentId getId() const { return m_componentId; }
-		void setOwner(std::shared_ptr<Actor> owner) { m_owner = owner; }
+		void setOwner(std::weak_ptr<Actor> owner) { m_owner = owner; }
 
 		virtual tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const { return nullptr; }
 		virtual bool loadFromXML(tinyxml2::XMLNode* node) { return true; }
@@ -31,6 +31,6 @@ namespace box
 	protected:
 		ComponentId m_componentId;
 	private:
-		std::shared_ptr<Actor> m_owner;
+		std::weak_ptr<Actor> m_owner;
 	};
 }

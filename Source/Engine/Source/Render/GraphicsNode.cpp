@@ -21,6 +21,7 @@ namespace box
 
 	void GraphicsNode::gatherCurrentNodeGraphicsObjects(RenderObjects& out)
 	{
+		if (!m_model) return;
 		auto count = m_model->getMeshesCount();
 		for (U32 i = 0; i < count; i++)
 		{

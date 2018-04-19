@@ -8,7 +8,17 @@ namespace box
 	Model::Model(const std::string& name, const std::string& sourceFile)
 		: m_name(name)
 		, m_sourceFile(sourceFile)
+		, m_transform(nullptr)
 	{
+	}
+
+	void Model::setTransform(TransformComponent* transform)
+	{
+			m_transform = transform;
+			for (const auto& mesh : m_meshes)
+			{
+				mesh->setTransform(m_transform);
+			}
 	}
 
 	int Model::getSizeForXML() const

@@ -149,7 +149,6 @@ namespace box
 			return false;
 		}
 
-	private:
 		void addComponent(Component::StrongComponentPtr component) { m_components[component->getId()] = component; }
 
 	private:

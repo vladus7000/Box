@@ -3,10 +3,14 @@
 #include <string>
 #include <memory>
 
+struct ID3D11Device;
+struct ID3D11DeviceContext;
+
 namespace box
 {
 	class Shader;
 	class Material;
+	class Mesh;
 
 	class ShaderEnvironmentProvider
 	{
@@ -16,9 +20,12 @@ namespace box
 
 		ShaderEnvironmentProvider() = default;
 		virtual ~ShaderEnvironmentProvider() {};
-	
+
+		virtual void onDeviceLost() = 0;
+		virtual bool restore(ID3D11Device* device) = 0;
+
 		virtual std::string getName() = 0;
 
-		virtual void prepareShader(Shader& shader, const Material& material) = 0;
+		virtual void prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const Mesh& mesh) = 0;
 	};
 }
