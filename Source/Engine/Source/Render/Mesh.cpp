@@ -12,7 +12,6 @@ namespace box
 		, m_indexCount(count)
 		, m_vertexSize(vertSize)
 		, m_topology(topology)
-		, m_transform(nullptr)
 	{
 	}
 
@@ -20,7 +19,6 @@ namespace box
 	{
 		SAVE_RELEASE(m_vertexBuffer);
 		SAVE_RELEASE(m_indexBuffer);
-		m_transform = nullptr;
 	}
 
 	void Mesh::render(F32 delta)

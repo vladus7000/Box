@@ -8,10 +8,11 @@
 
 #include "ActorComponentFactory.hpp"
 #include "Component.hpp"
+#include "Scene/Scene.hpp"
 
 namespace box
 {
-	class Actor
+	class Actor : public std::enable_shared_from_this<Actor>
 	{
 		friend class ActorComponentFactory;
 	public:
@@ -24,7 +25,9 @@ namespace box
 		explicit Actor(ActorId id) : m_id(id) {}
 		virtual ~Actor() {}
 
-		virtual bool init() { return false; }
+		std::shared_ptr<Actor> getptr() { return shared_from_this(); }
+
+		virtual bool init() { return true; }
 		virtual void postInit() {}
 		virtual void deinit() {}
 
@@ -32,7 +35,11 @@ namespace box
 		{
 			for (auto& it : m_components)
 			{
-				it.second->update(delta);
+				auto& component = it.second;
+				if (component->canUpdateFromActor())
+				{
+					component->update(delta);
+				}
 			}
 
 			for (auto& actor : m_children)
@@ -41,9 +48,22 @@ namespace box
 			}
 		}
 
+		virtual void threadSafeUpdate()
+		{
+			for (auto& it : m_components)
+			{
+				it.second->threadSafeUpdate();
+			}
+
+			for (auto& actor : m_children)
+			{
+				actor->threadSafeUpdate();
+			}
+		}
+
 		void addChild(StrongActorPtr actor)
 		{
-			auto& foundIt = std::find(m_children.begin(), m_children.end(), actor);
+			auto foundIt = std::find(m_children.begin(), m_children.end(), actor);
 
 			if (foundIt == m_children.end())
 			{
@@ -53,7 +73,7 @@ namespace box
 
 		void removeChild(StrongActorPtr actor)
 		{
-			auto& foundIt = std::find(m_children.begin(), m_children.end(), actor);
+			auto foundIt = std::find(m_children.begin(), m_children.end(), actor);
 
 			if (foundIt != m_children.end())
 			{
@@ -84,15 +104,20 @@ namespace box
 		void setName(const std::string& name) { m_name = name; }
 		const std::string& getName() const { return m_name; }
 
-		virtual tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const
+		virtual tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc, bool runTimeInfo = false) const
 		{
 			tinyxml2::XMLElement* rootElement = doc.NewElement("ActorBase");
 			
+			if (runTimeInfo)
+			{
+				rootElement->SetAttribute("ID", (long int)m_id);
+			}
+			rootElement->Attribute("name", m_name.c_str());
 			tinyxml2::XMLElement* components = doc.NewElement("Components");
 
 			for (auto& it : m_components)
 			{
-				it.second->serializeToXML(components, doc);
+				it.second->serializeToXML(components, doc, runTimeInfo);
 			}
 
 			rootElement->InsertEndChild(components);
@@ -100,7 +125,7 @@ namespace box
 			tinyxml2::XMLElement* childs = doc.NewElement("Children");
 			for (const auto& it : m_children)
 			{
-				it->serializeToXML(childs, doc);
+				it->serializeToXML(childs, doc, runTimeInfo);
 			}
 			rootElement->InsertEndChild(childs);
 
@@ -119,11 +144,17 @@ namespace box
 			{
 				if (strcmp(rootElement->Name(), "ActorBase") == 0)
 				{
+					if (const char* name = rootElement->Attribute("name"))
+					{
+						m_name = name;
+					}
 					if (auto componentsElement = rootElement->FirstChildElement("Components"))
 					{
+						auto scene = m_scene.lock();
 						for (tinyxml2::XMLNode* child = componentsElement->FirstChild(); child; child = child->NextSibling())
 						{
 							auto component = ActorComponentFactory::Instance().createComponent(child->ToElement()->Name());
+							component->setOwner(getptr());
 							ok &= component->loadFromXML(child);
 
 							m_components[component->getId()] = component;
@@ -137,24 +168,82 @@ namespace box
 							if (auto element = child->ToElement())
 							{
 								auto node = ActorComponentFactory::Instance().createActor(element->Name());
+								node->setScene(m_scene);
 								ok &= node->loadFromXML(child);
 
 								m_children.push_back(node);
 							}
 						}
 					}
+					return ok;
 				}
-				return ok;
+			}
+			return false;
+		}
+
+		virtual bool updateFromXml(tinyxml2::XMLNode* node)
+		{
+			bool ok = true;
+			if (auto rootElement = node->ToElement())
+			{
+				if (strcmp(rootElement->Name(), "ActorBase") == 0)
+				{
+					if (const char* name = rootElement->Attribute("name"))
+					{
+						m_name = name;
+					}
+
+					if (auto componentsElement = rootElement->FirstChildElement("Components"))
+					{
+						for (tinyxml2::XMLNode* child = componentsElement->FirstChild(); child; child = child->NextSibling())
+						{
+							auto element = child->ToElement();
+							U64 id(0);
+							element->QueryInt64Attribute("ID", (int64_t*)&id);
+
+							auto foundIt = m_components.find(id);
+							if (foundIt != m_components.end())
+							{
+								foundIt->second->updateFromXml(child);
+							}
+							else
+							{
+								auto component = ActorComponentFactory::Instance().createComponent(child->ToElement()->Name());
+								ok &= component->loadFromXML(child);
+
+								m_components[component->getId()] = component;
+							}
+						}
+					}
+
+					/*if (auto childsElement = rootElement->FirstChildElement("Children"))
+					{
+						for (tinyxml2::XMLNode* child = childsElement->FirstChild(); child; child = child->NextSibling())
+						{
+							if (auto element = child->ToElement())
+							{
+								auto node = ActorComponentFactory::Instance().createActor(element->Name());
+								ok &= node->loadFromXML(child);
+
+								m_children.push_back(node);
+							}
+						}
+					}*/
+					return ok;
+				}
 			}
 			return false;
 		}
 
 		void addComponent(Component::StrongComponentPtr component) { m_components[component->getId()] = component; }
+		void setScene(Scene::SceneWeakPtr scene) { m_scene = scene; }
+		Scene::SceneWeakPtr getScene() const { return m_scene; }
 
 	private:
 		Components m_components;
 		ActorId m_id;
 		std::vector<Actor::StrongActorPtr> m_children;
 		std::string m_name;
+		Scene::SceneWeakPtr m_scene;
 	};
 }

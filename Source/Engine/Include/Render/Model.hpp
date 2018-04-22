@@ -29,7 +29,7 @@ namespace box
 		U32 getMeshesCount() const { return static_cast<U32>(m_meshes.size()); }
 		Mesh::MeshWeakPtr getMeshAt(U32 i) { return m_meshes[i]; }
 
-		void setTransform(TransformComponent* transform);
+		//void setTransform(TransformComponent* transform);
 		TransformComponent* getTransform() const { return m_transform; }
 
 		int getSizeForXML() const;

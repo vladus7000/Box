@@ -113,7 +113,7 @@ namespace box
 			NetworkManager::Instance();
 			CheatManager::Instance();
 			EventSystem::Instance();
-			ActorComponentFactory::Instance();
+			ActorComponentFactory::Instance().init();
 		}
 		result &= Allocator::Instance().init();
 		result &= EventSystem::Instance().init();

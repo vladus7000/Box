@@ -46,11 +46,11 @@ void winforms::MyForm::initTools()
 	m_soundSystemWindow = gcnew Editor::SoundSystemWindow;
 	m_soundSystemWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::Document);
 
-	m_sceneView = gcnew Editor::SceneView;
-	m_sceneView->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockRight);
-
 	m_properties = gcnew Editor::PropertiesWindow;
 	m_properties->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockRight);
+
+	m_sceneView = gcnew Editor::SceneView;
+	m_sceneView->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockLeft);
 
 	m_addObjectWindow = gcnew Editor::AddObject;
 	m_addObjectWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockLeft);
@@ -58,12 +58,14 @@ void winforms::MyForm::initTools()
 	m_recourcesWindow = gcnew Editor::RecourcesWindow(m_runningEnvironmentWindow, m_properties);
 	m_recourcesWindow->Show(dockPanel1, WeifenLuo::WinFormsUI::Docking::DockState::DockLeft);
 
+
 	m_globals = gcnew Editor::Globals;
 	m_globals->m_recourcesWindow = m_recourcesWindow;
 	m_globals->m_runningEnvironmentWindow = m_runningEnvironmentWindow;
 	m_globals->m_propertiesWindow = m_properties;
 
 	m_properties->setGlobals(m_globals);
+	m_sceneView->setGlobals(m_globals);
 }
 
 void winforms::MyForm::deinit()

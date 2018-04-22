@@ -38,6 +38,7 @@ namespace Editor {
 		void addTexture(String^ descName);
 		void clearComboBoxes();
 		void updateMaterialUI(String^ fileName);
+		void updateActorXml(String^ xml, int id);
 
 	protected:
 		/// <summary>
@@ -114,6 +115,11 @@ namespace Editor {
 
 
 	private: System::Windows::Forms::Label^  label14;
+	private: System::Windows::Forms::TabPage^  tabPage7;
+	private: System::Windows::Forms::RichTextBox^  actorsXmlText;
+	private: System::Windows::Forms::Button^  button7;
+	private: System::Windows::Forms::Label^  actorIDLabel;
+	private: System::Windows::Forms::Label^  label15;
 			 /// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -170,6 +176,11 @@ namespace Editor {
 			this->button5 = (gcnew System::Windows::Forms::Button());
 			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->shaderSelectShaderComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->tabPage7 = (gcnew System::Windows::Forms::TabPage());
+			this->actorsXmlText = (gcnew System::Windows::Forms::RichTextBox());
+			this->button7 = (gcnew System::Windows::Forms::Button());
+			this->label15 = (gcnew System::Windows::Forms::Label());
+			this->actorIDLabel = (gcnew System::Windows::Forms::Label());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
@@ -178,6 +189,7 @@ namespace Editor {
 			this->tabPage4->SuspendLayout();
 			this->tabPage5->SuspendLayout();
 			this->tabPage6->SuspendLayout();
+			this->tabPage7->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// label1
@@ -234,7 +246,7 @@ namespace Editor {
 			this->tabControl1->Location = System::Drawing::Point(12, 68);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(329, 492);
+			this->tabControl1->Size = System::Drawing::Size(519, 492);
 			this->tabControl1->TabIndex = 5;
 			// 
 			// tabPage1
@@ -251,7 +263,7 @@ namespace Editor {
 			this->tabPage1->Location = System::Drawing::Point(4, 22);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(321, 466);
+			this->tabPage1->Size = System::Drawing::Size(511, 466);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"Import";
 			this->tabPage1->UseVisualStyleBackColor = true;
@@ -323,7 +335,7 @@ namespace Editor {
 			this->tabPage2->Location = System::Drawing::Point(4, 22);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(321, 466);
+			this->tabPage2->Size = System::Drawing::Size(511, 466);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"addToScene";
 			this->tabPage2->UseVisualStyleBackColor = true;
@@ -353,7 +365,7 @@ namespace Editor {
 			this->tabPage3->Controls->Add(this->tabControl2);
 			this->tabPage3->Location = System::Drawing::Point(4, 22);
 			this->tabPage3->Name = L"tabPage3";
-			this->tabPage3->Size = System::Drawing::Size(321, 466);
+			this->tabPage3->Size = System::Drawing::Size(511, 466);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Properties";
 			this->tabPage3->UseVisualStyleBackColor = true;
@@ -363,10 +375,11 @@ namespace Editor {
 			this->tabControl2->Controls->Add(this->tabPage4);
 			this->tabControl2->Controls->Add(this->tabPage5);
 			this->tabControl2->Controls->Add(this->tabPage6);
+			this->tabControl2->Controls->Add(this->tabPage7);
 			this->tabControl2->Location = System::Drawing::Point(3, 3);
 			this->tabControl2->Name = L"tabControl2";
 			this->tabControl2->SelectedIndex = 0;
-			this->tabControl2->Size = System::Drawing::Size(315, 460);
+			this->tabControl2->Size = System::Drawing::Size(505, 460);
 			this->tabControl2->TabIndex = 0;
 			// 
 			// tabPage4
@@ -379,7 +392,7 @@ namespace Editor {
 			this->tabPage4->Location = System::Drawing::Point(4, 22);
 			this->tabPage4->Name = L"tabPage4";
 			this->tabPage4->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage4->Size = System::Drawing::Size(307, 434);
+			this->tabPage4->Size = System::Drawing::Size(497, 434);
 			this->tabPage4->TabIndex = 0;
 			this->tabPage4->Text = L"Model";
 			this->tabPage4->UseVisualStyleBackColor = true;
@@ -446,7 +459,7 @@ namespace Editor {
 			this->tabPage5->Location = System::Drawing::Point(4, 22);
 			this->tabPage5->Name = L"tabPage5";
 			this->tabPage5->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage5->Size = System::Drawing::Size(307, 434);
+			this->tabPage5->Size = System::Drawing::Size(497, 434);
 			this->tabPage5->TabIndex = 1;
 			this->tabPage5->Text = L"Material";
 			this->tabPage5->UseVisualStyleBackColor = true;
@@ -580,7 +593,7 @@ namespace Editor {
 			this->tabPage6->Controls->Add(this->shaderSelectShaderComboBox);
 			this->tabPage6->Location = System::Drawing::Point(4, 22);
 			this->tabPage6->Name = L"tabPage6";
-			this->tabPage6->Size = System::Drawing::Size(307, 434);
+			this->tabPage6->Size = System::Drawing::Size(497, 434);
 			this->tabPage6->TabIndex = 2;
 			this->tabPage6->Text = L"Shader";
 			this->tabPage6->UseVisualStyleBackColor = true;
@@ -611,11 +624,60 @@ namespace Editor {
 			this->shaderSelectShaderComboBox->Size = System::Drawing::Size(188, 21);
 			this->shaderSelectShaderComboBox->TabIndex = 7;
 			// 
+			// tabPage7
+			// 
+			this->tabPage7->Controls->Add(this->actorIDLabel);
+			this->tabPage7->Controls->Add(this->label15);
+			this->tabPage7->Controls->Add(this->actorsXmlText);
+			this->tabPage7->Controls->Add(this->button7);
+			this->tabPage7->Location = System::Drawing::Point(4, 22);
+			this->tabPage7->Name = L"tabPage7";
+			this->tabPage7->Size = System::Drawing::Size(497, 434);
+			this->tabPage7->TabIndex = 3;
+			this->tabPage7->Text = L"ActorXml";
+			this->tabPage7->UseVisualStyleBackColor = true;
+			// 
+			// actorsXmlText
+			// 
+			this->actorsXmlText->Location = System::Drawing::Point(13, 26);
+			this->actorsXmlText->Name = L"actorsXmlText";
+			this->actorsXmlText->Size = System::Drawing::Size(468, 365);
+			this->actorsXmlText->TabIndex = 1;
+			this->actorsXmlText->Text = L"";
+			// 
+			// button7
+			// 
+			this->button7->Location = System::Drawing::Point(21, 397);
+			this->button7->Name = L"button7";
+			this->button7->Size = System::Drawing::Size(75, 23);
+			this->button7->TabIndex = 0;
+			this->button7->Text = L"updateActor";
+			this->button7->UseVisualStyleBackColor = true;
+			this->button7->Click += gcnew System::EventHandler(this, &PropertiesWindow::button7_Click);
+			// 
+			// label15
+			// 
+			this->label15->AutoSize = true;
+			this->label15->Location = System::Drawing::Point(108, 10);
+			this->label15->Name = L"label15";
+			this->label15->Size = System::Drawing::Size(45, 13);
+			this->label15->TabIndex = 6;
+			this->label15->Text = L"actorID:";
+			// 
+			// actorIDLabel
+			// 
+			this->actorIDLabel->AutoSize = true;
+			this->actorIDLabel->Location = System::Drawing::Point(162, 10);
+			this->actorIDLabel->Name = L"actorIDLabel";
+			this->actorIDLabel->Size = System::Drawing::Size(13, 13);
+			this->actorIDLabel->TabIndex = 7;
+			this->actorIDLabel->Text = L"0";
+			// 
 			// PropertiesWindow
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(353, 583);
+			this->ClientSize = System::Drawing::Size(537, 583);
 			this->Controls->Add(this->tabControl1);
 			this->Controls->Add(this->typeLabel);
 			this->Controls->Add(this->label2);
@@ -638,6 +700,8 @@ namespace Editor {
 			this->tabPage5->PerformLayout();
 			this->tabPage6->ResumeLayout(false);
 			this->tabPage6->PerformLayout();
+			this->tabPage7->ResumeLayout(false);
+			this->tabPage7->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -658,5 +722,6 @@ namespace Editor {
 	}
 
 private: System::Void newMaterial_Click(System::Object^  sender, System::EventArgs^  e);
+private: System::Void button7_Click(System::Object^  sender, System::EventArgs^  e);
 };
 }

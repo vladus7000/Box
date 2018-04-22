@@ -6,6 +6,7 @@
 #include "Render/Renderer.hpp"
 #include "Render/Camera.hpp"
 #include "Gameplay\GameView.hpp"
+#include "Gameplay/ActorEvents.hpp"
 #include "Scene\Scene.hpp"
 #include "System\ResourceSystem\ResourceEvents.hpp"
 #include "System\ResourceSystem\ResourceManager.hpp"
@@ -20,6 +21,7 @@
 #include "Gameplay/Actor.hpp"
 #include "Gameplay/Components/GraphicsComponent.hpp"
 #include "Gameplay/Components/TransformComponent.hpp"
+#include "Gameplay/ActorComponentFactory.hpp"
 
 #include <stdio.h>
 
@@ -57,8 +59,10 @@ namespace
 		void SaveLevelToXMLFile(const char* filename)
 		{
 			tinyxml2::XMLDocument xmlDoc;
-			tinyxml2::XMLNode* scene = m_scene->serializeToXML(nullptr, xmlDoc);
+			tinyxml2::XMLNode* actors = m_scene->serializeToXML(nullptr, xmlDoc);
+			tinyxml2::XMLNode* scene = m_rootActor->serializeToXML(nullptr, xmlDoc);
 			xmlDoc.InsertFirstChild(scene);
+			xmlDoc.InsertEndChild(actors);
 
 			FILE* pFile;
 			pFile = fopen(filename, "w");
@@ -74,9 +78,15 @@ namespace
 		{
 			tinyxml2::XMLDocument xmlDoc;
 			xmlDoc.LoadFile(filename);
-			tinyxml2::XMLNode* pRoot = xmlDoc.FirstChildElement("Scene");
+			tinyxml2::XMLNode* scene = xmlDoc.FirstChildElement("Scene");
+			tinyxml2::XMLNode* rootActor = xmlDoc.FirstChildElement("ActorBase");
+			m_rootActor = ActorComponentFactory::Instance().createActor("ActorBase");
+			m_actorsMap.clear();
 			m_scene = std::make_shared<Scene>();
-			m_scene->loadFromXML(pRoot, xmlDoc);
+			m_scene->loadFromXML(scene, xmlDoc);
+			m_scene->getRoot().lock()->addChild(m_grid);
+			m_rootActor->setScene(m_scene);
+			m_rootActor->loadFromXML(rootActor);
 		}
 
 		void addPreviewModelToCollection(const char* modelName, const char* descrFileName, const char* srcFileName)
@@ -102,18 +112,32 @@ namespace
 			{
 				return;
 			}
-
-
 			m_previewModel = handle->getExtraTyped<Model>();
 
-			//m_nodeToAdd = std::make_shared<GraphicsNode>();
-			//m_nodeToAdd->setModel(m_previewModel);
-			if (auto graphicsComponent = m_actor->getComponent<GraphicsComponent>(0xaf249c44LL).lock())
+			auto newActor = ActorComponentFactory::Instance().createActor("ActorBase");
+
+			auto transformComponent = std::make_shared<TransformComponent>();
+			transformComponent->setOwner(newActor);
+			newActor->addComponent(transformComponent);
+
 			{
-				auto transform = m_actor->getComponent<TransformComponent>(0x30bc59df).lock();
+				auto graphicsComponent = std::make_shared<GraphicsComponent>();
+				graphicsComponent->setOwner(newActor);
+
+				newActor->addComponent(graphicsComponent);
+				m_scene->getRoot().lock()->addChild(graphicsComponent->m_graphicsNode);
+				graphicsComponent->m_graphicsNode->setModel(m_previewModel);
+				graphicsComponent->m_graphicsNode->setTransform(transformComponent.get());
+				//m_previewModel->setTransform(transformComponent.get());
+				m_rootActor->addChild(newActor);
+			}
+
+			/*if (auto graphicsComponent = m_rootActor->getComponent<GraphicsComponent>(GraphicsComponent::ComponentID).lock())
+			{
+				auto transform = m_rootActor->getComponent<TransformComponent>(TransformComponent::ComponentID).lock();
 				graphicsComponent->m_graphicsNode->setModel(m_previewModel);
 				m_previewModel->setTransform(transform.get());
-			}
+			}*/
 		}
 
 		void updateEnvironmentSettings(const char* xml)
@@ -132,16 +156,14 @@ namespace
 		U32 getActorsXml(char* out, U32 buffMaxCapacity)
 		{
 			tinyxml2::XMLDocument xmlDoc;
-			tinyxml2::XMLNode* pRoot = xmlDoc.NewElement("Actors");
+			tinyxml2::XMLNode* pRoot = m_rootActor->serializeToXML(nullptr, xmlDoc, true);
 			xmlDoc.InsertFirstChild(pRoot);
-
-			//TODO:
 
 			tinyxml2::XMLPrinter printer(nullptr, true);
 
 			xmlDoc.Print(&printer);
 
-			if (buffMaxCapacity <= printer.CStrSize())
+			if (buffMaxCapacity >= printer.CStrSize())
 			{
 				memcpy(out, printer.CStr(), printer.CStrSize());
 				return 0;
@@ -151,22 +173,51 @@ namespace
 
 		int getActorInfo(unsigned int actorID, char* out, unsigned int buffMaxCapacity)
 		{
-			tinyxml2::XMLDocument xmlDoc;
-			tinyxml2::XMLNode* pRoot = xmlDoc.NewElement("ActorInfo");
-			xmlDoc.InsertFirstChild(pRoot);
-
-			//TODO:
-
-			tinyxml2::XMLPrinter printer(nullptr, true);
-
-			xmlDoc.Print(&printer);
-
-			if (buffMaxCapacity <= printer.CStrSize())
+			auto foundIt = m_actorsMap.find(actorID);
+			if (foundIt != m_actorsMap.end())
 			{
-				memcpy(out, printer.CStr(), printer.CStrSize());
-				return 0;
+				tinyxml2::XMLDocument xmlDoc;
+
+				if (auto actor = foundIt->second.lock())
+				{
+					auto elem = actor->serializeToXML(nullptr, xmlDoc, true);
+					xmlDoc.InsertFirstChild(elem);
+				}
+
+				tinyxml2::XMLPrinter printer(nullptr);
+
+				xmlDoc.Print(&printer);
+
+				if (buffMaxCapacity >= printer.CStrSize())
+				{
+					memcpy(out, printer.CStr(), printer.CStrSize());
+					return 0;
+				}
+				return printer.CStrSize() - buffMaxCapacity;
 			}
-			return printer.CStrSize() - buffMaxCapacity;
+
+			return -1;
+		}
+
+		int updateActor(unsigned int actorID, const char* xml)
+		{
+			auto foundIt = m_actorsMap.find(actorID);
+			if (foundIt != m_actorsMap.end())
+			{
+				const size_t size = strlen(xml);
+				tinyxml2::XMLDocument doc;
+				tinyxml2::XMLError result = doc.Parse(xml, size);
+				if (result == tinyxml2::XMLError::XML_SUCCESS)
+				{
+					tinyxml2::XMLElement* root = doc.RootElement();
+
+					if (auto actor = foundIt->second.lock())
+					{
+						actor->updateFromXml(root);
+					}
+				}
+			}
+			return -1;
 		}
 
 		virtual void keyState(const KeyState state[256]) override
@@ -249,24 +300,21 @@ namespace
 			m_renderer->setCamera(m_camera);
 
 			m_delegate = fastdelegate::MakeDelegate(this, &EditorView::resourceLoaded);
+			m_actorAddedDelegate = fastdelegate::MakeDelegate(this, &EditorView::actorAdded);
 			EventSystem::Instance().add(m_delegate, Event_ResourceLoaded::Type);
+			EventSystem::Instance().add(m_actorAddedDelegate, Event_ActorAdded::Type);
 			Input::Instance().registerKeyboardHandler(this);
 			Input::Instance().registerMouseHandler(this);
 
 			m_grid = std::make_shared<GridNode>();
 			m_scene->getRoot().lock()->addChild(m_grid);
 
-			m_actor = std::make_shared<Actor>(1);
-
+			m_rootActor = ActorComponentFactory::Instance().createActor("ActorBase");
+			m_rootActor->setScene(m_scene);
 
 			auto transformComponent = std::make_shared<TransformComponent>();
-			auto graphicsComponent = std::make_shared<GraphicsComponent>();
-			graphicsComponent->setOwner(m_actor);
-			transformComponent->setOwner(m_actor);
-			m_actor->addComponent(transformComponent);
-			m_actor->addComponent(graphicsComponent);
-
-			m_scene->getRoot().lock()->addChild(graphicsComponent->m_graphicsNode);
+			transformComponent->setOwner(m_rootActor);
+			m_rootActor->addComponent(transformComponent);
 
 			return true;
 		}
@@ -276,6 +324,7 @@ namespace
 			Input::Instance().unregisterMouseHandler(this);
 			Input::Instance().unregisterKeyboardHandler(this);
 			EventSystem::Instance().remove(m_delegate, Event_ResourceLoaded::Type);
+			EventSystem::Instance().remove(m_actorAddedDelegate, Event_ActorAdded::Type);
 			g_editor = nullptr;
 			m_envSettings.Clear();
 		}
@@ -327,9 +376,9 @@ namespace
 
 		virtual void update(F64 fTime, F32 fElapsedTime) override
 		{
-			auto transform = m_actor->getComponent<TransformComponent>(TransformComponent::ComponentID).lock();
-			static float f = 0.0f;
-			D3DXMatrixTranslation(&transform->m_transformMatrix, 0.0f, f += 0.001f, 0.0f);
+			m_rootActor->threadSafeUpdate();
+			m_rootActor->update(fElapsedTime);
+
 			if (m_clearPreviewModel)
 			{
 				m_clearPreviewModel = false;
@@ -367,18 +416,23 @@ namespace
 				{
 					return;
 				}
-				
-				
+
 				m_previewModel = handle->getExtraTyped<Model>();
 
 				//m_nodeToAdd = std::make_shared<GraphicsNode>();
 				//m_nodeToAdd->setModel(m_previewModel);
 
-				if (auto graphicsComponent = m_actor->getComponent<GraphicsComponent>(GraphicsComponent::ComponentID).lock())
+				if (auto graphicsComponent = m_rootActor->getComponent<GraphicsComponent>(GraphicsComponent::ComponentID).lock())
 				{
 					graphicsComponent->m_graphicsNode->setModel(m_previewModel);
 				}
 			}
+		}
+		void actorAdded(EventSystem::StrongEventDataPtr event)
+		{
+			auto actorAddedEvent = castTo<Event_ActorAdded>(event);
+			auto actor = actorAddedEvent->getActor();
+			m_actorsMap[actor->getId()] = actor;
 		}
 	private:
 		Renderer* m_renderer;
@@ -388,6 +442,7 @@ namespace
 		std::shared_ptr<GraphicsNode> m_nodeToAdd;
 		Camera::CameraStrongPtr m_camera;
 		EventSystem::DelegateType m_delegate;
+		EventSystem::DelegateType m_actorAddedDelegate;
 		F32 m_cameraMovementSpeed;
 		bool m_renderViewActive;
 		U32 m_prevMouseX;
@@ -398,7 +453,8 @@ namespace
 		ViewMode m_activeViewMode;
 		tinyxml2::XMLDocument m_envSettings;
 		std::shared_ptr<GridNode> m_grid;
-		Actor::StrongActorPtr m_actor;
+		Actor::StrongActorPtr m_rootActor;
+		std::map<Actor::ActorId, Actor::WeakActorPtr> m_actorsMap;
 	};
 }
 
@@ -681,6 +737,13 @@ namespace Editor
 		CHECK_ENGINE();
 		CHECK_EDITOR();
 		return g_editor->getActorInfo(actorID, out, buffMaxCapacity);
+	}
+
+	int UpdateActor(unsigned int actorID, const char* xml)
+	{
+		CHECK_ENGINE();
+		CHECK_EDITOR();
+		return g_editor->updateActor(actorID, xml);
 	}
 
 } // Editor

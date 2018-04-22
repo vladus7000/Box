@@ -3,6 +3,7 @@
 #include "Render/ShaderEnvironmentProviders/DefaultShaderEnvironmentProvider.hpp"
 #include "Render/Material.hpp"
 #include "Render/Mesh.hpp"
+#include "Render/GraphicsNode.hpp"
 
 namespace box
 {
@@ -40,7 +41,7 @@ namespace box
 		return true;
 	}
 
-	void DefaultShaderEnvironmentProvider::prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const Mesh& mesh)
+	void DefaultShaderEnvironmentProvider::prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const GraphicsNode& graphicsNode)
 	{
 		D3D11_MAPPED_SUBRESOURCE subResource;
 		context->Map(m_constants, 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
@@ -49,7 +50,7 @@ namespace box
 
 		if (shaderData)
 		{
-			if (TransformComponent* component = mesh.getTransform())
+			if (TransformComponent* component = graphicsNode.getTransform())
 			{
 				memcpy(shaderData->transformMatrix, component->m_transformMatrix.m, sizeof(float) * 16);
 			}

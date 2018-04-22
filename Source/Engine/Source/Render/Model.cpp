@@ -12,14 +12,14 @@ namespace box
 	{
 	}
 
-	void Model::setTransform(TransformComponent* transform)
+	/*void Model::setTransform(TransformComponent* transform)
 	{
 			m_transform = transform;
 			for (const auto& mesh : m_meshes)
 			{
 				mesh->setTransform(m_transform);
 			}
-	}
+	}*/
 
 	int Model::getSizeForXML() const
 	{

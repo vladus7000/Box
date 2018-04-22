@@ -10,11 +10,18 @@ namespace box
 	public:
 		GraphicsNode()
 			: SceneNode(SceneNode::Type::Graphics)
+			, m_transform(nullptr)
 		{}
 		virtual ~GraphicsNode() {};
 
 		void setModel(std::shared_ptr<Model> model) { m_model = model; }
-		std::weak_ptr<Model> getModel(std::shared_ptr<Model> model) const { return m_model; }
+		std::weak_ptr<Model> getModel() const { return m_model; }
+
+		virtual U32 getMeshesCount() const { return m_model->getMeshesCount(); }
+		virtual Mesh::MeshWeakPtr getMeshAt(U32 i) { return m_model->getMeshAt(i); }
+
+		void setTransform(TransformComponent* transform) { m_transform = transform; }
+		TransformComponent* getTransform() const { return m_transform; }
 
 		virtual void render(F32 delta) override;
 		virtual void gatherCurrentNodeGraphicsObjects(RenderObjects& out) override;
@@ -25,5 +32,6 @@ namespace box
 
 	protected:
 		std::shared_ptr<Model> m_model;
+		TransformComponent* m_transform;
 	};
 }

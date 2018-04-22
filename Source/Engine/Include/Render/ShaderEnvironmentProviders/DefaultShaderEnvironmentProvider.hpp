@@ -17,7 +17,7 @@ namespace box
 		virtual void onDeviceLost() override;
 		virtual bool restore(ID3D11Device* device) override;
 
-		virtual void prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const Mesh& mesh) override;
+		virtual void prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const GraphicsNode& graphicsNode) override;
 
 	private:
 		ID3D11Buffer* m_constants;

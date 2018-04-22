@@ -130,6 +130,12 @@ void Editor::PropertiesWindow::updateMaterialUI(System::String^ fileName)
 	}
 }
 
+void Editor::PropertiesWindow::updateActorXml(System::String^ xml, int id)
+{
+	actorsXmlText->Text = xml;
+	actorIDLabel->Text = id.ToString();
+}
+
 System::Void Editor::PropertiesWindow::button1_Click(System::Object^ sender, System::EventArgs^ e)
 {
 	(void)sender;
@@ -230,4 +236,17 @@ System::Void Editor::PropertiesWindow::newMaterial_Click(System::Object^ sender,
 
 	System::IO::Directory::CreateDirectory(System::IO::Path::GetDirectoryName("../Assets/Materials/" + materialDescPathTextBox->Text));
 	xmlDoc.Save("../Assets/Materials/" + materialDescPathTextBox->Text);
+}
+
+//update actor
+System::Void Editor::PropertiesWindow::button7_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	(void)sender;
+	(void)e;
+
+	char* xml = static_cast<char*>(Marshal::StringToHGlobalAnsi(actorsXmlText->Text).ToPointer());
+	
+	Exports::Editor::UpdateActor(int::Parse(actorIDLabel->Text), xml);
+
+	Marshal::FreeHGlobal(static_cast<IntPtr>(xml));
 }

@@ -5,19 +5,19 @@
 
 namespace box
 {
-	class Mesh;
+	class GraphicsNode;
 }
 
 namespace box
 {
 	struct RenderObjects
 	{
-		std::vector<std::shared_ptr<Mesh>> m_staticObjects;
-		std::vector<std::shared_ptr<Mesh>> m_dynamicObjects;
-		std::vector<std::shared_ptr<Mesh>> m_terrainObjects;
-		std::vector<std::shared_ptr<Mesh>> m_alphaObjects;
-		std::vector<std::shared_ptr<Mesh>> m_postObjects;
-		std::vector<std::shared_ptr<Mesh>> m_editorObjects;
+		std::vector<GraphicsNode*> m_staticObjects;
+		std::vector<GraphicsNode*> m_dynamicObjects;
+		std::vector<GraphicsNode*> m_terrainObjects;
+		std::vector<GraphicsNode*> m_alphaObjects;
+		std::vector<GraphicsNode*> m_postObjects;
+		std::vector<GraphicsNode*> m_editorObjects;
 
 		void clear()
 		{

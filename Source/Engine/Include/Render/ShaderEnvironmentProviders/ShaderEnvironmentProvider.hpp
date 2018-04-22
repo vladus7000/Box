@@ -10,7 +10,7 @@ namespace box
 {
 	class Shader;
 	class Material;
-	class Mesh;
+	class GraphicsNode;
 
 	class ShaderEnvironmentProvider
 	{
@@ -26,6 +26,6 @@ namespace box
 
 		virtual std::string getName() = 0;
 
-		virtual void prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const Mesh& mesh) = 0;
+		virtual void prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const GraphicsNode& graphicsNode) = 0;
 	};
 }

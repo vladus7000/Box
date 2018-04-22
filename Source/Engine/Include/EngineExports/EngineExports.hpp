@@ -70,6 +70,7 @@ namespace Exports
 		*/
 		int GetActorsXml(char* out, unsigned int buffMaxCapacity);
 		int GetActorInfo(unsigned int actorID, char* out, unsigned int buffMaxCapacity);
+		int UpdateActor(unsigned int actorID, const char* xml);
 	}
 
 }

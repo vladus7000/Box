@@ -77,10 +77,10 @@ namespace box
 		}
 
 		inline F32 getRadius() const { return m_radius; }
-		inline void setRadius(F32 radius) { m_radius = radius; }
+		inline void setRadius(F32 radius) { m_radius = radius; } //Update radius ?
 
 		inline const Vector3D& getPosition() const { return m_position; }
-		inline void setPosition(const Vector3D& position) { m_position = position; }
+		inline void setPosition(const Vector3D& position) { m_position = position; } //Update radius ?
 
 		inline void updateRadius(const SceneNode& child)
 		{

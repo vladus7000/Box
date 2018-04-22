@@ -16,11 +16,14 @@ namespace box
 	{
 		SINGLETON(ActorComponentFactory);
 	public:
+
+		void init();
+
 		using ComponentCreatorFunc = std::function<std::shared_ptr<Component>(U64)>;
 		using ActorCreatorFunc = std::function<std::shared_ptr<Actor>(U64)>;
 
-		void registerComponentCreator(const std::string& name, ComponentCreatorFunc& f) { m_componentCreators[name] = f; }
-		void registerActorCreator(const std::string& name, ActorCreatorFunc& f) { m_actorCreators[name] = f; }
+		void registerComponentCreator(const std::string& name, const ComponentCreatorFunc& f) { m_componentCreators[name] = f; }
+		void registerActorCreator(const std::string& name, const ActorCreatorFunc& f) { m_actorCreators[name] = f; }
 
 		std::shared_ptr<Actor> createActor(const std::string& name);
 		std::shared_ptr<Component> createComponent(const std::string& name);

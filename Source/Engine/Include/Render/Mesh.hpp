@@ -36,9 +36,6 @@ namespace box
 		void restore();
 		void deviceLost();
 
-		void setTransform(TransformComponent* transform) { m_transform = transform; }
-		TransformComponent* getTransform() const { return m_transform; }
-
 		int getSizeForXML() const;
 		tinyxml2::XMLNode* serializeToXML(tinyxml2::XMLNode* node, tinyxml2::XMLDocument& doc) const;
 		bool loadFromXML(tinyxml2::XMLNode* node);
@@ -51,7 +48,6 @@ namespace box
 		U32 m_indexCount;
 		U32 m_vertexSize;
 		D3D_PRIMITIVE_TOPOLOGY m_topology;
-		TransformComponent* m_transform;
 
 		std::string m_name;
 	};

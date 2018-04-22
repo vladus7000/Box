@@ -12,6 +12,7 @@
 #include <DXUT11\Core\DXUT.h>
 #include "Render\DXUTHelper.hpp"
 #include "DXUT11\Optional\DXUTgui.h"
+#include "Render/GraphicsNode.hpp"
 
 namespace box
 {
@@ -96,14 +97,18 @@ namespace box
 
 			for (auto& it : m_renderList.m_dynamicObjects)
 			{
-				if (auto material = it->getMaterial().lock())
+				for (int i = 0; i < it->getMeshesCount(); i++)
 				{
-					auto shader = material->getShader();
-					auto provider = shader->getEnvProvider();
+					auto mesh = it->getMeshAt(i).lock();
+					if (auto material = mesh->getMaterial().lock())
+					{
+						auto shader = material->getShader();
+						auto provider = shader->getEnvProvider();
 
-					provider->prepareShader(m_context, *shader, *material, *it);
-					material->apply(m_context);
-					it->render(delta);
+						provider->prepareShader(m_context, *shader, *material, *it);
+						material->apply(m_context);
+						mesh->render(delta);
+					}
 				}
 			}
 		}

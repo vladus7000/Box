@@ -74,7 +74,7 @@ namespace box
 				m_camera->serializeToXML(scene, doc);
 			}
 
-			tinyxml2::XMLNode* newNode = m_root->serializeToXML(scene, doc);
+			//tinyxml2::XMLNode* newNode = m_root->serializeToXML(scene, doc);
 
 			if (node)
 			{
@@ -91,6 +91,7 @@ namespace box
 			{
 				if (strcmp(root->Name(), "Scene") == 0)
 				{
+					ok = true;
 					if (auto envSettings = root->FirstChildElement("EnvironmentSettings"))
 					{
 						ok &= m_environment.loadFromXML(envSettings);
@@ -103,10 +104,10 @@ namespace box
 						}
 						ok &= m_camera->loadFromXML(element);
 					}
-					if (auto nodeElement = root->FirstChildElement("SceneNode"))
-					{
-						ok &= m_root->loadFromXML(nodeElement);
-					}
+					//if (auto nodeElement = root->FirstChildElement("SceneNode"))
+					//{
+					//	ok &= m_root->loadFromXML(nodeElement);
+					//}
 				}
 			}
 
