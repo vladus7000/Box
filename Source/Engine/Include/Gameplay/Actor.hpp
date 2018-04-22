@@ -12,6 +12,9 @@
 
 namespace box
 {
+	class TransformComponent;
+	class GraphicsComponent;
+
 	class Actor : public std::enable_shared_from_this<Actor>
 	{
 		friend class ActorComponentFactory;
@@ -22,7 +25,11 @@ namespace box
 		using ActorId = U64;
 
 	public:
-		explicit Actor(ActorId id) : m_id(id) {}
+		explicit Actor(ActorId id)
+			: m_id(id)
+			, m_transform(nullptr)
+			, m_graphics(nullptr)
+		{}
 		virtual ~Actor() {}
 
 		std::shared_ptr<Actor> getptr() { return shared_from_this(); }
@@ -157,7 +164,7 @@ namespace box
 							component->setOwner(getptr());
 							ok &= component->loadFromXML(child);
 
-							m_components[component->getId()] = component;
+							addComponent(component);
 						}
 					}
 
@@ -211,7 +218,7 @@ namespace box
 								auto component = ActorComponentFactory::Instance().createComponent(child->ToElement()->Name());
 								ok &= component->loadFromXML(child);
 
-								m_components[component->getId()] = component;
+								addComponent(component);
 							}
 						}
 					}
@@ -235,9 +242,33 @@ namespace box
 			return false;
 		}
 
-		void addComponent(Component::StrongComponentPtr component) { m_components[component->getId()] = component; }
+		void addComponent(Component::StrongComponentPtr component) { m_components[component->getId()] = component; addToCacheComponent(component.get()); }
 		void setScene(Scene::SceneWeakPtr scene) { m_scene = scene; }
 		Scene::SceneWeakPtr getScene() const { return m_scene; }
+
+		TransformComponent* getCachedTransform() { return m_transform; }
+		GraphicsComponent* getCachedGraphics() { return m_graphics; }
+
+private:
+		void addToCacheComponent(Component* component)
+		{
+			if (!component)
+			{
+				return;
+			}
+
+			switch (component->getId())
+			{
+			case 0x30bc59df:
+				break;
+				m_transform = reinterpret_cast<TransformComponent*>(component);
+			case 0xaf249c44:
+				m_graphics = reinterpret_cast<GraphicsComponent*>(component);
+				break;
+			default:
+				break;
+			}
+		}
 
 	private:
 		Components m_components;
@@ -245,5 +276,7 @@ namespace box
 		std::vector<Actor::StrongActorPtr> m_children;
 		std::string m_name;
 		Scene::SceneWeakPtr m_scene;
+		TransformComponent* m_transform;
+		GraphicsComponent* m_graphics;
 	};
 }

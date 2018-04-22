@@ -29,6 +29,7 @@ namespace box
 
 	private:
 		void cleanRenderLists();
+		void genericRenderGraphicsNodes(const std::vector<GraphicsNode*>& nodes, F32 delta);
 
 		Scene::SceneStrongPtr m_scene;
 		Camera::CameraStrongPtr m_camera;

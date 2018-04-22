@@ -95,22 +95,8 @@ namespace box
 			m_frameGlobals.update(m_context, delta);
 			m_frameGlobals.bind(m_context);
 
-			for (auto& it : m_renderList.m_dynamicObjects)
-			{
-				for (int i = 0; i < it->getMeshesCount(); i++)
-				{
-					auto mesh = it->getMeshAt(i).lock();
-					if (auto material = mesh->getMaterial().lock())
-					{
-						auto shader = material->getShader();
-						auto provider = shader->getEnvProvider();
-
-						provider->prepareShader(m_context, *shader, *material, *it);
-						material->apply(m_context);
-						mesh->render(delta);
-					}
-				}
-			}
+			genericRenderGraphicsNodes(m_renderList.m_dynamicObjects, delta);
+			genericRenderGraphicsNodes(m_renderList.m_editorObjects, delta);
 		}
 	}
 
@@ -123,6 +109,26 @@ namespace box
 	void Renderer::cleanRenderLists()
 	{
 		m_renderList.clear();
+	}
+
+	void Renderer::genericRenderGraphicsNodes(const std::vector<GraphicsNode*>& nodes, F32 delta)
+	{
+		for (auto& it : nodes)
+		{
+			for (int i = 0; i < it->getMeshesCount(); i++)
+			{
+				auto mesh = it->getMeshAt(i).lock();
+				if (auto material = mesh->getMaterial().lock())
+				{
+					auto shader = material->getShader();
+					auto provider = shader->getEnvProvider();
+
+					provider->prepareShader(m_context, *shader, *material, *it);
+					material->apply(m_context);
+					mesh->render(delta);
+				}
+			}
+		}
 	}
 
 }

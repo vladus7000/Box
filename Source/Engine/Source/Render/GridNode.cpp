@@ -87,6 +87,6 @@ namespace box
 
 	void GridNode::gatherCurrentNodeGraphicsObjects(RenderObjects& out)
 	{
-		out.m_dynamicObjects.push_back(this);
+		out.m_editorObjects.push_back(this);
 	}
 }
