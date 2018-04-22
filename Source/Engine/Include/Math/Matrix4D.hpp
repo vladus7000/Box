@@ -2,7 +2,7 @@
 
 #include <D3D11.h>
 #include <d3dx9math.h>
-
+#include <tinyxml2/tinyxml2.h>
 
 namespace box
 {

@@ -419,13 +419,8 @@ namespace
 
 				m_previewModel = handle->getExtraTyped<Model>();
 
-				//m_nodeToAdd = std::make_shared<GraphicsNode>();
-				//m_nodeToAdd->setModel(m_previewModel);
-
-				if (auto graphicsComponent = m_rootActor->getComponent<GraphicsComponent>(GraphicsComponent::ComponentID).lock())
-				{
-					graphicsComponent->m_graphicsNode->setModel(m_previewModel);
-				}
+				m_nodeToAdd = std::make_shared<GraphicsNode>();
+				m_nodeToAdd->setModel(m_previewModel);
 			}
 		}
 		void actorAdded(EventSystem::StrongEventDataPtr event)

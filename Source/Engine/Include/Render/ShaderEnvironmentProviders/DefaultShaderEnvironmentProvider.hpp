@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShaderEnvironmentProvider.hpp"
+#include "Math/Matrix4D.hpp"
 
 struct ID3D11Buffer;
 
@@ -21,5 +22,6 @@ namespace box
 
 	private:
 		ID3D11Buffer* m_constants;
+		Matrix4D m_defaultTransform;
 	};
 }

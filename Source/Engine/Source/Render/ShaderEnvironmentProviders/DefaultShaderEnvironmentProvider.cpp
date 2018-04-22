@@ -15,6 +15,7 @@ namespace box
 	DefaultShaderEnvironmentProvider::DefaultShaderEnvironmentProvider()
 		: m_constants(nullptr)
 	{
+		m_defaultTransform.setIdentity();
 	}
 
 	DefaultShaderEnvironmentProvider::~DefaultShaderEnvironmentProvider()
@@ -53,6 +54,10 @@ namespace box
 			if (TransformComponent* component = graphicsNode.getTransform())
 			{
 				memcpy(shaderData->transformMatrix, component->m_transformMatrix.m, sizeof(float) * 16);
+			}
+			else
+			{
+				memcpy(shaderData->transformMatrix, m_defaultTransform.m, sizeof(float) * 16);
 			}
 		}
 		context->Unmap(m_constants, 0);
