@@ -1,0 +1,10 @@
+<Material name="vase_round">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
+        <slot2 desc="sponza_textures/VaseRound_diffuse.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc="sponza_textures/VaseRound_normal.tga"/>
+        <slot5 desc="sponza_textures/VaseRound_roughness.tga"/>
+    </Textures>
+</Material>

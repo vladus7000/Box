@@ -40,7 +40,7 @@ namespace box
 		void resyncResourceFolders();
 
 	private:
-		std::vector<Mesh::MeshStrongPtr> loadStaticModelFromFile(const std::string& fileName);
+		void loadStaticModelFromFile(const std::string& fileName, std::vector<box::Mesh::MeshStrongPtr>& outMeshes, bool readMaterials = true,  bool saveNewMaterials = true);
 		ResourceCache* m_cache;
 	};
 }

@@ -1,0 +1,10 @@
+<Material name="floor">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
+        <slot2 desc="sponza_textures/Sponza_Floor_diffuse.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc="sponza_textures/Sponza_Floor_normal.tga"/>
+        <slot5 desc="sponza_textures/Sponza_Floor_roughness.tga"/>
+    </Textures>
+</Material>

@@ -1,0 +1,10 @@
+<Material name="Material__298">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
+        <slot2 desc="sponza_textures/Background_Albedo.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc="sponza_textures/Background_Normal.tga"/>
+        <slot5 desc="sponza_textures/Background_roughness.tga"/>
+    </Textures>
+</Material>

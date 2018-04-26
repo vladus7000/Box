@@ -1,0 +1,10 @@
+<Material name="ceiling">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
+        <slot2 desc="sponza_textures/Sponza_Ceiling_diffuse.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc="sponza_textures/Sponza_Ceiling_normal.tga"/>
+        <slot5 desc="sponza_textures/Sponza_Ceiling_roughness.tga"/>
+    </Textures>
+</Material>

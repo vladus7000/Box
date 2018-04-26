@@ -1,0 +1,10 @@
+<Material name="bricks">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
+        <slot2 desc="sponza_textures/Sponza_Bricks_a_Albedo.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc="sponza_textures/Sponza_Bricks_a_Normal.tga"/>
+        <slot5 desc="sponza_textures/Sponza_Bricks_a_Roughness.tga"/>
+    </Textures>
+</Material>

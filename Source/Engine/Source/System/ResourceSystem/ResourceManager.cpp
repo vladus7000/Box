@@ -151,7 +151,8 @@ namespace box
 
 	int ResourceManager::importStaticModel(const std::string& fileName, const std::string& modelName)
 	{
-		std::vector<box::Mesh::MeshStrongPtr> meshes = loadStaticModelFromFile(fileName);
+		std::vector<box::Mesh::MeshStrongPtr> meshes;
+		loadStaticModelFromFile(fileName, meshes);
 		if (meshes.size() > 0)
 		{
 			Model::ModelStrongPtr model = std::make_shared<Model>(modelName, fileName);
@@ -161,7 +162,10 @@ namespace box
 
 			for (auto& mesh : meshes)
 			{
-				mesh->setMaterial(material);
+				if (!mesh->getMaterial().lock())
+				{
+					mesh->setMaterial(material);
+				}
 				model->addMesh(mesh);
 			}
 
@@ -184,7 +188,8 @@ namespace box
 
 	void ResourceManager::loadModel(const std::string& fileName, Model& model)
 	{
-		std::vector<box::Mesh::MeshStrongPtr> meshes = loadStaticModelFromFile(fileName);
+		std::vector<box::Mesh::MeshStrongPtr> meshes;
+		loadStaticModelFromFile(fileName, meshes, false, false);
 
 		for (auto& mesh : meshes)
 		{
@@ -222,17 +227,94 @@ namespace box
 		m_cache->resyncResourceFolders();
 	}
 
-	std::vector<box::Mesh::MeshStrongPtr> ResourceManager::loadStaticModelFromFile(const std::string& fileName)
+	void readMaterial(aiMaterial* material, Material::MaterialStrongPtr out)
 	{
-		std::vector<box::Mesh::MeshStrongPtr> ret;
+		aiString name;
+		material->Get(AI_MATKEY_NAME, name);
+		out->setName(name.C_Str());
+		out->setShaderName("desc/default.shader");
+
+		Resource r("desc/default.shader");
+		auto handle = ResourceManager::Instance().getHandle(r);
+		auto shader = handle->getExtraTyped<Shader>();
+		out->setShader(shader);
+
+		out->setSrcFile(std::string("desc/") + name.C_Str() + ".material");
+
+		if (material->GetTextureCount(aiTextureType_AMBIENT) > 0) // map_Ka
+		{
+				aiString path;
+				material->GetTexture(aiTextureType_AMBIENT, 0, &path);
+				out->setTextureName(0, path.C_Str());
+		}
+		if (material->GetTextureCount(aiTextureType_DIFFUSE)) // map_Kd
+		{
+			aiString path;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+			out->setTextureName(1, path.C_Str());
+		}
+		if (material->GetTextureCount(aiTextureType_OPACITY)) // map_d
+		{
+			aiString path;
+			material->GetTexture(aiTextureType_OPACITY, 0, &path);
+			out->setTextureName(2, path.C_Str());
+		}
+		if (material->GetTextureCount(aiTextureType_HEIGHT)) // map_bump or bump
+		{
+			aiString path;
+			material->GetTexture(aiTextureType_HEIGHT, 0, &path);
+			out->setTextureName(3, path.C_Str());
+		}
+		if (material->GetTextureCount(aiTextureType_SHININESS)) // map_Ns
+		{
+			aiString path;
+			material->GetTexture(aiTextureType_SHININESS, 0, &path);
+			out->setTextureName(4, path.C_Str());
+		}
+	}
+
+	void ResourceManager::loadStaticModelFromFile(const std::string& fileName, std::vector<box::Mesh::MeshStrongPtr>& outMeshes, bool readMaterials, bool saveNewMaterialDesc)
+	{
+		outMeshes.clear();
+		std::vector<Material::MaterialStrongPtr> outMaterials;
 
 		Assimp::Importer importer;
 		const aiScene* assimpScene = importer.ReadFile(fileName, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Quality | aiProcess_GenUVCoords);
 		if (assimpScene)
 		{
 			auto rootNode = assimpScene->mRootNode;
+
+			if (assimpScene->mNumMaterials && readMaterials)
+			{
+				outMaterials.reserve(assimpScene->mNumMaterials);
+
+				for (U32 i = 0; i < assimpScene->mNumMaterials; i++)
+				{
+					auto material = assimpScene->mMaterials[i];
+					outMaterials.push_back(std::make_shared<Material>());
+
+					readMaterial(material, outMaterials.back());
+
+					if (saveNewMaterialDesc)
+					{
+						FILE* pFile;
+						tinyxml2::XMLDocument xmlDoc2;
+						pFile = fopen(outMaterials.back()->getSrcFile().c_str(), "w");
+						if (pFile)
+						{
+							tinyxml2::XMLNode* pRoot = outMaterials.back()->serializeToXML(nullptr, xmlDoc2);
+							xmlDoc2.InsertFirstChild(pRoot);
+							tinyxml2::XMLPrinter printer2(pFile, false);
+							xmlDoc2.Print(&printer2);
+							fclose(pFile);
+						}
+					}
+				}
+			}
+
 			if (assimpScene->mNumMeshes > 0)
 			{
+				outMeshes.reserve(assimpScene->mNumMeshes);
 				for (U32 meshI = 0; meshI < assimpScene->mNumMeshes; meshI++)
 				{
 					ID3D11DeviceContext* context = DXUTGetD3D11DeviceContext();
@@ -303,6 +385,11 @@ namespace box
 
 					Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size(), sizeof(VFs::PosTcoordNorm), D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+					if (assimpMesh->mMaterialIndex < outMaterials.size())
+					{
+						mesh->setMaterial(outMaterials[assimpMesh->mMaterialIndex]);
+					}
+
 					if (assimpMesh->mName.length > 0)
 					{
 						const char* name = assimpMesh->mName.C_Str();
@@ -314,12 +401,10 @@ namespace box
 						snprintf(buf, 50, "mesh_%d\0", meshI);
 						mesh->setName(buf);
 					}
-					ret.push_back(mesh);
+					outMeshes.push_back(mesh);
 				}
 			}
 		}
-
-		return ret;
 	}
 
 }

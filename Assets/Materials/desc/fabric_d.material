@@ -1,0 +1,10 @@
+<Material name="fabric_d">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Sponza_Fabric_metallic.tga"/>
+        <slot2 desc="sponza_textures/Sponza_Fabric_Blue_diffuse.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc="sponza_textures/Sponza_Fabric_Blue_normal.tga"/>
+        <slot5 desc="sponza_textures/Sponza_Fabric_roughness.tga"/>
+    </Textures>
+</Material>

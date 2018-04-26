@@ -1,0 +1,10 @@
+<Material name="details">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
+        <slot2 desc="sponza_textures/Sponza_Details_diffuse.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc="sponza_textures/Sponza_Details_normal.tga"/>
+        <slot5 desc="sponza_textures/Sponza_Details_roughness.tga"/>
+    </Textures>
+</Material>

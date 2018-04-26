@@ -1,0 +1,10 @@
+<Material name="vase_hanging">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Metallic_metallic.tga"/>
+        <slot2 desc="sponza_textures/VaseHanging_diffuse.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc="sponza_textures/VaseHanging_normal.tga"/>
+        <slot5 desc="sponza_textures/VaseHanging_roughness.tga"/>
+    </Textures>
+</Material>

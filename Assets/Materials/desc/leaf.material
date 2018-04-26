@@ -1,0 +1,10 @@
+<Material name="leaf">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
+        <slot2 desc="sponza_textures/Sponza_Thorn_diffuse.tga"/>
+        <slot3 desc="sponza_textures/sponza_thorn_mask.tga"/>
+        <slot4 desc="sponza_textures/Sponza_Thorn_normal.tga"/>
+        <slot5 desc="sponza_textures/Sponza_Thorn_roughness.tga"/>
+    </Textures>
+</Material>

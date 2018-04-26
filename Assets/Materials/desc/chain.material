@@ -1,0 +1,10 @@
+<Material name="chain">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/ChainTexture_Metallic.tga"/>
+        <slot2 desc="sponza_textures/ChainTexture_Albedo.tga"/>
+        <slot3 desc="sponza_textures/chain_texture_mask.tga"/>
+        <slot4 desc="sponza_textures/ChainTexture_Normal.tga"/>
+        <slot5 desc="sponza_textures/ChainTexture_Roughness.tga"/>
+    </Textures>
+</Material>

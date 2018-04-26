@@ -1,0 +1,10 @@
+<Material name="Material__57">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
+        <slot2 desc="sponza_textures/VasePlant_diffuse.tga"/>
+        <slot3 desc="sponza_textures/vase_plant_mask.tga"/>
+        <slot4 desc="sponza_textures/VasePlant_normal.tga"/>
+        <slot5 desc="sponza_textures/VasePlant_roughness.tga"/>
+    </Textures>
+</Material>

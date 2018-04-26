@@ -1,0 +1,10 @@
+<Material name="16___Default">
+    <Shader desc="desc/default.shader"/>
+    <Textures>
+        <slot1 desc="sponza_textures/gi_flag.tga"/>
+        <slot2 desc="sponza_textures/gi_flag.tga"/>
+        <slot3 desc=""/>
+        <slot4 desc=""/>
+        <slot5 desc=""/>
+    </Textures>
+</Material>
