@@ -1,0 +1,3 @@
+<Model name="1meterBox" sourceFile="src/static/1meterBox.obj">
+    <Mesh name="mesh_0" materialName="desc/default.material"/>
+</Model>

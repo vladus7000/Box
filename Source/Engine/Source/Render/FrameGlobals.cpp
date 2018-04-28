@@ -23,12 +23,11 @@ namespace box
 
 	FrameGlobals::~FrameGlobals()
 	{
-		SAVE_RELEASE(m_frameConstants);
 	}
 
 	void FrameGlobals::onDeviceLost()
 	{
-		SAVE_RELEASE(m_frameConstants);
+		m_frameConstants.Reset();
 	}
 
 	bool FrameGlobals::restore(ID3D11Device* device)
@@ -43,21 +42,21 @@ namespace box
 		desc.MiscFlags = 0;
 		desc.StructureByteStride = 0;
 
-		device->CreateBuffer(&desc, nullptr, &m_frameConstants);
+		device->CreateBuffer(&desc, nullptr, m_frameConstants.GetAddressOf());
 
 		return m_frameConstants != nullptr;
 	}
 
 	void FrameGlobals::bind(ID3D11DeviceContext* context)
 	{
-		context->VSSetConstantBuffers(0, 1, &m_frameConstants);
-		context->PSSetConstantBuffers(0, 1, &m_frameConstants);
+		context->VSSetConstantBuffers(0, 1, m_frameConstants.GetAddressOf());
+		context->PSSetConstantBuffers(0, 1, m_frameConstants.GetAddressOf());
 	}
 
 	void FrameGlobals::update(ID3D11DeviceContext* context, F32 delta)
 	{
 		D3D11_MAPPED_SUBRESOURCE subResource;
-		context->Map(m_frameConstants, 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
+		context->Map(m_frameConstants.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
 
 		ShaderData* shaderData =  reinterpret_cast<ShaderData*>(subResource.pData);
 
@@ -93,7 +92,7 @@ namespace box
 			shaderData->sunColor[2] = m_sunColor.z;
 			shaderData->sunColor[3] = 1.0f;
 		}
-		context->Unmap(m_frameConstants, 0);
+		context->Unmap(m_frameConstants.Get(), 0);
 
 	}
 

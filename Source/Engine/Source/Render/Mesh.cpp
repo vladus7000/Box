@@ -6,7 +6,7 @@
 namespace box
 {
 
-	Mesh::Mesh(ID3D11Buffer* vertex, ID3D11Buffer* index, U32 count, U32 vertSize, D3D_PRIMITIVE_TOPOLOGY topology)
+	Mesh::Mesh(Microsoft::WRL::ComPtr<ID3D11Buffer> vertex, Microsoft::WRL::ComPtr<ID3D11Buffer> index, U32 count, U32 vertSize, D3D_PRIMITIVE_TOPOLOGY topology)
 		: m_vertexBuffer(vertex)
 		, m_indexBuffer(index)
 		, m_indexCount(count)
@@ -17,8 +17,6 @@ namespace box
 
 	Mesh::~Mesh()
 	{
-		SAVE_RELEASE(m_vertexBuffer);
-		SAVE_RELEASE(m_indexBuffer);
 	}
 
 	void Mesh::render(F32 delta)
@@ -37,8 +35,8 @@ namespace box
 		unsigned int stride = m_vertexSize;
 		unsigned int offset = 0;
 
-		context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+		context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
 
 		context->IASetPrimitiveTopology(m_topology);
 		context->DrawIndexed(m_indexCount, 0, 0);
@@ -85,6 +83,17 @@ namespace box
 		{
 			if (strcmp(element->Name(), "Mesh") == 0)
 			{
+				{ // hacky way to not render mesh
+					bool del = false;
+					element->QueryBoolAttribute("del", &del);
+					if (del)
+					{
+						m_indexBuffer.Reset();
+						m_vertexBuffer.Reset();
+						m_indexCount = 0;
+						return true;
+					}
+				}
 				if (const char* name = element->Attribute("name"))
 				{
 					m_name = name;

@@ -9,8 +9,8 @@ namespace box
 	{
 		const S32 linesCount = 50;
 
-		ID3D11Buffer* vertexBuffer = nullptr;
-		ID3D11Buffer* indexBuffer = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 		D3D11_BUFFER_DESC vbDesc;
 		vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
 		vbDesc.ByteWidth = linesCount * 20 * sizeof(VFs::Pos);
@@ -55,7 +55,7 @@ namespace box
 		ID3D11DeviceContext* context = DXUTGetD3D11DeviceContext();
 		ID3D11Device* device = DXUTGetD3D11Device();
 
-		device->CreateBuffer(&vbDesc, &initData, &vertexBuffer);
+		device->CreateBuffer(&vbDesc, &initData, vertexBuffer.GetAddressOf());
 
 		D3D11_BUFFER_DESC ibDesc;
 		ibDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -67,7 +67,7 @@ namespace box
 
 		initData.pSysMem = indices.data();
 
-		device->CreateBuffer(&ibDesc, &initData, &indexBuffer);
+		device->CreateBuffer(&ibDesc, &initData, indexBuffer.GetAddressOf());
 
 		m_gridMesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size(), sizeof(VFs::Pos), D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 

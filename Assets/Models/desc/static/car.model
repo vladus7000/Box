@@ -1,0 +1,7 @@
+<Model name="car" sourceFile="src/static/car.obj">
+    <Mesh name="mesh_0" materialName="desc/default.material"/>
+    <Mesh name="mesh_1" materialName="desc/default.material"/>
+    <Mesh name="mesh_2" materialName="desc/default.material"/>
+    <Mesh name="mesh_3" materialName="desc/default.material"/>
+    <Mesh name="mesh_4" materialName="desc/default.material"/>
+</Model>

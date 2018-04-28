@@ -322,8 +322,8 @@ namespace box
 
 					auto assimpMesh = assimpScene->mMeshes[meshI];
 
-					ID3D11Buffer* vertexBuffer = nullptr;
-					ID3D11Buffer* indexBuffer = nullptr;
+					Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
+					Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 					D3D11_BUFFER_DESC vbDesc;
 					vbDesc.Usage = D3D11_USAGE_IMMUTABLE;
 					vbDesc.ByteWidth = assimpMesh->mNumVertices * sizeof(VFs::PosTcoordNorm);
@@ -358,7 +358,7 @@ namespace box
 					D3D11_SUBRESOURCE_DATA initData;
 					initData.pSysMem = verts.data();
 
-					device->CreateBuffer(&vbDesc, &initData, &vertexBuffer);
+					device->CreateBuffer(&vbDesc, &initData, vertexBuffer.GetAddressOf());
 
 					std::vector<U32> indices;
 					indices.reserve(assimpMesh->mNumFaces * 3);
@@ -381,7 +381,7 @@ namespace box
 
 					initData.pSysMem = indices.data();
 
-					device->CreateBuffer(&ibDesc, &initData, &indexBuffer);
+					device->CreateBuffer(&ibDesc, &initData, indexBuffer.GetAddressOf());
 
 					Mesh::MeshStrongPtr mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer, indices.size(), sizeof(VFs::PosTcoordNorm), D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

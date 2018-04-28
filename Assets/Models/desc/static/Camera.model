@@ -1,0 +1,6 @@
+<Model name="Camera" sourceFile="src/static/Camera.obj">
+    <Mesh name="mesh_0" materialName="desc/default.material"/>
+    <Mesh name="mesh_1" materialName="desc/default.material"/>
+    <Mesh name="mesh_2" materialName="desc/default.material"/>
+    <Mesh name="mesh_3" materialName="desc/default.material"/>
+</Model>

@@ -3,7 +3,7 @@
     <Mesh name="mesh_1" materialName="desc/Material__57.material"/>
     <Mesh name="mesh_2" materialName="desc/vase_round.material"/>
     <Mesh name="mesh_3" materialName="desc/Material__298.material"/>
-    <Mesh name="mesh_4" materialName="desc/16___Default.material"/>
+    <Mesh name="mesh_4" materialName="desc/16___Default.material" del="true"/>
     <Mesh name="mesh_5" materialName="desc/bricks.material"/>
     <Mesh name="mesh_6" materialName="desc/bricks.material"/>
     <Mesh name="mesh_7" materialName="desc/arch.material"/>

@@ -2,6 +2,7 @@
 
 #include <d3d11.h>
 #include "Scene/EnvironmentSettings.hpp"
+#include <wrl.h>
 
 namespace box
 {
@@ -24,7 +25,7 @@ namespace box
 		void update(ID3D11DeviceContext* context, F32 delta);
 
 	private:
-		ID3D11Buffer* m_frameConstants;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> m_frameConstants;
 		Vector3D m_sunPosition;
 		Vector3D m_sunColor;
 	};

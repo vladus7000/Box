@@ -6,7 +6,9 @@
 #include <System/ResourceSystem/ResourceHandle.hpp>
 #include <System/ResourceSystem/ResourceManager.hpp>
 #include <Render/ShaderEnvironmentProviders/DefaultShaderEnvironmentProvider.hpp>
+#include <Render/ShaderEnvironmentProviders/PbrShaderEnvironmentProvider.hpp>
 
+#include <wrl.h>
 #include <DXUT11\Core\DXUT.h>
 #include <d3dx11tex.h>
 #include <tinyxml2/tinyxml2.h>
@@ -17,13 +19,10 @@ namespace box
 	{
 		~Common()
 		{
-			SAVE_RELEASE(commonBlend);
-			SAVE_RELEASE(commonDepthStencil);
-			SAVE_RELEASE(commonRasterizer);
 		}
-		ID3D11BlendState* commonBlend = nullptr;
-		ID3D11DepthStencilState* commonDepthStencil = nullptr;
-		ID3D11RasterizerState* commonRasterizer = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11BlendState> commonBlend = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> commonDepthStencil = nullptr;
+		Microsoft::WRL::ComPtr<ID3D11RasterizerState> commonRasterizer = nullptr;
 		std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
 
 		const char* fileName = nullptr;
@@ -100,7 +99,7 @@ namespace box
 		return out.size() > 0;
 	}
 
-	bool parseRasterizer(tinyxml2::XMLElement* rasterizerRoot, ID3D11RasterizerState*& out)
+	bool parseRasterizer(tinyxml2::XMLElement* rasterizerRoot, Microsoft::WRL::ComPtr<ID3D11RasterizerState>& out)
 	{
 		D3D11_RASTERIZER_DESC rasterDesc;
 		ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
@@ -120,11 +119,11 @@ namespace box
 			ITEM_BOOL(rasterDesc.AntialiasedLineEnable, "AntialiasedLine");
 		END_LOOP
 		auto device = DXUTGetD3D11Device();
-		HRESULT res = device->CreateRasterizerState(&rasterDesc, &out);
+		HRESULT res = device->CreateRasterizerState(&rasterDesc, out.GetAddressOf());
 		return !FAILED(res);
 	}
 
-	bool parseDepthStencil(tinyxml2::XMLElement* depthStencilRoot, ID3D11DepthStencilState*& out)
+	bool parseDepthStencil(tinyxml2::XMLElement* depthStencilRoot, Microsoft::WRL::ComPtr<ID3D11DepthStencilState>& out)
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc;
 		ZeroMemory(&dsDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
@@ -154,11 +153,11 @@ namespace box
 		END_LOOP
 
 		auto device = DXUTGetD3D11Device();
-		HRESULT res = device->CreateDepthStencilState(&dsDesc, &out);
+		HRESULT res = device->CreateDepthStencilState(&dsDesc, out.GetAddressOf());
 		return !FAILED(res);
 	}
 
-	bool parseBlend(tinyxml2::XMLElement* blendRoot, ID3D11BlendState*& out)
+	bool parseBlend(tinyxml2::XMLElement* blendRoot, Microsoft::WRL::ComPtr<ID3D11BlendState>& out)
 	{
 		D3D11_BLEND_DESC BlendState;
 		ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
@@ -188,7 +187,7 @@ namespace box
 		}
 
 		auto device = DXUTGetD3D11Device();
-		HRESULT res = device->CreateBlendState(&BlendState, &out);
+		HRESULT res = device->CreateBlendState(&BlendState, out.GetAddressOf());
 		return !FAILED(res);
 	}
 
@@ -247,11 +246,11 @@ namespace box
 			if (!ret) break;
 
 			auto device = DXUTGetD3D11Device();
-			device->CreateVertexShader(rawShader->GetBufferPointer(), rawShader->GetBufferSize(), nullptr, &out.vertexShader);
+			device->CreateVertexShader(rawShader->GetBufferPointer(), rawShader->GetBufferSize(), nullptr, out.vertexShader.GetAddressOf());
 
 			if (inputLayoutDesc.size() > 0)
 			{
-				device->CreateInputLayout(inputLayoutDesc.data(), inputLayoutDesc.size(), rawShader->GetBufferPointer(), rawShader->GetBufferSize(), &out.inputLayout);
+				device->CreateInputLayout(inputLayoutDesc.data(), inputLayoutDesc.size(), rawShader->GetBufferPointer(), rawShader->GetBufferSize(), out.inputLayout.GetAddressOf());
 			}
 
 			if (out.inputLayout == nullptr || out.vertexShader == nullptr)
@@ -289,7 +288,6 @@ namespace box
 			if (common.commonRasterizer)
 			{
 				out.rasterizerState = common.commonRasterizer;
-				out.rasterizerState->AddRef();
 			}
 		}
 
@@ -302,7 +300,6 @@ namespace box
 			if (common.commonDepthStencil)
 			{
 				out.depthStencilView = common.commonDepthStencil;
-				out.depthStencilView->AddRef();
 			}
 		}
 
@@ -315,7 +312,6 @@ namespace box
 			if (common.commonBlend)
 			{
 				out.blendState = common.commonBlend;
-				out.blendState->AddRef();
 			}
 		}
 
@@ -331,7 +327,7 @@ namespace box
 		if (ret)
 		{
 			auto device = DXUTGetD3D11Device();
-			device->CreatePixelShader(rawShader->GetBufferPointer(), rawShader->GetBufferSize(), nullptr, &out.pixelShader);
+			device->CreatePixelShader(rawShader->GetBufferPointer(), rawShader->GetBufferSize(), nullptr, out.pixelShader.GetAddressOf());
 		}
 
 		return out.pixelShader != nullptr;
@@ -368,9 +364,16 @@ namespace box
 		{
 			auto device = DXUTGetD3D11Device();
 			{
-				auto provider = std::make_shared<DefaultShaderEnvironmentProvider>();
-				provider->restore(device);
-				m_providers["DefaultShaderEnvironmentProvider"] = provider;
+				{
+					auto provider = std::make_shared<DefaultShaderEnvironmentProvider>();
+					provider->restore(device);
+					m_providers["DefaultShaderEnvironmentProvider"] = provider;
+				}
+				{
+					auto provider = std::make_shared<PbrShaderEnvironmentProvider>();
+					provider->restore(device);
+					m_providers["PbrEnvironmentProvider"] = provider;
+				}
 			}
 		}
 

@@ -8,10 +8,6 @@ namespace box
 
 	Material::~Material()
 	{
-		for (U32 i = 0; i < MaxTextures; i++)
-		{
-			SAVE_RELEASE(m_textures[i]);
-		}
 	}
 
 	bool Material::apply(ID3D11DeviceContext* context)
@@ -98,11 +94,10 @@ namespace box
 			{
 				Resource r(desc);
 				auto handle = ResourceManager::Instance().getHandle(r);
-				auto extra = handle->getExtraTyped<box::TextureResourceExtraData>();
+				auto extra = handle->getExtraTyped<box::Texture>();
 				if (extra)
 				{
-					m_textures[slot] = extra->getTextureData().shaderResourceView;
-					m_textures[slot]->AddRef();
+					m_textures[slot] = extra;
 				}
 			}
 		}

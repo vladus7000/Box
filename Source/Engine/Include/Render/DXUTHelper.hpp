@@ -14,6 +14,7 @@ namespace box
 	{
 		void Restore(ID3D11Device* device, ID3D11DeviceContext* context);
 		void Deinit();
+		bool Inited();
 		AppMsg::Status MsgProc(const AppMsg& msg);
 		CDXUTDialogResourceManager& GetDialogResourceManager();
 		CDXUTTextHelper& GetTextHelper();

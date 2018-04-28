@@ -1,10 +1,10 @@
 <Material name="Material__25">
-    <Shader desc="desc/default.shader"/>
+    <Shader desc="desc/lighting/pbr.shader"/>
     <Textures>
-        <slot1 desc="sponza_textures/Dielectric_metallic.tga"/>
-        <slot2 desc="sponza_textures/Lion_Albedo.tga"/>
+        <slot1 desc="sponza_textures/Dielectric_metallic.dds"/>
+        <slot2 desc="sponza_textures/Lion_Albedo.dds"/>
         <slot3 desc=""/>
-        <slot4 desc="sponza_textures/Lion_Normal.tga"/>
-        <slot5 desc="sponza_textures/Lion_Roughness.tga"/>
+        <slot4 desc="sponza_textures/Lion_Normal.dds"/>
+        <slot5 desc="sponza_textures/Lion_Roughness.dds"/>
     </Textures>
 </Material>

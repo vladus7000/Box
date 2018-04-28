@@ -1,6 +1,6 @@
 #include "StdAfx.hpp"
 
-#include "Render/ShaderEnvironmentProviders/DefaultShaderEnvironmentProvider.hpp"
+#include "Render/ShaderEnvironmentProviders/PbrShaderEnvironmentProvider.hpp"
 #include "Render/Material.hpp"
 #include "Render/Mesh.hpp"
 #include "Render/GraphicsNode.hpp"
@@ -12,21 +12,21 @@ namespace box
 		float transformMatrix[16];
 	};
 
-	DefaultShaderEnvironmentProvider::DefaultShaderEnvironmentProvider()
+	PbrShaderEnvironmentProvider::PbrShaderEnvironmentProvider()
 		: m_constants(nullptr)
 	{
 		m_defaultTransform.setIdentity();
 	}
 
-	DefaultShaderEnvironmentProvider::~DefaultShaderEnvironmentProvider()
+	PbrShaderEnvironmentProvider::~PbrShaderEnvironmentProvider()
 	{
 	}
 
-	void DefaultShaderEnvironmentProvider::onDeviceLost()
+	void PbrShaderEnvironmentProvider::onDeviceLost()
 	{
 	}
 
-	bool DefaultShaderEnvironmentProvider::restore(ID3D11Device* device)
+	bool PbrShaderEnvironmentProvider::restore(ID3D11Device* device)
 	{
 		D3D11_BUFFER_DESC desc;
 		desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -41,7 +41,7 @@ namespace box
 		return true;
 	}
 
-	void DefaultShaderEnvironmentProvider::prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const GraphicsNode& graphicsNode)
+	void PbrShaderEnvironmentProvider::prepareShader(ID3D11DeviceContext* context, Shader& shader, const Material& material, const GraphicsNode& graphicsNode)
 	{
 		D3D11_MAPPED_SUBRESOURCE subResource;
 		context->Map(m_constants.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
@@ -60,6 +60,15 @@ namespace box
 			}
 		}
 		context->Unmap(m_constants.Get(), 0);
+
+		if (auto texture = material.getTexture(1))
+		{
+			ID3D11SamplerState* samplerStae[] = { texture->getSamplerState_Raw() };
+			ID3D11ShaderResourceView* srv[] = { texture->getSRV_Raw() };
+
+			context->PSSetSamplers(0, 1, samplerStae);
+			context->PSSetShaderResources(0, 1, srv);
+		}
 
 		context->VSSetConstantBuffers(1, 1, m_constants.GetAddressOf());
 	}

@@ -44,6 +44,11 @@ namespace DXUT
 		}
 	}
 
+	bool Inited()
+	{
+		return g_DialogResourceManager && g_TextHelper;
+	}
+
 	AppMsg::Status MsgProc(const AppMsg& msg)
 	{
 		if (g_DialogResourceManager->MsgProc(msg.hwnd, msg.uMsg, msg.wParam, msg.lParam))
@@ -69,10 +74,10 @@ namespace DXUT
 
 		box::Resource r(name);
 		auto handle = box::ResourceManager::Instance().getHandle(r);
-		auto extra = handle->getExtraTyped<box::TextureResourceExtraData>();
+		auto extra = handle->getExtraTyped<box::Texture>();
 		if (extra)
 		{
-			result = extra->getTextureData().shaderResourceView;
+			result = extra->getSRV_Raw();
 			result->AddRef();
 		}
 

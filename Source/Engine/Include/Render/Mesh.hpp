@@ -8,7 +8,7 @@
 #include "Gameplay/Components/TransformComponent.hpp"
 
 #include <d3d11.h>
-
+#include <wrl.h>
 namespace box
 {
 	class Mesh
@@ -18,7 +18,7 @@ namespace box
 		using MeshWeakPtr = std::weak_ptr<Mesh>;
 
 	public:
-		Mesh(ID3D11Buffer* vertex, ID3D11Buffer* index, U32 count, U32 vertSize, D3D_PRIMITIVE_TOPOLOGY topology);
+		Mesh(Microsoft::WRL::ComPtr<ID3D11Buffer> vertex, Microsoft::WRL::ComPtr<ID3D11Buffer> index, U32 count, U32 vertSize, D3D_PRIMITIVE_TOPOLOGY topology);
 		~Mesh();
 
 		void setMaterial(Material::MaterialStrongPtr material) { m_material = material; } // TODO: check input vertex format
@@ -43,8 +43,8 @@ namespace box
 	private:
 		Material::MaterialStrongPtr m_material;
 		//Matrix4D m_worldMatrix;
-		ID3D11Buffer* m_vertexBuffer;
-		ID3D11Buffer* m_indexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
 		U32 m_indexCount;
 		U32 m_vertexSize;
 		D3D_PRIMITIVE_TOPOLOGY m_topology;

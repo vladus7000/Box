@@ -3,18 +3,17 @@
 #include "ShaderEnvironmentProvider.hpp"
 #include "Math/Matrix4D.hpp"
 #include <wrl.h>
-
 struct ID3D11Buffer;
 
 namespace box
 {
-	class DefaultShaderEnvironmentProvider : public ShaderEnvironmentProvider
+	class PbrShaderEnvironmentProvider : public ShaderEnvironmentProvider
 	{
 	public:
-		DefaultShaderEnvironmentProvider();
-		virtual ~DefaultShaderEnvironmentProvider();
+		PbrShaderEnvironmentProvider();
+		virtual ~PbrShaderEnvironmentProvider();
 
-		std::string getName() { return "DefaultShaderEnvironmentProvider"; }
+		std::string getName() { return "PbrShaderEnvironmentProvider"; }
 
 		virtual void onDeviceLost() override;
 		virtual bool restore(ID3D11Device* device) override;

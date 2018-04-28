@@ -1,10 +1,10 @@
 <Material name="fabric_f">
-    <Shader desc="desc/default.shader"/>
+    <Shader desc="desc/lighting/pbr.shader"/>
     <Textures>
-        <slot1 desc="sponza_textures/Sponza_Curtain_metallic.tga"/>
-        <slot2 desc="sponza_textures/Sponza_Curtain_Green_diffuse.tga"/>
+        <slot1 desc="sponza_textures/Sponza_Curtain_metallic.dds"/>
+        <slot2 desc="sponza_textures/Sponza_Curtain_Green_diffuse.dds"/>
         <slot3 desc=""/>
-        <slot4 desc="sponza_textures/Sponza_Curtain_Green_normal.tga"/>
-        <slot5 desc="sponza_textures/Sponza_Curtain_roughness.tga"/>
+        <slot4 desc="sponza_textures/Sponza_Curtain_Green_normal.dds"/>
+        <slot5 desc="sponza_textures/Sponza_Curtain_roughness.dds"/>
     </Textures>
 </Material>

@@ -5,6 +5,8 @@
 #include "FrameGlobals.hpp"
 #include "RenderList.hpp"
 
+struct DXUTDeviceSettings;
+
 namespace box
 {
 	class Renderer
@@ -31,11 +33,20 @@ namespace box
 		void cleanRenderLists();
 		void genericRenderGraphicsNodes(const std::vector<GraphicsNode*>& nodes, F32 delta);
 
+	public:
+		void onModifyDeviceSettings(DXUTDeviceSettings* pDeviceSettings) { m_deviceSettings = pDeviceSettings; }
+		void onD3D11CreateDevice(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc) { m_backBufferSurfaceDesc = *pBackBufferSurfaceDesc; }
+		void onD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
+	private:
 		Scene::SceneStrongPtr m_scene;
 		Camera::CameraStrongPtr m_camera;
 		RenderObjects m_renderList;
 		ID3D11DeviceContext* m_context;
 		ID3D11Device* m_device;
+		IDXGISwapChain* m_swapChain;
 		FrameGlobals m_frameGlobals;
+
+		DXUTDeviceSettings* m_deviceSettings;
+		DXGI_SURFACE_DESC m_backBufferSurfaceDesc;
 	};
 }
