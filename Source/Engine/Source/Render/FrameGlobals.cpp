@@ -11,13 +11,14 @@ namespace box
 		float cameraProjectionMatrix[16];
 		float cameraPosition[4];
 		float cameraTarget[4];
-		float screenW_screenH_0_0[4];
+		float screenW_screenH_InvGamma_0[4];
 		float sunPosition[4];
 		float sunColor[4];
 	};
 
 	FrameGlobals::FrameGlobals()
 		: m_frameConstants(nullptr)
+		, m_gamma(2.2f)
 	{
 	}
 
@@ -77,10 +78,10 @@ namespace box
 			shaderData->cameraTarget[2] = camera->getTarget().z;
 			shaderData->cameraTarget[3] = 1.0f;
 
-			shaderData->screenW_screenH_0_0[0] = static_cast<F32>(Window::Instance().getWidth());
-			shaderData->screenW_screenH_0_0[1] = static_cast<F32>(Window::Instance().getHeight());
-			shaderData->screenW_screenH_0_0[2] = 0.0f;
-			shaderData->screenW_screenH_0_0[3] = 0.0f;
+			shaderData->screenW_screenH_InvGamma_0[0] = static_cast<F32>(Window::Instance().getWidth());
+			shaderData->screenW_screenH_InvGamma_0[1] = static_cast<F32>(Window::Instance().getHeight());
+			shaderData->screenW_screenH_InvGamma_0[2] = 1.0f / m_gamma;
+			shaderData->screenW_screenH_InvGamma_0[3] = 0.0f;
 
 			shaderData->sunPosition[0] = m_sunPosition.x;
 			shaderData->sunPosition[1] = m_sunPosition.y;
@@ -100,6 +101,7 @@ namespace box
 	{
 		m_sunPosition = settings.sunPosition;
 		m_sunColor = settings.sunColor;
+		m_gamma = settings.gamma;
 	}
 
 }

@@ -37,8 +37,13 @@ namespace box
 				color->SetAttribute("B", sunColor.z);
 				sun->InsertEndChild(color);
 			}
-
 			root->InsertEndChild(sun);
+
+			{
+				tinyxml2::XMLElement* element = doc.NewElement("gamma");
+				element->SetAttribute("val", gamma);
+				root->InsertEndChild(element);
+			}
 
 			if (node)
 			{
@@ -68,7 +73,10 @@ namespace box
 							color->QueryFloatAttribute("G", &sunColor.y);
 							color->QueryFloatAttribute("B", &sunColor.z);
 						}
-						return true;
+					}
+					if (auto gammaElement = element->FirstChildElement("gamma"))
+					{
+						gammaElement->QueryFloatAttribute("val", &gamma);
 					}
 
 				}
@@ -79,5 +87,6 @@ namespace box
 
 		Vector3D sunPosition;
 		Vector3D sunColor;
+		F32 gamma;
 	};
 }

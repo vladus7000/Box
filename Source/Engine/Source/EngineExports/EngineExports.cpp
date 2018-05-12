@@ -343,11 +343,9 @@ namespace
 			{
 				ClearColor[0] = 0.15f;
 			}
-			ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
-			context->ClearRenderTargetView(pRTV, ClearColor);
 
-			ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
-			context->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0, 0);
+			auto backBuffer = m_renderer->getBackBuffer();
+			m_renderer->clear(Renderer::ClearFlags::CF_CLEAR_COLOR | Renderer::ClearFlags::CF_CLEAR_DEPTH, backBuffer, ClearColor, backBuffer, 1.0f, 0);
 
 			m_camera->update(delta);
 

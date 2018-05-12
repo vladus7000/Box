@@ -22,8 +22,10 @@ void Editor::RunningEnvironmentWindow::updateEnvironmentSettings()
 			color->SetAttribute("B", BSunColorTextBox->Text);
 			sun->AppendChild(color);
 		}
-
+		System::Xml::XmlElement^ gamma = xmlDoc.CreateElement(L"gamma");
+		gamma->SetAttribute("val", GammatextBox->Text);
 		rootMaterial->AppendChild(sun);
+		rootMaterial->AppendChild(gamma);
 	}
 	xmlDoc.AppendChild(rootMaterial);
 

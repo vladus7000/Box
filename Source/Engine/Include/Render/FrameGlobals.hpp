@@ -28,5 +28,6 @@ namespace box
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_frameConstants;
 		Vector3D m_sunPosition;
 		Vector3D m_sunColor;
+		F32 m_gamma;
 	};
 }

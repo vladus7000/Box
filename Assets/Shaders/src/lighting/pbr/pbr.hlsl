@@ -4,7 +4,7 @@ cbuffer ShaderData : register(b0)
 	float4x4 cameraProjectionMatrix;
 	float4 cameraPosition;
 	float4 cameraTarget;
-	float4 screenW_screenH_0_0;
+	float4 screenW_screenH_InvGamma_0;
 	float3 sunDirection;
 	float3 sunColor;
 };
@@ -53,5 +53,7 @@ float4 t1_psMain(PixelShaderInput input) : SV_TARGET
 {
 	float3 normal = normalize(input.normal);
 	float3 posPixel	= input.posPixel;
-	return float4(diffuse.Sample( samLinear, input.texCoord ).rgb, 1.0);
+	float3 pixel = diffuse.Sample( samLinear, input.texCoord ).rgb * sunColor;
+	
+	return float4(pixel, 1.0);
 }

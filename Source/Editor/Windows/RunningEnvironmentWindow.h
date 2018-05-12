@@ -88,6 +88,8 @@ namespace Editor {
 
 	private: System::Windows::Forms::Label^  label11;
 	private: System::Windows::Forms::TextBox^  RSunColorTextBox;
+	private: System::Windows::Forms::Label^  label12;
+	private: System::Windows::Forms::TextBox^  GammatextBox;
 
 			 XmlDocument^ m_doc;
 
@@ -127,6 +129,8 @@ namespace Editor {
 			this->label6 = (gcnew System::Windows::Forms::Label());
 			this->XSunTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->button4 = (gcnew System::Windows::Forms::Button());
+			this->label12 = (gcnew System::Windows::Forms::Label());
+			this->GammatextBox = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox1->SuspendLayout();
 			this->environmentSettings->SuspendLayout();
 			this->SuspendLayout();
@@ -269,6 +273,8 @@ namespace Editor {
 			// 
 			// environmentSettings
 			// 
+			this->environmentSettings->Controls->Add(this->label12);
+			this->environmentSettings->Controls->Add(this->GammatextBox);
 			this->environmentSettings->Controls->Add(this->label9);
 			this->environmentSettings->Controls->Add(this->BSunColorTextBox);
 			this->environmentSettings->Controls->Add(this->label10);
@@ -292,7 +298,7 @@ namespace Editor {
 			// label9
 			// 
 			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(126, 74);
+			this->label9->Location = System::Drawing::Point(144, 74);
 			this->label9->Name = L"label9";
 			this->label9->Size = System::Drawing::Size(17, 13);
 			this->label9->TabIndex = 12;
@@ -300,17 +306,17 @@ namespace Editor {
 			// 
 			// BSunColorTextBox
 			// 
-			this->BSunColorTextBox->Location = System::Drawing::Point(144, 71);
+			this->BSunColorTextBox->Location = System::Drawing::Point(162, 71);
 			this->BSunColorTextBox->MaxLength = 4;
 			this->BSunColorTextBox->Name = L"BSunColorTextBox";
-			this->BSunColorTextBox->Size = System::Drawing::Size(30, 20);
+			this->BSunColorTextBox->Size = System::Drawing::Size(39, 20);
 			this->BSunColorTextBox->TabIndex = 11;
 			this->BSunColorTextBox->Text = L"0";
 			// 
 			// label10
 			// 
 			this->label10->AutoSize = true;
-			this->label10->Location = System::Drawing::Point(71, 74);
+			this->label10->Location = System::Drawing::Point(81, 74);
 			this->label10->Name = L"label10";
 			this->label10->Size = System::Drawing::Size(18, 13);
 			this->label10->TabIndex = 10;
@@ -318,10 +324,10 @@ namespace Editor {
 			// 
 			// GSunColorTextBox
 			// 
-			this->GSunColorTextBox->Location = System::Drawing::Point(89, 71);
+			this->GSunColorTextBox->Location = System::Drawing::Point(99, 71);
 			this->GSunColorTextBox->MaxLength = 4;
 			this->GSunColorTextBox->Name = L"GSunColorTextBox";
-			this->GSunColorTextBox->Size = System::Drawing::Size(30, 20);
+			this->GSunColorTextBox->Size = System::Drawing::Size(39, 20);
 			this->GSunColorTextBox->TabIndex = 9;
 			this->GSunColorTextBox->Text = L"1";
 			// 
@@ -339,7 +345,7 @@ namespace Editor {
 			this->RSunColorTextBox->Location = System::Drawing::Point(37, 71);
 			this->RSunColorTextBox->MaxLength = 4;
 			this->RSunColorTextBox->Name = L"RSunColorTextBox";
-			this->RSunColorTextBox->Size = System::Drawing::Size(30, 20);
+			this->RSunColorTextBox->Size = System::Drawing::Size(38, 20);
 			this->RSunColorTextBox->TabIndex = 7;
 			this->RSunColorTextBox->Text = L"1";
 			// 
@@ -406,6 +412,24 @@ namespace Editor {
 			this->button4->Text = L"Update";
 			this->button4->UseVisualStyleBackColor = true;
 			this->button4->Click += gcnew System::EventHandler(this, &RunningEnvironmentWindow::updateEnvSettings_Click);
+			// 
+			// label12
+			// 
+			this->label12->AutoSize = true;
+			this->label12->Location = System::Drawing::Point(19, 112);
+			this->label12->Name = L"label12";
+			this->label12->Size = System::Drawing::Size(46, 13);
+			this->label12->TabIndex = 14;
+			this->label12->Text = L"Gamma:";
+			// 
+			// GammatextBox
+			// 
+			this->GammatextBox->Location = System::Drawing::Point(67, 109);
+			this->GammatextBox->MaxLength = 4;
+			this->GammatextBox->Name = L"GammatextBox";
+			this->GammatextBox->Size = System::Drawing::Size(30, 20);
+			this->GammatextBox->TabIndex = 13;
+			this->GammatextBox->Text = L"2.2";
 			// 
 			// RunningEnvironmentWindow
 			// 
