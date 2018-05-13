@@ -1,0 +1,4 @@
+<Model name="turret" sourceFile="src/static/turret.obj">
+    <Mesh name="mesh_0" materialName="desc/turret/top.material"/>
+    <Mesh name="mesh_1" materialName="desc/turret/bottom.material"/>
+</Model>
