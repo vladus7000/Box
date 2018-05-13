@@ -1,0 +1,5 @@
+slot1 - metalness
+slot2 - base color
+slot3 - mask ???
+slot4 - normals
+slot5 - roughness

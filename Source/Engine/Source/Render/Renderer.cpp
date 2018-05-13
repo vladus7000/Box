@@ -102,7 +102,7 @@ namespace box
 			m_skyboxShader = handle->getExtraTyped<Shader>();
 		}
 		{
-			Resource r("cubemaps/uffizi_cross.dds");
+			Resource r("cubemaps/galileo_cross.dds");
 			auto handle = ResourceManager::Instance().getHandle(r);
 			m_skyboxTexture = handle->getExtraTyped<Texture>();
 		}
@@ -129,6 +129,12 @@ namespace box
 		m_frameGlobals.updateEnvironmentSettings(m_scene->getEnvironmentSettings());
 		m_frameGlobals.update(m_context, delta);
 		m_frameGlobals.bind(m_context);
+
+		ID3D11ShaderResourceView* srvs[8] = { m_skyboxTexture->getSRV_Raw() };
+		m_context->PSSetShaderResources(0, 1, srvs);
+
+		ID3D11SamplerState* samplers[1] = { m_skyboxTexture->getSamplerState_Raw() };
+		m_context->PSSetSamplers(0, 1, samplers);
 
 		lightingPass(delta);
 		skyboxPass();
@@ -259,12 +265,6 @@ namespace box
 		m_context->IASetVertexBuffers(0, 1, pBuffers, &uStrides, &uOffsets);
 		m_context->IASetIndexBuffer(NULL, DXGI_FORMAT_R32_UINT, 0);
 		m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-		ID3D11ShaderResourceView* srvs[8] = { m_skyboxTexture->getSRV_Raw() };
-		m_context->PSSetShaderResources(0, 1, srvs);
-
-		ID3D11SamplerState* samplers[1] = { m_skyboxTexture->getSamplerState_Raw() };
-		m_context->PSSetSamplers(0, 1, samplers);
 
 		m_context->Draw(4, 0);
 	}

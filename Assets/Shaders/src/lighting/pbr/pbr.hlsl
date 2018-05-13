@@ -14,7 +14,6 @@ cbuffer ModelData : register(b1)
 	float4x4 worldMatrix;
 };
 
-
 struct VertexShaderInput
 {
 	float3 pos : POSITION;
@@ -30,8 +29,20 @@ struct PixelShaderInput
 	float3 posPixel : POSITION;
 };
 
-Texture2D diffuse : register( t0 ); 
-SamplerState samLinear : register( s0 );
+TextureCube	g_EnvironmentTexture : register( t0 );
+SamplerState g_sam : register( s0 );
+
+Texture2D metalness : register( t1 ); 
+SamplerState metalnessSampler : register( s1 );
+
+Texture2D baseColor : register( t2 ); 
+SamplerState baseColorSampler : register( s2 );
+
+Texture2D normal : register( t3 ); 
+SamplerState normalSampler : register( s3 );
+
+Texture2D roughness : register( t4 ); 
+SamplerState roughnessSampler : register( s4 );
 
 PixelShaderInput t1_VsMain(VertexShaderInput input)
 {
@@ -44,16 +55,22 @@ PixelShaderInput t1_VsMain(VertexShaderInput input)
 
 	output.texCoord = input.texCoord;
 	output.normal = input.normal;
-	output.posPixel = output.pos;
+	output.posPixel = output.pos.xyz;
 
 	return output;
 }
 
 float4 t1_psMain(PixelShaderInput input) : SV_TARGET
 {
+	float3 ao = 1.0;
+	float3 outColor = 0.0;
+	
 	float3 normal = normalize(input.normal);
 	float3 posPixel	= input.posPixel;
-	float3 pixel = diffuse.Sample( samLinear, input.texCoord ).rgb * sunColor;
+	float3 albedo = baseColor.Sample( baseColorSampler, input.texCoord ).rgb;
+	float3 ambientColor = g_EnvironmentTexture.Sample(g_sam, normal).rgb;
 	
-	return float4(pixel, 1.0);
+	outColor += albedo * ao * ambientColor;
+	
+	return float4(outColor, 1.0);
 }

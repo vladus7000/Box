@@ -59,15 +59,40 @@ namespace box
 				memcpy(shaderData->transformMatrix, m_defaultTransform.m, sizeof(float) * 16);
 			}
 		}
+
 		context->Unmap(m_constants.Get(), 0);
 
-		if (auto texture = material.getTexture(1))
+		if (auto texture = material.getTexture(0))
 		{
-			ID3D11SamplerState* samplerStae[] = { texture->getSamplerState_Raw() };
+			ID3D11SamplerState* samplers[] = { texture->getSamplerState_Raw() };
 			ID3D11ShaderResourceView* srv[] = { texture->getSRV_Raw() };
 
-			context->PSSetSamplers(0, 1, samplerStae);
-			context->PSSetShaderResources(0, 1, srv);
+			context->PSSetSamplers(1, 1, samplers);
+			context->PSSetShaderResources(1, 1, srv);
+		}
+		if (auto texture = material.getTexture(1))
+		{
+			ID3D11SamplerState* samplers[] = { texture->getSamplerState_Raw() };
+			ID3D11ShaderResourceView* srv[] = { texture->getSRV_Raw() };
+
+			context->PSSetSamplers(2, 1, samplers);
+			context->PSSetShaderResources(2, 1, srv);
+		}
+		if (auto texture = material.getTexture(3))
+		{
+			ID3D11SamplerState* samplers[] = { texture->getSamplerState_Raw() };
+			ID3D11ShaderResourceView* srv[] = { texture->getSRV_Raw() };
+
+			context->PSSetSamplers(3, 1, samplers);
+			context->PSSetShaderResources(3, 1, srv);
+		}
+		if (auto texture = material.getTexture(2))
+		{
+			ID3D11SamplerState* samplers[] = { texture->getSamplerState_Raw() };
+			ID3D11ShaderResourceView* srv[] = { texture->getSRV_Raw() };
+
+			context->PSSetSamplers(4, 1, samplers);
+			context->PSSetShaderResources(4, 1, srv);
 		}
 
 		context->VSSetConstantBuffers(1, 1, m_constants.GetAddressOf());

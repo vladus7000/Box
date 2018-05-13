@@ -1,10 +1,10 @@
 <Material name="turret_top">
     <Shader desc="desc/lighting/pbr.shader"/>
     <Textures>
-        <slot1 desc="sponza_textures/ChainTexture_Metallic.dds"/>
-        <slot2 desc="turret/turret_top_ALB.dds"/>
-        <slot3 desc="sponza_textures/chain_texture_mask.dds"/>
-        <slot4 desc="sponza_textures/ChainTexture_Normal.dds"/>
-        <slot5 desc="sponza_textures/ChainTexture_Roughness.dds"/>
+        <slot1 desc="turret/turret_top_MTL.dds"/>
+        <slot2 desc="turret/turret_top_BC.dds"/>
+        <slot3 desc=""/>
+        <slot4 desc="turret/turret_top_NRML.dds"/>
+        <slot5 desc="turret/turret_top_RUFF.dds"/>
     </Textures>
 </Material>
