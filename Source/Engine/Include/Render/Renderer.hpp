@@ -52,8 +52,9 @@ namespace box
 		void renderPostEffects();
 		void tonemapPass();
 		void lightingPass(F32 delta);
+		void skyboxPass();
 		void recreateRenderTargets(U32 w, U32 h);
-
+		void recreateSkybox(U32 w, U32 h);
 	public:
 		void onModifyDeviceSettings(DXUTDeviceSettings* pDeviceSettings) { m_deviceSettings = pDeviceSettings; }
 		void onD3D11CreateDevice(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc) { m_device = pd3dDevice; }
@@ -77,5 +78,9 @@ namespace box
 		std::vector<Texture::TextureStrongPtr> m_lumChain;
 		U32 m_BBwidth;
 		U32 m_BBHeight;
+		///// test for skybox
+		Shader::ShaderStrongPtr m_skyboxShader;
+		ID3D11Buffer* m_skyboxBuffer = nullptr;
+		Texture::TextureStrongPtr m_skyboxTexture;
 	};
 }

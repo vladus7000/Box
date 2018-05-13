@@ -61,6 +61,7 @@ namespace box
 
 		memset(&m_backBufferSurfaceDesc, 0, sizeof(m_backBufferSurfaceDesc));
 
+		DXUTSetIsInGammaCorrectMode(false);
 		DXUTSetCallbackDeviceChanging(ModifyDeviceSettings, this);
 		DXUTSetCallbackD3D11DeviceAcceptable(IsD3D11DeviceAcceptable, this);
 		DXUTSetCallbackD3D11DeviceCreated(OnD3D11CreateDevice, this);
@@ -95,12 +96,27 @@ namespace box
 			auto handle = ResourceManager::Instance().getHandle(r);
 			m_postProcessShader = handle->getExtraTyped<Shader>();
 		}
+		{
+			Resource r("desc/skybox.shader");
+			auto handle = ResourceManager::Instance().getHandle(r);
+			m_skyboxShader = handle->getExtraTyped<Shader>();
+		}
+		{
+			Resource r("cubemaps/uffizi_cross.dds");
+			auto handle = ResourceManager::Instance().getHandle(r);
+			m_skyboxTexture = handle->getExtraTyped<Texture>();
+		}
 		return result;
 	}
 
 	void Renderer::deinit()
 	{
 		DXUT::Deinit();
+
+		if (m_skyboxBuffer)
+		{
+			m_skyboxBuffer->Release();
+		}
 	}
 
 	void Renderer::renderScene(F32 delta)
@@ -115,6 +131,7 @@ namespace box
 		m_frameGlobals.bind(m_context);
 
 		lightingPass(delta);
+		skyboxPass();
 		tonemapPass();
 		renderPostEffects();
 	}
@@ -222,6 +239,34 @@ namespace box
 
 		srvs[0] = nullptr;
 		m_context->PSSetShaderResources(0, 1, srvs);
+	}
+
+	void Renderer::skyboxPass()
+	{
+		struct SKYBOX_VERTEX
+		{
+			D3DXVECTOR4 pos;
+		};
+
+		m_skyboxShader->setActiveTechnique(0);
+		auto& technique = m_skyboxShader->getActiveTechnique();
+		technique.apply(m_context);
+		HRESULT hr;
+
+		UINT uStrides = sizeof(SKYBOX_VERTEX);
+		UINT uOffsets = 0;
+		ID3D11Buffer* pBuffers[1] = { m_skyboxBuffer };
+		m_context->IASetVertexBuffers(0, 1, pBuffers, &uStrides, &uOffsets);
+		m_context->IASetIndexBuffer(NULL, DXGI_FORMAT_R32_UINT, 0);
+		m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+		ID3D11ShaderResourceView* srvs[8] = { m_skyboxTexture->getSRV_Raw() };
+		m_context->PSSetShaderResources(0, 1, srvs);
+
+		ID3D11SamplerState* samplers[1] = { m_skyboxTexture->getSamplerState_Raw() };
+		m_context->PSSetSamplers(0, 1, samplers);
+
+		m_context->Draw(4, 0);
 	}
 
 	void Renderer::cullObjects()
@@ -374,6 +419,46 @@ namespace box
 			}
 			size /= 2;
 		}
+
+		recreateSkybox(w, h);
+	}
+
+	void Renderer::recreateSkybox(U32 w, U32 h)
+	{
+		/// for skybox
+		if (m_skyboxBuffer)
+		{
+			m_skyboxBuffer->Release();
+		}
+		struct SKYBOX_VERTEX
+		{
+			D3DXVECTOR4 pos;
+		};
+
+		SKYBOX_VERTEX pVertex[4];
+		// Map texels to pixels 
+		float fHighW = -1.0f - (1.0f / (float)w);
+		float fHighH = -1.0f - (1.0f / (float)h);
+		float fLowW = 1.0f + (1.0f / (float)w);
+		float fLowH = 1.0f + (1.0f / (float)h);
+
+		pVertex[0].pos = D3DXVECTOR4(fLowW, fLowH, 1.0f, 1.0f);
+		pVertex[1].pos = D3DXVECTOR4(fLowW, fHighH, 1.0f, 1.0f);
+		pVertex[2].pos = D3DXVECTOR4(fHighW, fLowH, 1.0f, 1.0f);
+		pVertex[3].pos = D3DXVECTOR4(fHighW, fHighH, 1.0f, 1.0f);
+
+		UINT uiVertBufSize = 4 * sizeof(SKYBOX_VERTEX);
+		//Vertex Buffer
+		D3D11_BUFFER_DESC vbdesc;
+		vbdesc.ByteWidth = uiVertBufSize;
+		vbdesc.Usage = D3D11_USAGE_IMMUTABLE;
+		vbdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		vbdesc.CPUAccessFlags = 0;
+		vbdesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = pVertex;
+		m_device->CreateBuffer(&vbdesc, &InitData, &m_skyboxBuffer);
 	}
 
 	bool operator==(const DXGI_SURFACE_DESC& lhs, const DXGI_SURFACE_DESC& rhs)
